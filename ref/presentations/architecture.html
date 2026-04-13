@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI老师团队 · 产品架构全景</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg-deep: #0a0e1a;
+    --bg-card: rgba(255,255,255,0.04);
+    --accent-blue: #60a5fa;
+    --accent-purple: #a78bfa;
+    --accent-cyan: #22d3ee;
+    --accent-green: #34d399;
+    --accent-amber: #fbbf24;
+    --accent-rose: #fb7185;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --border: rgba(255,255,255,0.08);
+  }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 60px;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(ellipse at 25% 20%, rgba(96,165,250,0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 75% 70%, rgba(167,139,250,0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page { position: relative; z-index: 1; width: 100%; max-width: 1300px; }
+
+  /* Header */
+  .header { text-align: center; margin-bottom: 48px; }
+  .header-tag {
+    font-size: 12px; font-weight: 600; letter-spacing: 2px;
+    color: var(--accent-blue); margin-bottom: 12px;
+  }
+  .header-title {
+    font-size: 36px; font-weight: 800; letter-spacing: -0.03em;
+    background: linear-gradient(135deg, #f1f5f9, #94a3b8);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .header-sub { font-size: 15px; color: var(--text-secondary); }
+
+  /* Timeline axis */
+  .timeline-axis {
+    display: grid;
+    grid-template-columns: 200px repeat(6, 1fr);
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .axis-label {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 8px 0;
+  }
+  .timeline-bar {
+    grid-column: 2 / -1;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan), var(--accent-green), var(--accent-purple), var(--accent-amber), var(--text-muted));
+    border-radius: 2px;
+    opacity: 0.35;
+    margin-bottom: 20px;
+  }
+  .timeline-bar-row {
+    display: grid;
+    grid-template-columns: 200px repeat(6, 1fr);
+  }
+
+  /* Product rows */
+  .product-section {
+    margin-bottom: 32px;
+    position: relative;
+  }
+  .section-label {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    align-items: start;
+    margin-bottom: 12px;
+  }
+  .section-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+  }
+  .badge-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+  .badge-text {
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .badge-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+
+  /* Item grid - positioned on timeline */
+  .items-row {
+    display: grid;
+    grid-template-columns: 200px repeat(6, 1fr);
+    gap: 8px;
+    align-items: start;
+  }
+  .item-spacer { /* empty cell */ }
+
+  .item {
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 12px;
+    line-height: 1.5;
+    position: relative;
+  }
+  .item-title {
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+  .item-desc {
+    font-size: 11px;
+    opacity: 0.7;
+  }
+  .item-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+
+  /* Color themes */
+  .theme-blue .item {
+    background: rgba(96,165,250,0.08);
+    border: 1px solid rgba(96,165,250,0.2);
+    color: var(--text-primary);
+  }
+  .theme-blue .item-tag { background: rgba(96,165,250,0.15); color: var(--accent-blue); }
+  .theme-blue .badge-icon { background: rgba(96,165,250,0.15); color: var(--accent-blue); }
+  .theme-blue .badge-text { color: var(--accent-blue); }
+
+  .theme-purple .item {
+    background: rgba(167,139,250,0.08);
+    border: 1px solid rgba(167,139,250,0.2);
+    color: var(--text-primary);
+  }
+  .theme-purple .item-tag { background: rgba(167,139,250,0.15); color: var(--accent-purple); }
+  .theme-purple .badge-icon { background: rgba(167,139,250,0.15); color: var(--accent-purple); }
+  .theme-purple .badge-text { color: var(--accent-purple); }
+
+  .theme-amber .item {
+    background: rgba(251,191,36,0.08);
+    border: 1px solid rgba(251,191,36,0.2);
+    color: var(--text-primary);
+  }
+  .theme-amber .item-tag { background: rgba(251,191,36,0.15); color: var(--accent-amber); }
+  .theme-amber .badge-icon { background: rgba(251,191,36,0.15); color: var(--accent-amber); }
+  .theme-amber .badge-text { color: var(--accent-amber); }
+
+  /* Grayed out / future */
+  .theme-gray .item {
+    background: rgba(255,255,255,0.02);
+    border: 1px dashed rgba(255,255,255,0.1);
+    color: var(--text-muted);
+  }
+  .theme-gray .item-title { color: var(--text-muted); }
+  .theme-gray .item-tag { background: rgba(255,255,255,0.05); color: var(--text-muted); }
+  .theme-gray .badge-icon { background: rgba(255,255,255,0.05); color: var(--text-muted); }
+  .theme-gray .badge-text { color: var(--text-muted); }
+
+  /* Span helpers */
+  .span-2 { grid-column: span 2; }
+  .span-3 { grid-column: span 3; }
+
+  /* Connector arrow */
+  .connector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 14px;
+    padding: 4px 0;
+  }
+
+  /* Shared capability bar */
+  .capability-bar {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    margin-top: 8px;
+    gap: 8px;
+  }
+  .cap-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 8px;
+  }
+  .cap-pills {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .cap-pill {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 24px 0;
+  }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 3px;
+  }
+  .legend-dot.dashed {
+    border: 1px dashed var(--text-muted);
+    background: transparent;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-tag">AI 老师团队 · PRODUCT ARCHITECTURE</div>
+    <div class="header-title">产品架构全景图</div>
+    <div class="header-sub">两大交付形态 &times; 时间演进路线 &mdash; 2025 Q2-Q3</div>
+  </div>
+
+  <!-- Timeline Axis -->
+  <div class="timeline-axis">
+    <div></div>
+    <div class="axis-label" style="color:var(--text-muted);">4月</div>
+    <div class="axis-label" style="color:var(--accent-blue);">5月</div>
+    <div class="axis-label" style="color:var(--accent-cyan);">6月</div>
+    <div class="axis-label" style="color:var(--accent-green);">7月</div>
+    <div class="axis-label" style="color:var(--accent-purple);">8月</div>
+    <div class="axis-label" style="color:var(--accent-amber);">9月+</div>
+  </div>
+  <div class="timeline-bar-row">
+    <div></div>
+    <div class="timeline-bar"></div>
+  </div>
+
+  <!-- ═══════ NeoLearning - 新 ═══════ -->
+  <div class="product-section theme-blue">
+    <div class="section-label">
+      <div class="section-badge">
+        <div class="badge-icon">&#9670;</div>
+        <div>
+          <div class="badge-text">NeoLearning</div>
+          <div class="badge-sub">培训项目 · 新</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 1: 基层管理者 -->
+    <div class="items-row" style="margin-bottom:8px;">
+      <div style="display:flex;align-items:center;justify-content:flex-end;padding-right:12px;">
+        <span style="font-size:12px;color:var(--text-secondary);font-weight:600;">基层管理者</span>
+      </div>
+      <!-- 4月: 空 -->
+      <div></div>
+      <!-- 5月: 横向协同内测 -->
+      <div class="item">
+        <div class="item-title">横向协同内测</div>
+        <div class="item-desc">学员端 + 管理端<br>Mini Project 验证</div>
+      </div>
+      <!-- 6月: V1 Online MVP -->
+      <div class="item">
+        <div class="item-title">V1 标准版 Online</div>
+        <div class="item-desc">6月初 MVP 上线<br>8模块 · 25-30挑战场景</div>
+        <span class="item-tag">1,600-1,800/账号</span>
+      </div>
+      <!-- 7月: 混合式 + 移动端 -->
+      <div class="item">
+        <div class="item-title">V1 混合式 + 移动端</div>
+        <div class="item-desc">7月中 线上线下混合<br>学员端移动端上线</div>
+        <span class="item-tag">~10万/项目</span>
+      </div>
+      <!-- 8月: V2 + 销售场景 -->
+      <div class="item">
+        <div class="item-title">V2 中层 + 销售场景</div>
+        <div class="item-desc">V2 在岗/中层 上线<br>销售场景版 + 混合式<br>可结合 SalesLeader</div>
+      </div>
+      <!-- 9月+: 空 -->
+      <div></div>
+    </div>
+
+    <!-- Row 2: AI 组织 -->
+    <div class="items-row">
+      <div style="display:flex;align-items:center;justify-content:flex-end;padding-right:12px;">
+        <span style="font-size:12px;color:var(--text-secondary);font-weight:600;">AI 组织</span>
+      </div>
+      <div></div>
+      <div></div>
+      <!-- 6月: AI组织 Online -->
+      <div class="item">
+        <div class="item-title">标准版 Online MVP</div>
+        <div class="item-desc">6月底上线 · 纯线上<br>目标 100企业 × 50账号</div>
+        <span class="item-tag">800-1,000/账号</span>
+      </div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
+
+  <!-- ═══════ NeoLearning - 老 (灰色) ═══════ -->
+  <div class="product-section theme-gray">
+    <div class="items-row">
+      <div style="display:flex;align-items:center;justify-content:flex-end;padding-right:12px;">
+        <div class="section-badge">
+          <div class="badge-icon">&#9671;</div>
+          <div>
+            <div class="badge-text">NeoLearning</div>
+            <div class="badge-sub">已有课程 · 老</div>
+          </div>
+        </div>
+      </div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <!-- 9月+: 已有课程NeoLearning化 -->
+      <div class="item">
+        <div class="item-title">已有课程 NeoLearning 化</div>
+        <div class="item-desc">线上线下混合学习课程<br>升级为 AI 自适应培训</div>
+        <span class="item-tag" style="border:1px dashed rgba(255,255,255,0.15);">9月后启动 · 规划中</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════ Neo Course ═══════ -->
+  <div class="product-section theme-purple">
+    <div class="section-label">
+      <div class="section-badge">
+        <div class="badge-icon">&#9830;</div>
+        <div>
+          <div class="badge-text">Neo Course</div>
+          <div class="badge-sub">生产平台</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 1: AI 伴学 -->
+    <div class="items-row" style="margin-bottom:8px;">
+      <div style="display:flex;align-items:center;justify-content:flex-end;padding-right:12px;">
+        <span style="font-size:12px;color:var(--text-secondary);font-weight:600;">AI 伴学</span>
+      </div>
+      <div></div>
+      <div></div>
+      <!-- 6月: 4门老课 -->
+      <div class="item">
+        <div class="item-title">4 门老课 AI 化</div>
+        <div class="item-desc">启航 / 积极协同<br>跳出困局 / 王牌销售<br>6月底交付上架</div>
+        <span class="item-tag">Video + Check + 答疑 + 报告</span>
+      </div>
+      <!-- 7月底: 平台上线 -->
+      <div class="item" style="background:rgba(167,139,250,0.12);border-color:rgba(167,139,250,0.3);">
+        <div class="item-title">Neo Course 平台上线</div>
+        <div class="item-desc">7月底<br>Video / PPT / CASE 多格式<br>完整制课能力开放</div>
+        <span class="item-tag">企业自主制课</span>
+      </div>
+      <div></div>
+      <div></div>
+    </div>
+
+    <!-- Row 2: 新产品赋能 -->
+    <div class="items-row">
+      <div style="display:flex;align-items:center;justify-content:flex-end;padding-right:12px;">
+        <span style="font-size:12px;color:var(--text-secondary);font-weight:600;">新产品赋能</span>
+      </div>
+      <div></div>
+      <div></div>
+      <!-- 6月: Mini Project -->
+      <div class="item">
+        <div class="item-title">Mini Project 交付</div>
+        <div class="item-desc">萃取 → 制课(PPT+Quiz)<br>→ 学习反馈 → 报告<br>可结合 SalesMate</div>
+        <span class="item-tag">~3万/项目 + AI豆</span>
+      </div>
+      <div></div>
+      <!-- 8月: 规模化 -->
+      <div class="item">
+        <div class="item-title">规模化推广</div>
+        <div class="item-desc">目标 200-300 份</div>
+      </div>
+      <div></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════ 沙盘 (增购) ═══════ -->
+  <div class="product-section theme-amber">
+    <div class="items-row">
+      <div style="display:flex;align-items:center;justify-content:flex-end;padding-right:12px;">
+        <div class="section-badge">
+          <div class="badge-icon">&#9733;</div>
+          <div>
+            <div class="badge-text">增购服务</div>
+            <div class="badge-sub">沙盘模拟与沙盘教练</div>
+          </div>
+        </div>
+      </div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <!-- 9月+: 沙盘 -->
+      <div class="item">
+        <div class="item-title">沙盘模拟与沙盘教练</div>
+        <div class="item-desc">基层管理者场景优先<br>线上沙盘体验<br>9月底完成产品形态</div>
+        <span class="item-tag">NeoLearning 增购</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shared Capabilities -->
+  <div class="divider"></div>
+  <div class="capability-bar">
+    <div class="cap-label">共享底层能力</div>
+    <div class="cap-pills">
+      <span class="cap-pill">测评引擎</span>
+      <span class="cap-pill">AI 辅导</span>
+      <span class="cap-pill">萃取工具</span>
+      <span class="cap-pill">报告 Agent</span>
+      <span class="cap-pill">记忆工程</span>
+      <span class="cap-pill">项目运营</span>
+      <span class="cap-pill">Quiz / Check</span>
+      <span class="cap-pill">智能答疑</span>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-blue);"></div>NeoLearning 培训项目</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-purple);"></div>Neo Course 生产平台</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-amber);"></div>增购服务</div>
+    <div class="legend-item"><div class="legend-dot dashed"></div>9月后规划（待启动）</div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">AI 老师团队 &middot; 2025 Q2-Q3 产品架构 &middot; 一个团队，两大交付形态</div>
+</div>
+
+</body>
+</html>

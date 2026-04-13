@@ -1,0 +1,1101 @@
+{
+  "projectName": "横向协作：销售内测",
+  "description": "本课程聚焦跨部门协作场景 ，精讲PIN法、POWER法与推拉沟通法三大工具 。助您透过立场挖掘需求 ，化解分歧冲突 ，灵活切换沟通策略 ，从而打破沟通僵局、达成共识，全面提升协作效率。",
+  "learningObjectives": [],
+  "learnerProfile": {},
+  "competencyGoals": [],
+  "hotWords": [],
+  "lang": "zh-CN",
+  "modules": [
+    {
+      "moduleName": "横向协作",
+      "moduleDescription": null,
+      "activities": [
+        {
+          "learningObjectives": null,
+          "knowledgePoints": null,
+          "relatedCompetencyKeys": null,
+          "activity": {
+            "activityId": "guidance_0",
+            "activityName": "课前互动",
+            "activityType": "lecture",
+            "description": null,
+            "resourceId": null,
+            "artifactId": null,
+            "buildArtifactId": null
+          },
+          "extra": {
+            "isIntroduction": true
+          },
+          "directScoContent": {
+            "scoFlow": [
+              {
+                "tutorMode": 0,
+                "scoName": "横向协作的痛点唤醒",
+                "segmentList": [
+                  {
+                    "segmentId": "1.1",
+                    "content": {
+                      "pptUrl": "https://stc.yxt.com/aitutor/9c227853-4fe6-4fd8-9fb1-f3d038af419e.jpg"
+                    },
+                    "segmentType": "ppt",
+                    "name": "横向协作三部曲",
+                    "script": "今天我们将通过横向协作三部曲，让你在面对平级同事、跨部门团队时，能够游刃有余地化解分歧、达成共识。",
+                    "description": "横向协作三部曲",
+                    "separateTag": "",
+                    "groupKey": "1.1"
+                  },
+                  {
+                    "segmentId": "1.2",
+                    "content": {
+                      "pptUrl": "https://stc.yxt.com/aitutor/373342da-04e4-4bec-a796-203c6e717b12.jpg"
+                    },
+                    "segmentType": "ppt",
+                    "name": "横向协作的“扎心”日常",
+                    "script": "在正式学习横向协作的理论之前，我们先来回顾一下工作中经常遇到的三个典型困境：你满怀诚意请求支持，对方满口答应“好的好的”，可后续迟迟没有动作，项目卡在口头承诺上，让你无从下手。你带着一个对公司整体有利的“双赢”方案寻求合作，对方却觉得你是在给他们“添麻烦”，协作还没开始就碰了一鼻子灰。你花大量时间讲清背景、目标和分工，对方事后却在群里抱怨听不懂，甚至认为你在推卸责任，沟通陷入“各说各话”的僵局。这些场景是否似曾相识？其实，每一个看似无解的沟通死结，背后都隐藏着我们在利益洞察、沟通策略和情绪处理上的盲区。今天，就让我们一起探索如何打破这些僵局，开启高效协作之旅。",
+                    "description": "横向协作的“扎心”日常",
+                    "separateTag": "",
+                    "groupKey": "1.2"
+                  }
+                ],
+                "sco": null,
+                "interactionPoint": {
+                  "blueprint": "遵循“先破后立”的教学逻辑，不急于抛出理论，而是通过还原“沟通卡壳、推诿扯皮、好心办坏事”的真实工作场景，让学员产生“这门课简直就是在说我”的代入感，为后续吸收三个硬核沟通工具建立心理渴望与连接感。",
+                  "rule": "播放完毕",
+                  "description": "本模块作为整个系列课程的开场，首先呈现课程的整体主题与核心定位，随后迅速切入职场人每天都在经历的横向协作真实痛点。通过连续的反问与场景重现，打破学员的防御心理，激发强烈的共鸣与学习动机。",
+                  "aiTutorDialogue": [],
+                  "interactionType": "NARRATION"
+                }
+              },
+              {
+                "tutorMode": 0,
+                "scoName": "课前互动：你的专属协作剧本",
+                "segmentList": null,
+                "sco": {
+                  "scoName": "课前互动：你的专属协作剧本",
+                  "scoType": "quiz",
+                  "description": "",
+                  "content": {
+                    "questions": [
+                      {
+                        "stem": "正式学习之前，让我了解一下你平时工作中遇到的跨部门协作情况。这样我能帮你匹配更贴近你实际的学习内容。\n\n最近有没有哪次跨部门协作，让你觉得特别心累、推不动的？",
+                        "explanation": "【系统隐性目标】本题不设标准答案，为多轮对话诊断。核心目标是在1-2分钟内，通过极少交互获取学员在“场景类型”、“对方动机”和“学员风格”三个维度的信息，从而为后续匹配课程进行指导。",
+                        "answer": "本题没有标准答案",
+                        "solution": "【AI行为准则：引导三步走】\n第一步（探场景）：用开放式问题让学员讲述具体事件，激活真实记忆（由题干自动触发）。\n第二步（挖动机）：用探询式追问引导学员归因，如“你觉得他为什么会这样？”\n第三步（看风格）：用反射式提问让学员复盘，如“那你当时是怎么做的？”\n注：保持好奇、不评判，多用“嗯”、“明白了”承接。若学员跑题，用“我理解，想再多问一句…”温和拉回。",
+                        "knowledgePoints": [],
+                        "passConditions": {
+                          "description": "场景类型、对方动机、学员风格，达到“两项清晰一项模糊”或“一项清晰两项模糊”即可通关。若经过经过多轮沟通（建议是3轮，根据对话情况可以适当调整），还是“三项模糊”则不继续追问，结束当前环节。",
+                          "rules": [
+                            "【清晰度判定】清晰=有具体动作/内在原因/具体应对；模糊=笼统描述/表层归因(如很忙)/中性描述；无效=未提供。",
+                            "【打标规则】若三清或两清一模：按高频类型投票匹配（平票以场景类型为准）；若一清两模：以唯一清晰维度对应类型打标。",
+                            "【强制兜底机制-触发即结束并输出类型B】1. 学员持续回复“不知道/随便/都行”；2. 学员情绪激动且共情引导1次后仍无效。"
+                          ]
+                        },
+                        "answerAnalysis": "【收尾话术生成规范】当满足通关或兜底条件时，必须使用以下结构收尾并结束对话：\n“明白了，[简单呼应学员提到的关键词]确实是很多人都会遇到的。根据你刚才说的——[用学员原话概括1-2点]——我已经对你的协作场景有了初步了解。接下来我会为你匹配相关的课程，看看除了你提到的方式，还有什么方法能让协作更顺畅一些。准备好了吗？”",
+                        "showAnswer": false,
+                        "separateTag": "",
+                        "groupKey": "2.1"
+                      }
+                    ]
+                  }
+                },
+                "interactionPoint": {
+                  "description": "基于大模型的多轮开放式对话前测",
+                  "aiTutorDialogue": [],
+                  "interactionType": "CHAT",
+                  "rule": "触发通关条件或强制兜底机制后，播放结束话术并终止对话",
+                  "blueprint": "通过“轻负担”对话获取特征，实现“初阶个性化”课程推送。"
+                }
+              },
+              {
+                "tutorMode": 0,
+                "scoName": "横向协作三部曲学习全景图概览",
+                "segmentList": [
+                  {
+                    "segmentId": "3.1",
+                    "content": {
+                      "pptUrl": "https://stc.yxt.com/aitutor/d65ebc74-ffbc-4bf5-926b-96ccf02cf230.jpg"
+                    },
+                    "segmentType": "ppt",
+                    "name": "横向协作三部曲全景图",
+                    "script": "为了系统解决横向协作中的典型痛点，我们推出了“横向协作三部曲”系列课程。这三门课由浅入深，覆盖日常协作到冲突化解的全场景：第一课：PIN法三步走——针对利益错综复杂的场景，教你透过对方表面的“立场”，挖掘其背后真实的“需求”，将对立转化为合作。第二课：推拉沟通法——聚焦日常协作效率问题，帮你掌握“推”与“拉”的沟通节奏，根据对方状态灵活切换策略，告别推不动、拉不走的僵局。第三课：POWER利益沟通法——应对激烈的横向协作冲突，提供一套化解情绪、重组利益的框架，通过资源交换找到共识点，推动可执行的解决方案。",
+                    "description": "横向协作三部曲全景图",
+                    "separateTag": "",
+                    "groupKey": "3.1"
+                  }
+                ],
+                "sco": null,
+                "interactionPoint": {
+                  "blueprint": "采用纯PPT结合全局概览的视觉布局，旨在为学员建立一个清晰的认知脚手架。成人学习非常看重“全局观”，在深入学习具体技能之前，必须让他们知道自己身处何方、将要去向哪里、以及这些工具之间是如何协同运作的。这有助于学员在后续学习中不迷失方向，并能根据实际场景灵活调用不同的沟通工具。",
+                  "rule": "播放完毕",
+                  "description": "本模块是导入课的第三页，也是核心信息传递区。在学员明确了痛点并带着个人问题后，正式向学员展示本次系列课程的学习路径。通过一张直观的学习全景图，将三门课程的定位、逻辑关系和学习路径进行全盘托出。",
+                  "aiTutorDialogue": [],
+                  "interactionType": "NARRATION"
+                }
+              }
+            ]
+          },
+          "competencyArtifactId": null
+        },
+        {
+          "learningObjectives": null,
+          "knowledgePoints": null,
+          "relatedCompetencyKeys": null,
+          "activity": {
+            "activityId": "lecture_1",
+            "activityName": "沟通卡住了？PIN法三步走",
+            "activityType": "lecture",
+            "description": null,
+            "resourceId": null,
+            "artifactId": null,
+            "buildArtifactId": null
+          },
+          "extra": {
+            "isIntroduction": false
+          },
+          "directScoContent": {
+            "scoFlow": [
+              {
+                "tutorMode": 0,
+                "scoName": "概念引入与PIN模型拆解",
+                "segmentList": [
+                  {
+                    "segmentId": "1.1",
+                    "content": {
+                      "pptUrl": "https://stc.yxt.com/aitutor/725d2790-26b2-4ee3-bde2-aec8533c10b5.jpg"
+                    },
+                    "segmentType": "ppt",
+                    "name": "《沟通卡住了？PIN法三步走》",
+                    "script": "日常工作中，跨部门协调或推进项目时，我们常会遇到“沟通卡壳”的僵局，沟通陷入僵局，往往不是你不努力，而是没找对方法。今天，我们将学习一个实用的分析工具——《沟通卡住了？PIN法三步走》。",
+                    "description": "《沟通卡住了？PIN法三步走》",
+                    "separateTag": "",
+                    "groupKey": "1.1"
+                  },
+                  {
+                    "segmentId": "1.2",
+                    "content": {
+                      "pptUrl": "https://stc.yxt.com/aitutor/6c847c63-03bc-4377-897a-4093c89ed3bd.jpg"
+                    },
+                    "segmentType": "ppt",
+                    "name": "课程学习目标",
+                    "script": "我们的第一个核心学习目标是“认知升级”。过去我们在沟通时，往往只盯着对方嘴上说了什么，也就是对方的“立场”。学完这门课，你将能够运用PIN法，洞察到对方立场背后隐藏的真实“利益”与深层“需求”。第二个核心学习目标是“行为转变”。很多时候我们以为沟通成功了，其实对方只是迫于压力给了一个“形式上的同意”，转头就不配合了。我们的目标，是将这种 “表面同意”，升级为双方都愿意全力以赴的“实质协作”。",
+                    "description": "课程学习目标",
+                    "separateTag": "",
+                    "groupKey": "1.2"
+                  },
+                  {
+                    "segmentId": "1.3",
+                    "content": {
+                      "pptUrl": "https://stc.yxt.com/aitutor/fab9f67b-0e0a-4c85-b107-6ec2af8a0636.jpg"
+                    },
+                    "segmentType": "ppt",
+                    "name": "沟通中的“冰山模型”",
+                    "script": "要理解什么是PIN法，我们首先要引入一个具有启发性的概念——“冰山模型”。沟通就像一座冰山，露出水面的一角，是对方嘴上说的话、提的要求，我们称之为“立场”。然而，真正决定冰山走向的，是水面下的那部分，也就是对方内心的动机、顾虑和期待，即“利益”和“需求”。沟通之所以卡住或爆发冲突，往往是因为双方只在水面上互相撞击“立场”，却完全忽略了水面下真正驱动行为的力量。",
+                    "description": "沟通中的“冰山模型”",
+                    "separateTag": "",
+                    "groupKey": "1.3"
+                  },
+                  {
+                    "segmentId": "1.4",
+                    "content": {
+                      "pptUrl": "https://stc.yxt.com/aitutor/f62e8f00-534f-4bca-85ad-c1d714a0bab0.jpg"
+                    },
+                    "segmentType": "ppt",
+                    "name": "P – 立场（Position）",
+                    "script": "我们把这座冰山彻底拆解开来，看看PIN法的第一个要素：P，立场（Position）。立场就是对方嘴上说什么，表面要什么，是公开的诉求。比如产品经理说“方案绝对不接受”，财务总监说“预算必须砍20%”。这些斩钉截铁的话就是立场。立场往往强硬且没有商量余地，因为它就像沟通中的一层防御铠甲或谈判筹码。如果只停留在立场层面争论，比如回击“预算一分不能少”，沟通就会变成拔河比赛，最终要么两败俱伤，要么一方委曲求全。",
+                    "description": "P – 立场（Position）",
+                    "separateTag": "",
+                    "groupKey": "1.4"
+                  },
+                  {
+                    "segmentId": "1.5",
+                    "content": {
+                      "pptUrl": "https://stc.yxt.com/aitutor/a7277841-ab99-4008-9d02-7f0776ecb596.jpg"
+                    },
+                    "segmentType": "ppt",
+                    "name": "I – 利益（Interest）",
+                    "script": "既然不能在立场上死磕，我们需要潜入水下，寻找第二个要素：I，利益（Interest）。利益是对方真正关心什么，是强硬立场背后的真实动机和驱动力。回到刚才的例子，财务总监说“砍预算20%”是立场，但他为什么这么做？也许是公司现金流紧张，他的利益是“控制财务风险”；也许是背负了降本增效指标，利益是“完成绩效考核”。立场通常只有一个且容易冲突，但利益可能有很多个。在利益层面，双方往往能找到共同点或互补空间。只要我们能满足他“控制风险”的利益，也许不砍预算，而是分期支付，他也能欣然接受。",
+                    "description": "I – 利益（Interest）",
+                    "separateTag": "",
+                    "groupKey": "1.5"
+                  },
+                  {
+                    "segmentId": "1.6",
+                    "content": {
+                      "pptUrl": "https://stc.yxt.com/aitutor/1fc6b975-a17d-4105-adcd-010361d5fdbc.jpg"
+                    },
+                    "segmentType": "ppt",
+                    "name": "N – 需求（Need）",
+                    "script": "找到了利益，沟通就一定能顺畅吗？有时候还不够。这就需要我们继续下潜，触及冰山的最深处，也就是PIN法的第三个要素：N，需求（Need）。需求特指未说出口的深层心理渴望，如安全感、被认可、掌控感或归属感。举个例子，老员工对新方案百般挑剔是立场；你以为他担心增加工作量是利益；但承诺加派人手后他仍不配合。为什么？因为新方案是你绕过他制定的，挑战了他的权威。他未说出口的需求是“不想丢脸”和“需要被尊重”。如果不能敏锐捕捉并安抚这些心理需求，任何物质利益交换都无济于事。需求，才是沟通中最核心的。",
+                    "description": "N – 需求（Need）",
+                    "separateTag": "",
+                    "groupKey": "1.6"
+                  },
+                  {
+                    "segmentId": "1.7",
+                    "content": {
+                      "pptUrl": "https://stc.yxt.com/aitutor/73a973b3-a0b2-4b93-a9c3-c3bf58ef5de2.jpg"
+                    },
+                    "segmentType": "ppt",
+                    "name": "核心法则：透过表象看本质，深挖心理动机",
+                    "script": "将立场、利益和需求这三个要素紧密串联起来，就构成了PIN模型的核心法则：透过立场看利益，透过利益挖需求。陷入僵局时，对方的强硬立场只是一个信号弹。绝不能对着信号弹开火，而要顺着轨迹向下寻找。先问“他为什么提这要求”找利益；若仍无共识，继续深挖“他到底在害怕或渴望什么”找需求。沟通高手从不在立场上纠缠，而是精准扫描对方的利益与需求，在水面之下悄无声息地化解冲突。",
+                    "description": "核心法则：透过表象看本质，深挖心理动机",
+                    "separateTag": "",
+                    "groupKey": "1.7"
+                  }
+                ],
+                "sco": null,
+                "interactionPoint": {
+                  "blueprint": "遵循用户的严格要求，本模块摒弃了传统的痛点导入（Hook），直接以封面和目标开场，确保教学效率。采用纯PPT的陈述方式，旨在为学员提供最客观、最权威的理论框架。将P、I、N三个要素分别独立成页进行讲解，是为了避免认知超载，让学员能够在一个页面内专注吸收一个维度的概念、关键词与生活化案例，从而为后续的实际应用打下坚实的基础。",
+                  "rule": "播放完毕",
+                  "description": "本模块作为课程的开篇与核心知识输入阶段，直接切入主题。首先通过课程封面与学习目标设定学员的预期，随后引入“沟通冰山模型”这一通俗易懂的比喻，自然过渡到PIN模型的核心概念。在此基础上，将PIN模型的三个要素（立场、利益、需求）进行逐一的、独立的深度拆解，最后通过核心法则的总结，帮助学员建立“透过表象看本质”的系统性认知框架。",
+                  "aiTutorDialogue": [],
+                  "interactionType": "NARRATION"
+                }
+              },
+              {
+                "tutorMode": 0,
+                "scoName": "PIN三要素识别测试",
+                "segmentList": null,
+                "sco": {
+                  "scoName": "PIN三要素识别测试",
+                  "scoType": "quiz",
+                  "description": "",
+                  "content": {
+                    "questions": [
+                      {
+                        "stem": "你是研发部主管，正在推进新系统上线，需销售部在下周五前提交用户数据反馈。销售部经理老王在会议上拍桌子大声拒绝：“这么临时来通知我们！下周五绝对不可能！现在全员都在冲刺季末业绩，哪有时间？必须推迟到下个月！” 请运用PIN模型分析：老王的立场（P）是什么？他背后的利益（I）可能是什么？他深层的需求（N）又可能是什么？",
+                        "explanation": "本题旨在检验学员对PIN模型三个要素的准确识别与分层解析能力，特别是从显性立场到隐性需求的推导逻辑。通过一个典型的职场冲突场景，引导学员超越表面情绪，理解行为背后的多层次动因。设计重点在于强化“认知翻译”能力——将激烈言辞转化为可沟通的立场、利益与需求，从而为后续协商奠定基础。",
+                        "answer": "* **立场（P）**：下周五无法提交用户数据反馈，必须推迟到下个月。\n* **利益（I）**：确保销售团队有足够时间和精力完成季末业绩冲刺，保障部门KPI达成。\n* **需求（N）**：希望被尊重、参与决策过程，维护在团队中的权威感与安全感。",
+                        "solution": "1. **识别立场（P）**：直接提取当事人明确表达的主张或要求。老王说“下周五绝对不可能”“必须推迟”，这是最表层的立场表达。\n2. **挖掘利益（I）**：追问“他为什么这么说？”结合上下文，“全员冲刺季末业绩”表明其关注点在于部门绩效目标，即KPI能否完成，这是其核心利益所在。\n3. **探查需求（N）**：进一步思考“他为什么用这种方式说？”拍桌子、当众反对，反映出情绪化行为背后的心理诉求——可能感到被忽视、未被提前协商，或需要在下属面前展现强硬姿态以维护权威，本质是对尊重、掌控感和安全感的需求。",
+                        "knowledgePoints": [
+                          {
+                            "kpKey": "kp_0001",
+                            "title": "PIN模型",
+                            "description": "PIN模型是一种用于分析人际冲突与谈判立场的框架，将个体表达分为三个层次：立场（Position, P）——表面主张；利益（Interest, I）——背后的实际关切；需求（Need, N）——深层心理动机。通过分层解析，可实现从对抗性立场转向合作性沟通。"
+                          },
+                          {
+                            "kpKey": "kp_0002",
+                            "title": "立场-利益-需求分层分析",
+                            "description": "该方法强调在沟通中不被表面立场迷惑，而是通过提问与共情，识别对方真实利益（如资源、时间、绩效）及深层需求（如尊重、安全感、认同），从而找到双赢解决方案。"
+                          }
+                        ],
+                        "passConditions": {
+                          "description": "准确识别并分别写出老王的立场（P）、利益（I）和需求（N），且内容符合PIN模型的逻辑分层。",
+                          "rules": [
+                            "【结构与内容要求】答案必须严格对应PIN模型的三层结构，且对“需求（N）”的分析需体现心理层面动因（如尊重、掌控感、安全感），仅描述情绪或行为不给分。"
+                          ]
+                        },
+                        "answerAnalysis": "老王的“拍桌子”并非单纯的脾气暴躁，而是一种信号——它暴露了组织协作中的结构性问题：跨部门决策缺乏前置沟通。他的立场是可协商的时间问题，但若只回应时间（如“再商量几天”），而忽略其未被尊重的感受和管理威信的维护需求，则协议即便达成也难以执行。真正的解决之道在于先回应“N”（需求）：表达对其团队压力的理解，承认前期沟通不足；再回应“I”（利益）：探讨是否可分批提交数据、减轻负担；最后调整“P”（立场）：共同确定一个双方可接受的时间节点。这一过程体现了PIN模型的核心价值：把对抗转化为协作，从情绪中翻译出可行动的信息。",
+                        "showAnswer": true,
+                        "separateTag": "",
+                        "groupKey": "2.1"
+                      }
+                    ]
+                  }
+                },
+                "interactionPoint": {
+                  "blueprint": "在连续的干货知识输入之后，学员的注意力可能会出现疲劳。此时插入一个Observe模块，不仅能够有效唤醒学员的注意力，更重要的是，通过“知识验证型（Type B）”的测验，检验学员是否真正理解了P、I、N的区别，尤其是能否准确区分容易混淆的“利益”与“需求”。这为后续讲解“如何运用PIN法”扫清了认知障碍。",
+                  "rule": "播放完毕",
+                  "description": "本模块通过一个精心设计的纯测验环节，对学员在Block 1中学习的PIN模型三要素进行即时的知识验证。测验将提供一个贴近日常工作的跨部门沟通冲突场景，要求学员在没有标准选项的情况下，通过深度思考，准确识别出场景中人物的立场、利益与需求。",
+                  "aiTutorDialogue": [],
+                  "interactionType": "NARRATION"
+                }
+              },
+              {
+                "tutorMode": 0,
+                "scoName": "PIN法的应用与场景策略",
+                "segmentList": [
+                  {
+                    "segmentId": "3.1",
+                    "content": {
+                      "pptUrl": "https://stc.yxt.com/aitutor/0a15fb1d-4a43-4c3c-8066-e23f71458632.jpg"
+                    },
+                    "segmentType": "ppt",
+                    "name": "沟通运用三步法",
+                    "script": "在实际沟通中，我们可以运用一个具实操性的“PIN法三步走”，也就是：识别、探询、挖掘。第一步：识别立场。面对强硬要求，第一件事是“暂停和记录”。听清对方要什么、不要什么，切忌急于反驳，反驳只会让对方铠甲穿得更紧。第二步：探询利益。像侦探一样寻找动机，运用话术：“为什么这条件对您很重要？”“您最担心什么？”“如果我们解决某个问题，方案可行吗？”用开放式问题引导对方说出利益。第三步：挖掘需求，这最考验洞察力。观察对方情绪是焦虑还是冷漠？关注对方是否需要被认可？听弦外之音，对方反复强调或刻意回避的话题，往往就藏着最深层的心理需求。",
+                    "description": "沟通运用三步法",
+                    "separateTag": "",
+                    "groupKey": "3.1"
+                  },
+                  {
+                    "segmentId": "3.2",
+                    "content": {
+                      "pptUrl": "https://stc.yxt.com/aitutor/c5d7b87f-4835-4d88-83fc-35d3c6405310.jpg"
+                    },
+                    "segmentType": "ppt",
+                    "name": "不同场景下的PIN应用策略",
+                    "script": "掌握了三步法，我们还要学会因地制宜。在不同的沟通状态下，我们使用PIN法的侧重点是完全不同的。我们可以根据对方的“表达意愿”和“情绪对抗程度”，将沟通分为四种典型场景。第一种场景，对方情绪对抗高，但表达意愿低，表现为“坚持立场、不松口”。他可能就是反复重复一句话“不行”。这时候我们的重点是“探利益”，策略是多问“为什么”，用开放式问题打开对话空间。第二种场景，对方情绪对抗高，表达意愿也高，表现为“情绪激动、防御强”。他可能会大声指责你。这时候千万别讲理，重点是“挖需求”。策略是先共情，安抚他“被尊重、被理解”的心理需求，等情绪降温了，再去探询利益。第三种场景，对方情绪对抗低，表达意愿也低，表现为“回避冷漠、不表态”。开会时一言不发。这时候重点依然是“挖需求”，但策略是先建立连接，给予他足够的安全感和信任感，消除他的顾虑。第四种场景，对方情绪对抗低，表达意愿高，表现为“配合开放、愿意聊”。这是最理想的状态。这时候我们的重点是“明立场+共识”，策略是快速确认双方的共同利益，推动方案落地。",
+                    "description": "不同场景下的PIN应用策略",
+                    "separateTag": "",
+                    "groupKey": "3.2"
+                  }
+                ],
+                "sco": null,
+                "interactionPoint": {
+                  "blueprint": "本模块是课程的“手脚”，旨在促成学员的“行为转变”。采用纯PPT的陈述方式，是为了清晰、结构化地展示操作步骤和策略矩阵。将三步法整合在一个流程图中，将四种场景整合在一个象限图中，有助于学员建立全局的行动地图，确保他们在遇到真实沟通障碍时，能够按图索骥，迅速找到应对之策。",
+                  "rule": "播放完毕",
+                  "description": "在学员准确理解了PIN模型之后，本模块将教学重点从“是什么”转向“怎么做”。首先，将PIN模型的应用转化为一套极具操作性的“三步法（识别-探询-回应）”，并提供具体的话术指导。随后，引入一个二维象限矩阵，将沟通对象的状态分为四种典型场景，并针对每种场景给出了明确的PIN应用重点和回应策略，全面提升学员应对复杂局面的实战能力。",
+                  "aiTutorDialogue": [],
+                  "interactionType": "NARRATION"
+                }
+              },
+              {
+                "tutorMode": 0,
+                "scoName": "场景策略选择测试",
+                "segmentList": null,
+                "sco": {
+                  "scoName": "场景策略选择测试",
+                  "scoType": "quiz",
+                  "description": "",
+                  "content": {
+                    "questions": [
+                      {
+                        "stem": "在跨部门项目复盘会上，技术部负责人老李被问及项目延期原因时，靠在椅子上，双手交叉，面无表情地说：“我没什么好说的，你们看着办吧。”随后陷入沉默。根据策略矩阵，老李当前处于哪种状态？此时运用PIN法的重点是什么？应采取何种具体回应策略？",
+                        "explanation": "本题旨在检验学员能否准确识别非对抗性但低表达意愿的沟通状态，掌握在“回避冷漠”状态下，PIN法应聚焦“挖需求”而非追问立场或利益，并能准确应用建立安全感的回应话术。避免将此类沉默误判为“情绪对抗高”的情境或状态，或错误地继续追问个人看法以试图突破沉默。",
+                        "answer": "老李当前的表现是低表达意愿，低情绪对抗，即“回避冷漠”状态。此时运用PIN法的重点是“挖需求”。应采取的回应策略是：建立连接与安全感，避免追责暗示，通过认可贡献、明确不追究责任等方式缓解其心理防御。",
+                        "solution": "1. **观察行为信号**：老李“靠在椅子上、双手交叉、面无表情、陷入沉默”，这些肢体语言和言语反应表明其表达意愿极低。\n2. **判断情绪对抗程度**：他并未激烈反驳或情绪爆发，说明情绪对抗程度较低，不属于第一象限的“情绪对抗高”状态。\n3. **定位象限**：结合“低表达意愿”与“低情绪对抗”，可确定其处于 “回避冷漠”状态。\n4. **确定PIN法重点**：在此象限中，对方封闭自我，不宜强行探求立场（P）或利益（I），而应聚焦“挖需求”（N），识别其背后的安全感、认可感等深层心理需求。\n5. **选择回应策略**：应暂停追问，转而建立连接，使用如“我们不追究个人责任”“你们的付出我们都看在眼里”等话术，营造安全氛围，逐步打开沟通通道。",
+                        "knowledgePoints": [
+                          {
+                            "kpKey": "kp_0001",
+                            "title": "策略矩阵：第三象限（低表达意愿，低情绪对抗）",
+                            "description": "第三象限代表个体在沟通中表现出极低的表达意愿和较低的情绪对抗，常见表现为沉默、回避、冷淡、不表态。此状态下，个体并非敌对，而是因缺乏安全感、信任或感到无力影响结果而选择退缩。需通过非压迫性方式重建连接。"
+                          },
+                          {
+                            "kpKey": "kp_0002",
+                            "title": "PIN法在沟通封闭状态下的应用重点：挖需求",
+                            "description": "PIN法中的“N”指需求（Need），在沟通对象封闭时，应优先挖掘其背后的心理或情境需求（如安全感、被尊重、避免惩罚等），而非执着于其立场或表面利益。这是打破沉默的关键切入点。"
+                          },
+                          {
+                            "kpKey": "kp_0003",
+                            "title": "回应策略：建立连接与安全感，避免追责暗示",
+                            "description": "面对“回避冷漠”状态的对象，回应应以降低防御为目标，强调共同目标、认可付出、排除追责意图，使用安抚性语言建立信任，为后续沟通创造条件。"
+                          }
+                        ],
+                        "passConditions": {
+                          "description": "准确判断老李所处的沟通象限或状态，明确PIN法在此情境下的正确应用重点，并提出符合安全导向的回应策略。",
+                          "rules": [
+                            "【核心要素匹配】要么正确匹配“第三象限”，要么与“回避冷漠”同等含义的描述，且提到了“挖需求”“建立安全感”这两个核心要素。"
+                          ]
+                        },
+                        "answerAnalysis": "老李的沉默不是无话可说，而是“不敢说”。他的肢体语言（双手交叉、靠坐）是一种心理防御的外显，言语“你们看着办吧”透露出一种放弃参与的消极态度，这正是“回避冷漠”状态的典型特征。许多学员容易误将此类沉默视为“情绪稳定”而忽略，或误判为“对抗”而施压，这两种反应都会加剧沟通破裂。正确的做法是理解：沉默背后有需求。此时PIN法若仍聚焦于“你认为问题出在哪”（探立场）或“你担心什么后果”（探利益），等于直接挑战其防御机制。唯有转向“挖需求”——识别他是否害怕担责、是否感到不被理解、是否觉得努力未被看见——才能找到破局点。回应策略的核心不是获取信息，而是重建心理安全。通过声明“不追责”“认可付出”“需要你的专业意见”，既满足其安全感需求，又赋予其价值感，从而逐步引导其从封闭走向开放。这才是高阶沟通的本质：先处理关系，再处理问题。",
+                        "showAnswer": true,
+                        "separateTag": "",
+                        "groupKey": "4.1"
+                      }
+                    ]
+                  }
+                },
+                "interactionPoint": {
+                  "blueprint": "在讲解完复杂的象限矩阵后，学员需要一个机会来消化和应用这些策略。本模块的“知识验证型（Type B）”测验，刻意选取了日常工作中最让人头疼的“冷暴力/不表态”场景，引导学员跳出“逼迫对方表态”的惯性思维，转而运用PIN法去关注对方的安全感需求，从而巩固对策略矩阵的理解和记忆。",
+                  "rule": "播放完毕",
+                  "description": "本模块再次通过一个纯测验环节，对学员刚刚学习的“四象限场景策略”进行即时检验。测验设定了一个极具挑战性的“沉默回避”场景，要求学员判断对方所处的状态，并选择最合适的PIN法应对策略。",
+                  "aiTutorDialogue": [],
+                  "interactionType": "NARRATION"
+                }
+              },
+              {
+                "tutorMode": 1,
+                "scoName": "视频案例与解析",
+                "segmentList": [
+                  {
+                    "segmentId": "5.1",
+                    "content": {
+                      "pptUrl": "https://stc.yxt.com/aitutor/82de590d-a992-4203-8237-721c9cd19660.jpg"
+                    },
+                    "segmentType": "ppt",
+                    "name": "案例导入",
+                    "script": "接下来我们将观看一段真实的职场沟通案例。故事的主人公是项目经理李雷和数据分析师韩梅梅。在观看视频时，请大家带着这个问题思考：如果你是李雷，如何运用PIN法打破僵局？",
+                    "description": "案例导入",
+                    "separateTag": "防御拖延型",
+                    "groupKey": "5.1"
+                  },
+                  {
+                    "segmentId": "5.1",
+                    "content": {
+                      "pptUrl": "https://stc.yxt.com/aitutor/1d3d53b9-b190-4e0f-8cff-ab160b700d1c.jpg"
+                    },
+                    "segmentType": "ppt",
+                    "name": "案例导入",
+                    "script": "在前面的课程中，我们已经系统地学习了沟通中的“冰山模型”，并且深度拆解了PIN法的三个核心要素。接下来，让我们通过一个真实的职场案例来看下该工具是如何具体应用的。在这个案例中：我们的主人公张总为了力推创新项目，需要从公司总盘子里抽调营销预算。但这不可避免地动了公司核心老业务部门的奶酪。现在，请带着需要思考的问题走入案例，看看我们的主人公最终是如何破局的？",
+                    "description": "案例导入",
+                    "separateTag": "利益博弈型",
+                    "groupKey": "5.1"
+                  },
+                  {
+                    "segmentId": "5.1",
+                    "content": {
+                      "pptUrl": "https://stc.yxt.com/aitutor/93f94d48-d0f1-4d7d-b24d-4b0be6b24c8c.jpg"
+                    },
+                    "segmentType": "ppt",
+                    "name": "案例导入",
+                    "script": "在接下来的视频案例中，你将看到一场典型的跨部门冲突。运营部主管林浩接到了一个老板特批的突发线上活动，需要几张海报在今天下班前加急赶出来。他拿着需求直接找到了设计部苏经理。然而，设计部已满负荷运转。面对林浩突如其来的“加急指令”，苏经理的情绪瞬间爆发，强烈抵触。接下去，请带着思考观看视频。",
+                    "description": "案例导入",
+                    "separateTag": "情绪对抗型",
+                    "groupKey": "5.1"
+                  },
+                  {
+                    "segmentId": null,
+                    "content": {
+                      "content": [
+                        {
+                          "imageUrl": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/963dd75b1d004fe58f7274617b02341f.png",
+                          "frameList": [
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/8156eafef8b44e88b092d181ede65ef7.mp3",
+                              "duration": 6840,
+                              "subtitle": "梅梅，明天上午要给老板汇报，那个用户行为数据报告今天下班前必须给我！",
+                              "name": "李雷",
+                              "avatar": "https://stc.yxt.com/aitutor/2608b21a-6525-4649-a3a8-bbf8ff33e8aa.jpg"
+                            },
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/a4835cde8298413890f6439ff14a8dea.mp3",
+                              "duration": 4416,
+                              "subtitle": "不可能，流程上规定要三个工作日，最快后天给你。",
+                              "name": "韩梅梅",
+                              "avatar": "https://stc.yxt.com/aitutor/45df7a9d-e50f-4d28-96f0-5d3a9b135083.jpg"
+                            }
+                          ]
+                        },
+                        {
+                          "imageUrl": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/f509fd16a449464f850d19f0366f820d.png",
+                          "frameList": [
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/9cc0d4e62c414f5ca3646a0866110f17.mp3",
+                              "duration": 3288,
+                              "subtitle": "这是老板急要的，你能不能变通一下？",
+                              "name": "李雷",
+                              "avatar": "https://stc.yxt.com/aitutor/2608b21a-6525-4649-a3a8-bbf8ff33e8aa.jpg"
+                            },
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/066bb8fe6f8d4f8b8f57fc4205f2212a.mp3",
+                              "duration": 3960,
+                              "subtitle": "变通？数据出了错谁负责？反正今天给不了！",
+                              "name": "韩梅梅",
+                              "avatar": "https://stc.yxt.com/aitutor/45df7a9d-e50f-4d28-96f0-5d3a9b135083.jpg"
+                            }
+                          ]
+                        },
+                        {
+                          "imageUrl": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/f82dd75f7b084b45a647527f02fa7337.png",
+                          "frameList": [
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/467fe9d9ca184bc2b2e34184a50494d5.mp3",
+                              "duration": 11640,
+                              "subtitle": "冲突升级，李雷意识到硬性施压无效。他走进茶水间，开始用PIN模型分析：韩梅梅的立场是‘今天给不了’，那她的利益是什么？需求又是什么？",
+                              "name": "旁白",
+                              "avatar": null
+                            }
+                          ]
+                        },
+                        {
+                          "imageUrl": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/cb70c89a3e6e4c0db6a35c47a40c3ffe.png",
+                          "frameList": [
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/aba4ccf4573848109cb7e87a80d573bc.mp3",
+                              "duration": 11616,
+                              "subtitle": "她提到‘数据出错谁负责’，说明她的核心利益是确保准确性，规避风险。而我刚才的态度，可能让她觉得专业流程被轻视——她的深层需求，是被尊重。",
+                              "name": "旁白",
+                              "avatar": null
+                            }
+                          ]
+                        },
+                        {
+                          "imageUrl": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/5abf2914a37e4a35bfed468bcd144773.png",
+                          "frameList": [
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/3517eff652ba44af85b95d50d675f4bf.mp3",
+                              "duration": 10296,
+                              "subtitle": "梅梅，刚才我太着急了，态度不好，跟你道个歉。我知道你们做数据的最看重严谨，你的专业度我们项目组一直是非常认可的。",
+                              "name": "李雷",
+                              "avatar": "https://stc.yxt.com/aitutor/2608b21a-6525-4649-a3a8-bbf8ff33e8aa.jpg"
+                            },
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/d7e076e176c8496d9b60dddb05fcaf34.mp3",
+                              "duration": 9864,
+                              "subtitle": "……嗯，谢谢。其实我也不是不配合，只是这次要跑的新维度，底层数据很乱，必须清洗一遍，今天下班前根本洗不完。",
+                              "name": "韩梅梅",
+                              "avatar": "https://stc.yxt.com/aitutor/45df7a9d-e50f-4d28-96f0-5d3a9b135083.jpg"
+                            }
+                          ]
+                        },
+                        {
+                          "imageUrl": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/6945c7a6ab5e4c38a36f44182c441174.png",
+                          "frameList": [
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/122e3f41a68343f4b1a4c638d1c918ff.mp3",
+                              "duration": 13272,
+                              "subtitle": "我理解。那你看这样行不行？明天上午汇报，我们先用上个月的基础数据打底，说明整体趋势。你这边重点清洗那几个核心维度，明天下午再出一份补充报告。",
+                              "name": "李雷",
+                              "avatar": "https://stc.yxt.com/aitutor/2608b21a-6525-4649-a3a8-bbf8ff33e8aa.jpg"
+                            },
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/db347a3a53fb41dba64fde1edf7ed3d9.mp3",
+                              "duration": 5016,
+                              "subtitle": "这个方案可行。那我今天加个班，先把基础趋势图给你跑出来。",
+                              "name": "韩梅梅",
+                              "avatar": "https://stc.yxt.com/aitutor/45df7a9d-e50f-4d28-96f0-5d3a9b135083.jpg"
+                            }
+                          ]
+                        },
+                        {
+                          "imageUrl": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/76acddb7fb5442109fb8bde7d5ed9e22.png",
+                          "frameList": [
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/efe7a745983849fb8986c6b08f51f969.mp3",
+                              "duration": 4032,
+                              "subtitle": "共识达成。从形式上的同意，走向实质性的协作。",
+                              "name": "旁白",
+                              "avatar": null
+                            }
+                          ]
+                        },
+                        {
+                          "imageUrl": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/92ec4ec5524446708554cb3c8bb991c4.png",
+                          "frameList": [
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/bf6184dcfee24c5c81cbd0beeabb6216.mp3",
+                              "duration": 7080,
+                              "subtitle": "PIN沟通法：先理解立场，再挖掘利益与需求，用共情打开对话，用方案创造共赢。",
+                              "name": "旁白",
+                              "avatar": null
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "segmentType": "asvideo",
+                    "name": "视频案例《迟到的数据报告》",
+                    "script": "项目经理李雷因老板紧急需求向数据分析师韩梅梅索要报告，遭遇流程阻力。冲突后，他冷静分析对方立场背后的**利益**与**需求**，重返沟通现场，以共情与协作方案打破僵局，最终实现从“对抗”到“合作”的转变，生动演绎PIN沟通模型的实战应用。",
+                    "description": "简洁商务风，写实风格，人物设计干脆整洁，色彩偏冷调，突出职场专业氛围",
+                    "separateTag": "防御拖延型",
+                    "groupKey": "5.2"
+                  },
+                  {
+                    "segmentId": null,
+                    "content": {
+                      "content": [
+                        {
+                          "imageUrl": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/4491abae7f0544e6810d4897b8b768d8.jpg",
+                          "frameList": [
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/df421ebac5a64eef920eb75117d20674.mp3",
+                              "duration": 6720,
+                              "subtitle": "为了保证新产品下个月顺利首发，我们需要从总盘子里调拨20%的营销预算。",
+                              "name": "张总",
+                              "avatar": "https://stc.yxt.com/aitutor/40b43bc2-2379-4b45-aa2a-9c97f66c1dcf.jpg"
+                            },
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/82df47233b3144c0ad673c807199d14f.mp3",
+                              "duration": 10560,
+                              "subtitle": "这绝对不可能！我们部门扛着公司70%的营收利润，你现在要砍我20%的预算去搞一个连水花都没看到的新项目？我一分钱都不会让！",
+                              "name": "李总",
+                              "avatar": "https://stc.yxt.com/aitutor/889a8c76-f988-4abd-bc4e-1d9dd676601e.jpg"
+                            }
+                          ]
+                        },
+                        {
+                          "imageUrl": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/5dac999fd274448aa6360225e6bab925.jpg",
+                          "frameList": [
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/777bb9d1222e4193800051116e9f318a.mp3",
+                              "duration": 2808,
+                              "subtitle": "但公司长远战略需要创新投入……",
+                              "name": "张总",
+                              "avatar": "https://stc.yxt.com/aitutor/40b43bc2-2379-4b45-aa2a-9c97f66c1dcf.jpg"
+                            },
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/652a1c8f1aa84198a00b05301c06d77c.mp3",
+                              "duration": 4896,
+                              "subtitle": "别跟我扯战略，没预算我怎么打仗？下个季度的财报你来扛吗？",
+                              "name": "李总",
+                              "avatar": "https://stc.yxt.com/aitutor/889a8c76-f988-4abd-bc4e-1d9dd676601e.jpg"
+                            }
+                          ]
+                        },
+                        {
+                          "imageUrl": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/5bdca184876b4a00956145bdb56b5793.jpg",
+                          "frameList": [
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/f320b0e26a8847fcbc073e5e29f4e3b1.mp3",
+                              "duration": 4752,
+                              "subtitle": "硬抢不行。李总资历深，立场强硬。但为什么他这么抗拒？",
+                              "name": "旁白",
+                              "avatar": null
+                            }
+                          ]
+                        },
+                        {
+                          "imageUrl": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/2e53d1f666e24a7f9d4054b9b19f85f6.jpg",
+                          "frameList": [
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/a2bb983070b7434ba7368206ae412f9b.mp3",
+                              "duration": 17544,
+                              "subtitle": "他的立场是‘一分预算不让’。但利益呢？他反复提财报、提KPI——他的核心利益是保住营收指标和团队奖金。而深层需求？他强调‘扛着70%营收’，怕被当成提款机，怕被边缘化。他需要的是认可与安全感。",
+                              "name": "旁白",
+                              "avatar": null
+                            }
+                          ]
+                        },
+                        {
+                          "imageUrl": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/e99057a3ddd44c84ad4a25647ce80645.jpg",
+                          "frameList": [
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/fccf6f15ee0f49228459e7d5bd81d96e.mp3",
+                              "duration": 10656,
+                              "subtitle": "李总，今天不谈工作，就是想跟你道个谢。说实话，如果没有你们老业务在前面挡子弹、赚利润，公司根本没底气让我们搞创新。",
+                              "name": "张总",
+                              "avatar": "https://stc.yxt.com/aitutor/40b43bc2-2379-4b45-aa2a-9c97f66c1dcf.jpg"
+                            },
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/9cdbde41eb54464494cefdf2439a6c2f.mp3",
+                              "duration": 5256,
+                              "subtitle": "你们是公司的基本盘，这一点老板心里清楚，我心里更清楚。",
+                              "name": "张总",
+                              "avatar": "https://stc.yxt.com/aitutor/40b43bc2-2379-4b45-aa2a-9c97f66c1dcf.jpg"
+                            },
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/d672ed902eb047d79d4a0575ca142fe1.mp3",
+                              "duration": 5304,
+                              "subtitle": "唉，张总，不是我为难你，现在的市场环境，我们团队也非常艰难。",
+                              "name": "李总",
+                              "avatar": "https://stc.yxt.com/aitutor/889a8c76-f988-4abd-bc4e-1d9dd676601e.jpg"
+                            }
+                          ]
+                        },
+                        {
+                          "imageUrl": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/3b06d1d86ad542f2ad4ed1d3c93fb218.jpg",
+                          "frameList": [
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/ccf68031e67a4373acf82c852534e5c7.mp3",
+                              "duration": 9000,
+                              "subtitle": "我懂。李总，你最担心的，是不是一旦预算少了，你们三季度的营收KPI完不成，同事们的奖金受影响？",
+                              "name": "张总",
+                              "avatar": "https://stc.yxt.com/aitutor/40b43bc2-2379-4b45-aa2a-9c97f66c1dcf.jpg"
+                            },
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/9bad5ee8241f479a945363c5eca9f7c2.mp3",
+                              "duration": 2592,
+                              "subtitle": "那是肯定的啊，我得对下面的人负责。",
+                              "name": "李总",
+                              "avatar": "https://stc.yxt.com/aitutor/889a8c76-f988-4abd-bc4e-1d9dd676601e.jpg"
+                            }
+                          ]
+                        },
+                        {
+                          "imageUrl": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/f50ea88c0e354c3aad371db8434f0f3f.jpg",
+                          "frameList": [
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/4729dd07325a4d918511d6fb56dac596.mp3",
+                              "duration": 11376,
+                              "subtitle": "你看这样行不行？我不要你直接切预算给我了。我们新产品的目标用户，其实和你们老产品的VIP客户高度重合。我们搞一次‘新老联动’的联合营销。",
+                              "name": "张总",
+                              "avatar": "https://stc.yxt.com/aitutor/40b43bc2-2379-4b45-aa2a-9c97f66c1dcf.jpg"
+                            },
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/8e343b1d50c74ace975c5342c904a680.mp3",
+                              "duration": 11496,
+                              "subtitle": "用我的新产品作为你们老客户续费的赠品或增值服务。这样，营销费用算在我的首发预算里，但带来的续费营收，全部算进你们部门的KPI。",
+                              "name": "张总",
+                              "avatar": "https://stc.yxt.com/aitutor/40b43bc2-2379-4b45-aa2a-9c97f66c1dcf.jpg"
+                            },
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/e97765fca80a47739e0fc944ebcd3a5c.mp3",
+                              "duration": 1560,
+                              "subtitle": "这个方案有点意思！",
+                              "name": "李总",
+                              "avatar": "https://stc.yxt.com/aitutor/889a8c76-f988-4abd-bc4e-1d9dd676601e.jpg"
+                            }
+                          ]
+                        },
+                        {
+                          "imageUrl": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/d4bf90722a604fc8b4c3a6b2850dc6d9.jpg",
+                          "frameList": [
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/89fc05c416044f81bf102c4966a16eff.mp3",
+                              "duration": 5472,
+                              "subtitle": "从零和博弈，到实质协作。PIN法不是说服技巧，而是理解人心的钥匙。",
+                              "name": "旁白",
+                              "avatar": null
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "segmentType": "asvideo",
+                    "name": "视频案例《争夺的预算池》",
+                    "script": "创新业务部负责人张总为新产品首发申请预算，却遭核心业务部李总激烈反对，会议陷入僵局。张总冷静分析冲突背后的立场、利益与深层需求，运用PIN法在咖啡厅私下面谈，先共情、再探利、最后提出双赢方案，成功将零和博弈转化为实质协作。",
+                    "description": "简洁商务风，写实风格，人物造型干脆利落，色彩以冷灰蓝为主调，突出职场专业感与情绪张力",
+                    "separateTag": "利益博弈型",
+                    "groupKey": "5.2"
+                  },
+                  {
+                    "segmentId": null,
+                    "content": {
+                      "content": [
+                        {
+                          "imageUrl": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/1f6455f85abb4b139d003e09a17c8bc7.jpg",
+                          "frameList": [
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/8776c7c86045499fb05c6c2e5510fd91.mp3",
+                              "duration": 7104,
+                              "subtitle": "周三上午十点，运营部主管林浩接到一项紧急任务——明天必须上线一场线上促销活动。",
+                              "name": "旁白",
+                              "avatar": null
+                            }
+                          ]
+                        },
+                        {
+                          "imageUrl": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/7d54542a8fab43d09c1400e855ed4382.jpg",
+                          "frameList": [
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/10fa6237d1e54fb8ad79a2387a8b47c8.mp3",
+                              "duration": 7632,
+                              "subtitle": "苏经理，明天有个突发的线上活动，这几张海报今天下班前必须赶出来，辛苦你们加个急！",
+                              "name": "林浩",
+                              "avatar": "https://stc.yxt.com/aitutor/d93761c0-4db5-4f7c-a5a4-df8ea03ff382.jpg"
+                            },
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/cdc1f3f24ea343fb84aab1c09c5f5e1a.mp3",
+                              "duration": 3432,
+                              "subtitle": "这根本不在我们这周的排期里！这不归我们管！",
+                              "name": "苏婉婷",
+                              "avatar": "https://stc.yxt.com/aitutor/56ffdbc5-7f1d-44d8-a4ac-15c3cd30999f.jpg"
+                            }
+                          ]
+                        },
+                        {
+                          "imageUrl": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/d31865a0e6474e10b2de578afa49ae81.jpg",
+                          "frameList": [
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/f2c74543542e4689aa1cc01fcd29a0eb.mp3",
+                              "duration": 13920,
+                              "subtitle": "林浩意识到，争吵只会让局面更糟。他开始用PIN模型分析：苏经理的立场是‘不归我们管’，但背后呢？她的团队已经满负荷运转，接下急活意味着全员加班——这是她的实际利益。",
+                              "name": "旁白",
+                              "avatar": null
+                            },
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/493d15aa93274f588a479bd44e63e9d5.mp3",
+                              "duration": 7080,
+                              "subtitle": "而她当众爆发，是因为作为管理者，权威被挑战，面子受损——这才是她真正的深层需求。",
+                              "name": "旁白",
+                              "avatar": null
+                            }
+                          ]
+                        },
+                        {
+                          "imageUrl": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/9d3997049e5846108f724416ee23a1d0.jpg",
+                          "frameList": [
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/d7b3e63641f84cbb9393dd9727cc429f.mp3",
+                              "duration": 8712,
+                              "subtitle": "苏姐，刚才在外面是我不对，我太着急了，没顾及你的感受，当着大家的面跟你大声说话，实在抱歉。",
+                              "name": "林浩",
+                              "avatar": "https://stc.yxt.com/aitutor/d93761c0-4db5-4f7c-a5a4-df8ea03ff382.jpg"
+                            },
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/0808882e239d4cc2bcd8b113841af2cb.mp3",
+                              "duration": 10872,
+                              "subtitle": "我知道你们设计部最近为了双十一的项目天天熬夜，大家都看在眼里，你们的专业和辛苦我们绝对是尊重的。我不该拿个临时需求就去硬塞给你们。",
+                              "name": "林浩",
+                              "avatar": "https://stc.yxt.com/aitutor/d93761c0-4db5-4f7c-a5a4-df8ea03ff382.jpg"
+                            }
+                          ]
+                        },
+                        {
+                          "imageUrl": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/50f93f1de6a641ac889a0f6d688136ca.jpg",
+                          "frameList": [
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/37a68c29eaef411d8c24443ed46c9bd7.mp3",
+                              "duration": 9456,
+                              "subtitle": "唉，小林，不是我针对你，我手下那几个设计师这周已经连熬三个通宵了，我再给他们派急活，队伍就没法带了。",
+                              "name": "苏婉婷",
+                              "avatar": "https://stc.yxt.com/aitutor/56ffdbc5-7f1d-44d8-a4ac-15c3cd30999f.jpg"
+                            }
+                          ]
+                        },
+                        {
+                          "imageUrl": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/8b2418b040644cfb870fbe3ddc3597c5.jpg",
+                          "frameList": [
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/0110b20a448b4ae583b46e6982296a87.mp3",
+                              "duration": 14856,
+                              "subtitle": "苏姐，我完全理解你的难处，保护团队是应该的。你看这样行不行？这次活动确实急，但我不需要你们做全新的原创设计。我把上个月那套海报的源文件找出来了，文案我也全部写好了。",
+                              "name": "林浩",
+                              "avatar": "https://stc.yxt.com/aitutor/d93761c0-4db5-4f7c-a5a4-df8ea03ff382.jpg"
+                            },
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/459e3bb4805447b9ae0d215f5b9e125b.mp3",
+                              "duration": 11808,
+                              "subtitle": "只需要你们安排个实习生，花半个小时替换一下文字和主图就行。作为补偿，下周我们运营部提的那个常规H5页面，排期往后延三天，让你们喘口气。",
+                              "name": "林浩",
+                              "avatar": "https://stc.yxt.com/aitutor/d93761c0-4db5-4f7c-a5a4-df8ea03ff382.jpg"
+                            }
+                          ]
+                        },
+                        {
+                          "imageUrl": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/7b2d33ecee064938b1b68d8de9e084aa.jpg",
+                          "frameList": [
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/c23802a9-c780-4c72-b772-e4d4b0bf1598/bbs/202603/0df165e39a114b93b6b370b7bcc0bdec.mp3",
+                              "duration": 5928,
+                              "subtitle": "早这么说不就完了吗？行吧，源文件发我，我让小张下午抽空给你改出来。",
+                              "name": "苏婉婷",
+                              "avatar": "https://stc.yxt.com/aitutor/56ffdbc5-7f1d-44d8-a4ac-15c3cd30999f.jpg"
+                            }
+                          ]
+                        },
+                        {
+                          "imageUrl": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/826918f399494cbe880e1be13ecca24c.jpg",
+                          "frameList": [
+                            {
+                              "mp3url": "https://picobd.yunxuetang.cn/orgsv2/ai-xui-tf.yunxuetang.com.cn20250801/bbs/202603/ea15322bdb784c309eaa7576428e4ab8.mp3",
+                              "duration": 9312,
+                              "subtitle": "一次情绪对抗，最终转化为实质协作。尊重边界，理解需求，用利益交换创造共赢——这才是跨部门沟通的高阶解法。",
+                              "name": "旁白",
+                              "avatar": null
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "segmentType": "asvideo",
+                    "name": "视频案例《越界的临时需求》",
+                    "script": "运营主管林浩因突发活动向设计部索要紧急设计支持，却因方式粗暴引发苏经理强烈抵触。冲突后，林浩冷静反思，运用PIN沟通模型分析对方立场、利益与深层需求，最终以共情开场、降低负担、资源置换的方式达成协作，实现从对抗到共赢的转变。",
+                    "description": "简洁商务风，人物设计遵循可用人物参考图风格，画面干净利落，情绪通过肢体语言与微表情精准传达",
+                    "separateTag": "情绪对抗型",
+                    "groupKey": "5.2"
+                  },
+                  {
+                    "segmentId": "5.3",
+                    "content": {
+                      "pptUrl": "https://stc.yxt.com/aitutor/4faf01f7-2500-4055-b98b-0dd9b974a794.jpg"
+                    },
+                    "segmentType": "ppt",
+                    "name": "案例解析：李雷是如何用PIN法破局的？",
+                    "script": "刚才的视频场景大家一定不陌生。一开始，李雷和韩梅梅卡在了“今天交”还是“后天交”的立场之争上。韩梅梅态度强硬、防御极强，如果继续施压，肯定会大吵一架。面对这一状态，需要的是“先共情，再挖需求”。所以，李雷后来先道歉并肯定对方的专业度，这正是“先共情，满足需求”；等韩梅梅情绪缓和，转变到愿意沟通的状态后，他再提出“先给基础数据，后给详细报告”的折中方案，完美兼顾了老板要看数据和韩梅梅要保准确率的共同利益，这叫“探利益，达成共识”。真正实现了从“表面同意”走向“实质协作”。",
+                    "description": "案例解析：李雷是如何用PIN法破局的？",
+                    "separateTag": "防御拖延型",
+                    "groupKey": "5.3"
+                  },
+                  {
+                    "segmentId": "5.3",
+                    "content": {
+                      "pptUrl": "https://stc.yxt.com/aitutor/ea9f8dcc-6b47-4711-8900-0e8b0c603d67.jpg"
+                    },
+                    "segmentType": "ppt",
+                    "name": "案例解析：张总是如何用PIN法撬动预算的？",
+                    "script": "大家刚刚看完了这段视频，是不是觉得这个场景简直就是我们日常工作的翻版？一开始，张总和李总完全卡在了“砍20%预算”还是“一分不让”的零和博弈上。张总通过PIN法拆解，首先识别了李总的立场“一分钱预算都不让”，然后找到他的利益“保住部门营收KPI和团队奖金”，最后洞察到他的需求“老功臣地位需被认可，害怕被边缘化”。张总先共情满足需求，再探询兼顾利益，最终提出联合营销方案，将零和博弈转化为实质协作。这正是“应用策略四象限”灵活运用的完美体现。",
+                    "description": "案例解析：张总是如何用PIN法撬动预算的？",
+                    "separateTag": "利益博弈型",
+                    "groupKey": "5.3"
+                  },
+                  {
+                    "segmentId": "5.3",
+                    "content": {
+                      "pptUrl": "https://stc.yxt.com/aitutor/07cb6143-3c1d-486d-b42f-d88262d95e6e.jpg"
+                    },
+                    "segmentType": "ppt",
+                    "name": "案例解析：林浩是如何用PIN法化解情绪对抗的？",
+                    "script": "大家刚刚看完了这段视频，是不是觉得苏经理发火的场景特别真实？林浩和苏经理最初完全卡在了“必须做”和“我不负责”的情绪对抗上。结合“场景策略四象限”来分析，苏经理此刻正处于典型的“情绪对抗高，且表达意愿高”的状态，在这种场景下，大忌就是继续讲道理或施压。林浩的破局关键在于他运用了PIN法，“先共情、挖需求”的策略。首先，他识别了苏经理的立场：这不归我们管。其次，他洞察到苏经理的利益：团队满负荷，需要控制工作量。最关键的是，他抓住了苏经理深层的需求：作为负责人，她的边界和面子需要被尊重。因此，林浩先真诚道歉，满足苏经理被尊重的需求；随后提出“只改字不原创、延后其他排期”的方案，兼顾了双方的利益。这就是运用PIN法，将情绪对抗转化为实质协作的完美路",
+                    "description": "案例解析：林浩是如何用PIN法化解情绪对抗的？",
+                    "separateTag": "情绪对抗型",
+                    "groupKey": "5.3"
+                  }
+                ],
+                "sco": null,
+                "interactionPoint": {
+                  "blueprint": "作为课程的高潮部分，本模块承担着“佐证知识点”和“示范最佳实践”的双重任务。通过影视化的视听语言，让学员在沉浸式的剧情中，直观地看到PIN法是如何在真实、高压的沟通环境中发挥作用的。这不仅增强了课程的趣味性，更极大地提升了学员对PIN法实用价值的确信度。而随后的PPT解析部分，则起到了“画龙点睛”的作用，将感性的故事重新拉回理性的理论框架中，确保学员不仅“看热闹”，更能“看门道”，彻底打通从理论到实战的最后一公里。",
+                  "rule": "播放完毕",
+                  "description": "本模块通过一段精心制作的剧情视频，将前面所有的理论知识（冰山模型、PIN三要素、三步法、场景策略）进行一次综合性的全景展示。视频生动还原了职场中常见的跨部门冲突，并展示了主人公如何通过运用PIN法，成功化解危机，达成实质协作的过程。",
+                  "aiTutorDialogue": [],
+                  "interactionType": "NARRATION"
+                }
+              },
+              {
+                "tutorMode": 0,
+                "scoName": "知识全景图",
+                "segmentList": [
+                  {
+                    "segmentId": "6.1",
+                    "content": {
+                      "pptUrl": "https://stc.yxt.com/aitutor/0e364baf-5b76-432e-a91d-7370a05116f3.jpg"
+                    },
+                    "segmentType": "ppt",
+                    "name": "课程总结与全景图",
+                    "script": "最后，我们来梳理一下今天学习的全部核心脉络。我们学习了沟通的“冰山模型”，知道了水面之上是对方的“立场”，而水面之下隐藏着对方的“利益”和“需求”。为了解决沟通冲突，我们掌握了PIN法的核心法则：透过立场看利益，透过利益挖需求。在具体应用中，我们总结了“识别、探询、挖掘”三步法，并针对对方“坚持立场、情绪激动、回避冷漠、配合开放”这四种不同的状态，制定了精准的回应策略。沟通中的每一次卡壳，都不是为了让我们停下脚步，而是提醒我们，是时候潜入水面之下，去倾听那些未被说出口的声音了。希望大家都能熟练运用PIN法，将每一次沟通的僵局，都转化为实质协作的契机。",
+                    "description": "课程总结与全景图",
+                    "separateTag": "",
+                    "groupKey": "6.1"
+                  }
+                ],
+                "sco": null,
+                "interactionPoint": {
+                  "blueprint": "作为标准的Review模块，其核心意图是“收口与强化记忆”。在经历了概念学习、互动测试和案例观摩之后，学员的脑海中积累了大量的信息。此时提供一张全景图，能够帮助学员建立起坚固的知识结构，方便他们在课后随时回顾和提取。最后的金句升华，旨在再次点燃学员的应用热情，确保课程目标的最终达成。",
+                  "rule": "播放完毕",
+                  "description": "本模块是课程的收尾部分。通过一张结构清晰的“知识全景图”，将本课程中所有零散的知识点（冰山模型、PIN三要素、三步法、四象限策略）进行一次全局性的梳理和串联。最后，用一句富有哲理的金句进行升华，结束整个教学过程。",
+                  "aiTutorDialogue": [],
+                  "interactionType": "NARRATION"
+                }
+              }
+            ]
+          },
+          "competencyArtifactId": null
+        },
+        {
+          "learningObjectives": null,
+          "knowledgePoints": null,
+          "relatedCompetencyKeys": null,
+          "activity": {
+            "activityId": "lecture_4",
+            "activityName": "课程回顾",
+            "activityType": "lecture",
+            "description": null,
+            "resourceId": null,
+            "artifactId": null,
+            "buildArtifactId": null
+          },
+          "extra": {
+            "isIntroduction": false
+          },
+          "directScoContent": {
+            "scoFlow": [
+              {
+                "tutorMode": 0,
+                "scoName": "课程回顾与总结",
+                "segmentList": [
+                  {
+                    "segmentId": "1.1",
+                    "content": {
+                      "pptUrl": "https://stc.yxt.com/aitutor/1db56da7-15df-4ac4-ab66-763fd3e7f9ae.png"
+                    },
+                    "segmentType": "ppt",
+                    "name": "课程回顾与总结",
+                    "script": "三节课下来，我们深度探索了横向协作的核心逻辑与实操工具。这并非三个孤立的技巧，而是一次拾级而上的思维升级。首先，我们通过PIN法穿透表象，看透对方坚硬立场下的柔软需求，完成“理解对方”的第一阶段。紧接着，推拉沟通法教会我们在关系的张力中寻找平衡，精准把握倾听与推进的时机，实现“影响对方”。最后，面对看似不可调和的冲突，我们运用POWER利益沟通法重组利益、化解矛盾，最终走向“成就彼此”。",
+                    "description": "课程回顾与总结",
+                    "separateTag": "",
+                    "groupKey": "1.1"
+                  }
+                ],
+                "sco": null,
+                "interactionPoint": {
+                  "blueprint": "在总结类课程的开篇，成人学习者最需要的不是立刻复习知识点，而是明确“我学完这些到底获得了什么整体能力的提升”。本模块的教学意图在于通过构建一个递进式的认知地图，帮助学员跳出单一工具的局限，看到横向协作沟通的全貌。采用纯PPT的陈述方式，能够以最客观、最高效的视觉呈现，迅速收拢学员的注意力，为其接下来的具体工具复习奠定一个宏大且清晰的上下文背景，激发其将所学融会贯通的内在动机。",
+                  "rule": "播放完毕",
+                  "description": "本模块作为整个学习总结课的开场，主要承担唤醒学员记忆、建立全局认知框架的作用。通过高度凝练的语言，将过去三节课中看似独立的三个沟通工具（PIN法、推拉法、POWER法）串联成一条逻辑严密的思维升级路径。不涉及具体工具的细节展开，而是从“道”与“术”的高度，向学员展示这套课程体系的整体价值，即从单向的“理解对方”，跨越到双向的“影响对方”，最终抵达高维的“成就彼此”。",
+                  "aiTutorDialogue": [],
+                  "interactionType": "NARRATION"
+                }
+              },
+              {
+                "tutorMode": 0,
+                "scoName": "工具应用图谱",
+                "segmentList": [
+                  {
+                    "segmentId": "2.1",
+                    "content": {
+                      "pptUrl": "https://stc.yxt.com/aitutor/bdc1eaf6-2a52-4ac8-abc7-4c927e421ad3.png"
+                    },
+                    "segmentType": "ppt",
+                    "name": "工具应用图谱",
+                    "script": "我们再来系统梳理一下这三大工具的内在逻辑与核心价值。最底层是协作的基石PIN法，它帮助我们洞察真实诉求，解决“不理解”的认知盲区。中间层是协作的引擎推拉沟通法，它指导我们在推进任务时理顺人际关系，解决“推不动”的执行阻力。最顶层则是协作的破局点POWER利益沟通法，当遭遇根本性的利益冲突时，它能帮助我们重新分配筹码，解开“谈不拢”的死结。我们需要在横向协作过程中灵活切换不同的工具，及时调整沟通策略，才能顺利破局。",
+                    "description": "工具应用图谱",
+                    "separateTag": "",
+                    "groupKey": "2.1"
+                  }
+                ],
+                "sco": null,
+                "interactionPoint": {
+                  "blueprint": "本模块的教学意图是“建构系统思维并聚焦协作本质”。孤立的工具无法应对复杂的职场。通过这张极简的立体图谱，让学员明白：在横向协作中，PIN法解决“不理解”的问题，推拉法解决“推不动”的问题，POWER法解决“谈不拢”的问题。这三者是一个自下而上、层层递进的完整协作通关路径。",
+                  "rule": "播放完毕",
+                  "description": "本模块展示全课的第二张核心PPT。针对横向协作的本质（无强制职权，依赖影响力和利益对齐），对三个工具之间的关系进行极简的结构化梳理。去除冗余文字，通过金字塔结构的视觉隐喻，精准传递工具在打破“部门墙”时的递进价值。",
+                  "aiTutorDialogue": [],
+                  "interactionType": "NARRATION"
+                }
+              },
+              {
+                "tutorMode": 0,
+                "scoName": "PIN法：穿透表象的洞察",
+                "segmentList": [
+                  {
+                    "segmentId": "3.1",
+                    "content": {
+                      "pptUrl": "https://stc.yxt.com/aitutor/dd436cdc-a851-4e50-b2ad-06e973c86b2a.jpg"
+                    },
+                    "segmentType": "ppt",
+                    "name": "PIN法：穿透表象的洞察",
+                    "script": "第一个破局工具是PIN法。沟通受阻往往是因为我们被对方水面之上的“立场”绊倒了。在沟通的冰山模型中，水面之上的立场是公开的主张，通常强硬且缺乏回旋余地。若仅停留在这一层，沟通必将沦为博弈。因此我们必须潜入水面之下，探寻对方真正关心的“利益”动机，以及最底层关乎安全感、掌控感等未说出口的人性“需求”。PIN法的核心法则就是透过立场看利益，透过利益挖需求。实操中，面对强硬立场切忌急于反驳，而应在内心深究对方真正在乎的利益与渴望被满足的需求究竟是什么。",
+                    "description": "PIN法：穿透表象的洞察",
+                    "separateTag": "",
+                    "groupKey": "3.1"
+                  }
+                ],
+                "sco": null,
+                "interactionPoint": {
+                  "blueprint": "本模块的教学意图是“精准复现与核心强化”。对于已经学习过该内容的学员，总结课不需要再进行冗长的案例铺垫，而是需要提供最干净、最结构化的知识骨架。采用纯PPT结合金字塔/冰山视觉模型的方式，能够最大化地利用空间隐喻（上层表象、下层本质），帮助学员在脑海中形成牢固的视觉记忆锚点。确保学员在未来遇到“沟通卡住”的场景时，能够条件反射般地调取这个三层模型进行分析。",
+                  "rule": "播放完毕",
+                  "description": "本模块进入具体工具的复习阶段，专属聚焦于第一节课的核心工具——PIN法。内容将严格围绕“冰山模型”这一隐喻展开，详细拆解P（立场）、I（利益）、N（需求）三个层次的定义、关键词以及典型话术特征。同时，提炼出该工具在实际应用中的核心操作口诀，即如何透过水面之上的表象，挖掘水面之下的真实驱动力。",
+                  "aiTutorDialogue": [],
+                  "interactionType": "NARRATION"
+                }
+              },
+              {
+                "tutorMode": 0,
+                "scoName": "推拉沟通法：平衡关系的张力",
+                "segmentList": [
+                  {
+                    "segmentId": "4.1",
+                    "content": {
+                      "pptUrl": "https://stc.yxt.com/aitutor/090f688c-ea72-4f35-b0a6-eccb6321bf61.jpg"
+                    },
+                    "segmentType": "ppt",
+                    "name": "推拉沟通法：平衡关系的张力",
+                    "script": "第二个工具是推拉沟通法。沟通绝非非黑即白的固定公式，而是两股力量的辩证运用。 “推”代表直白的主张与决策，是一股向前的冲击力，其核心价值在于建立边界与驱动结果。拉”则代表柔和的倾听与共创，是一股让人靠近的柔性力量，核心在于建立连接与探寻共识。真正的高手懂得在两者间保持动态平衡。当对方犹豫不决时，果断用“推”给予方向；当对方强势防御时，必须收起锋芒，用“拉”卸下心防。推拉结合没有标准答案，一切策略均取决于对方实时的状态反馈。",
+                    "description": "推拉沟通法：平衡关系的张力",
+                    "separateTag": "",
+                    "groupKey": "4.1"
+                  }
+                ],
+                "sco": null,
+                "interactionPoint": {
+                  "blueprint": "推拉法的核心在于“辩证”与“动态”。本模块的教学意图是打破学员“沟通非黑即白”的固定思维。通过极简的对比布局，让学员清晰地记住这两种力量的本质区别，明白沟通是一场需要像雷达般感知对方状态并灵活切换的动态舞蹈。",
+                  "rule": "播放完毕",
+                  "description": "本模块聚焦于第二节课的核心工具——推拉沟通法。内容将系统性地对比“推”与“拉”这两种截然不同的沟通力量，明确其各自的行为特征（直给建议 vs 倾听提问）。严格按照用户要求，用最干净的页面总结推拉沟通法的核心要义。通过对比“推”与“拉”的不同力量特质，帮助学员掌握这套让协作更顺畅的“方向盘”。",
+                  "aiTutorDialogue": [],
+                  "interactionType": "NARRATION"
+                }
+              },
+              {
+                "tutorMode": 0,
+                "scoName": "POWER利益沟通法：重组利益化解冲突",
+                "segmentList": [
+                  {
+                    "segmentId": "5.1",
+                    "content": {
+                      "pptUrl": "https://stc.yxt.com/aitutor/d696f570-f27e-4e81-b939-b81b6def55da.png"
+                    },
+                    "segmentType": "ppt",
+                    "name": "POWER利益沟通法：重组利益化解冲突",
+                    "script": "最后是应对冲突的利器——POWER利益沟通法。陷入僵局时请牢记利益结合原则，沟通不是单向说服而是利益重组，必须先处理情绪再处理事情。POWER法提供了一条清晰的五步路径。第一步释放情绪，通过不反驳、不评价的倾听让对方从对抗转入对话。第二步明确目标，通过精准提问厘清双方期望达成的最终标准。第三步厘清诉求，严格区分表面要求与深层利益，精准识别对方绝对不能失去的核心筹码。第四步资源交换，这是创造多赢的核心，通过寻找替代方案满足彼此诉求。第五步解决与跟进，形成共识并落地执行，明确具体的分工与时间节点。严格遵循这五步，你就能将破坏性的冲突转化为建设性的协作。我们的课程复盘到此结束，感谢大家的学习。",
+                    "description": "POWER利益沟通法：重组利益化解冲突",
+                    "separateTag": "",
+                    "groupKey": "5.1"
+                  }
+                ],
+                "sco": null,
+                "interactionPoint": {
+                  "blueprint": "本模块的教学意图是“复杂流程的标准化呈现”。化解冲突是职场沟通中最具挑战性的任务，学员往往容易在情绪的干扰下迷失方向。采用流程图（Flow）的布局，能够将复杂的冲突化解过程拆解为五个清晰、可控的线性步骤。这种设计旨在为学员提供一条在混乱冲突中可以紧紧抓住的“安全绳”，确保他们能够按照既定节奏，一步步引导对方从对抗走向对话，最终达成共识。",
+                  "rule": "播放完毕",
+                  "description": "本模块进入第三个工具的复习——POWER利益沟通法。内容将追溯该方法的理论源头（玛丽·帕克·芙丽特的“利益结合原则”），重申其核心理念（沟通不是说服而是利益重组，先处理情绪再处理事情）。随后，详细展开POWER五个字母所代表的标准引导步骤：释放情绪、明确目标、厘清诉求、资源交换、解决与跟进，并提供每个步骤的关键话术指引。",
+                  "aiTutorDialogue": [],
+                  "interactionType": "NARRATION"
+                }
+              }
+            ]
+          },
+          "competencyArtifactId": null
+        }
+      ]
+    }
+  ],
+  "excludeReport": 0
+}

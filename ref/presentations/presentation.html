@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI老师 Q2-Q3 产品规划与商业化路径</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-deep: #0a0e1a;
+    --bg-card: rgba(255,255,255,0.04);
+    --bg-card-hover: rgba(255,255,255,0.08);
+    --accent-blue: #60a5fa;
+    --accent-purple: #a78bfa;
+    --accent-cyan: #22d3ee;
+    --accent-amber: #fbbf24;
+    --accent-green: #34d399;
+    --accent-rose: #fb7185;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --border: rgba(255,255,255,0.08);
+    --glow-blue: 0 0 40px rgba(96,165,250,0.15);
+    --glow-purple: 0 0 40px rgba(167,139,250,0.15);
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  /* ── Slide system ── */
+  .slide {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 80px;
+    opacity: 0;
+    transform: translateX(60px);
+    transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+    background: var(--bg-deep);
+    overflow: hidden;
+  }
+  .slide::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(ellipse at 30% 20%, rgba(96,165,250,0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(167,139,250,0.04) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .slide.active {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+  .slide.exit-left {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+  .slide.enter-left {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+  .slide.exit-right {
+    opacity: 0;
+    transform: translateX(60px);
+  }
+
+  /* ── Navigation ── */
+  .nav {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+    background: rgba(15,23,42,0.8);
+    backdrop-filter: blur(20px);
+    padding: 8px 16px;
+    border-radius: 40px;
+    border: 1px solid var(--border);
+  }
+  .nav-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+    outline: none;
+  }
+  .nav-dot.active {
+    background: var(--accent-blue);
+    box-shadow: 0 0 12px rgba(96,165,250,0.5);
+    width: 28px;
+    border-radius: 5px;
+  }
+
+  .page-num {
+    position: fixed;
+    bottom: 32px;
+    right: 50px;
+    font-size: 13px;
+    color: var(--text-muted);
+    z-index: 100;
+    font-weight: 500;
+  }
+
+  .arrow-nav {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: rgba(15,23,42,0.6);
+    backdrop-filter: blur(10px);
+    color: var(--text-secondary);
+    cursor: pointer;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: all 0.3s;
+  }
+  .arrow-nav:hover { background: rgba(96,165,250,0.15); color: var(--accent-blue); }
+  .arrow-left { left: 24px; }
+  .arrow-right { right: 24px; }
+
+  /* ── Typography ── */
+  .slide-tag {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-blue);
+    margin-bottom: 12px;
+  }
+  .slide-title {
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #f1f5f9, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .slide-subtitle {
+    font-size: 18px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-width: 700px;
+  }
+
+  /* ── Cards ── */
+  .card-grid {
+    display: grid;
+    gap: 20px;
+    width: 100%;
+    max-width: 1100px;
+  }
+  .card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .card:hover {
+    background: var(--bg-card-hover);
+    border-color: rgba(96,165,250,0.2);
+    box-shadow: var(--glow-blue);
+  }
+  .card-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+  }
+  .card-desc {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  /* ── Metric boxes ── */
+  .metric {
+    text-align: center;
+    padding: 20px;
+  }
+  .metric-value {
+    font-size: 48px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .metric-label {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-top: 8px;
+  }
+  .metric-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  /* ── Timeline ── */
+  .timeline {
+    width: 100%;
+    max-width: 1100px;
+    position: relative;
+    padding: 20px 0;
+  }
+  .timeline-line {
+    position: absolute;
+    top: 50%;
+    left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple), var(--accent-cyan));
+    opacity: 0.3;
+  }
+  .timeline-items {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+  }
+  .timeline-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    position: relative;
+  }
+  .timeline-dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    border: 3px solid var(--bg-deep);
+    box-shadow: 0 0 12px rgba(96,165,250,0.4);
+    margin: 16px 0;
+    z-index: 1;
+  }
+  .timeline-top, .timeline-bottom {
+    font-size: 12px;
+    text-align: center;
+    max-width: 140px;
+    line-height: 1.5;
+  }
+  .timeline-top {
+    color: var(--text-muted);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .timeline-bottom {
+    color: var(--text-secondary);
+    font-size: 11px;
+  }
+  .timeline-item:nth-child(even) .timeline-dot { background: var(--accent-purple); box-shadow: 0 0 12px rgba(167,139,250,0.4); }
+  .timeline-item:nth-child(3n) .timeline-dot { background: var(--accent-cyan); box-shadow: 0 0 12px rgba(34,211,238,0.4); }
+
+  /* ── Revenue table ── */
+  .rev-table {
+    width: 100%;
+    max-width: 1000px;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+  }
+  .rev-table th {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-align: left;
+    padding: 8px 16px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .rev-table td {
+    padding: 16px;
+    background: var(--bg-card);
+    font-size: 15px;
+    color: var(--text-primary);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .rev-table td:first-child { border-left: 1px solid var(--border); border-radius: 12px 0 0 12px; }
+  .rev-table td:last-child { border-right: 1px solid var(--border); border-radius: 0 12px 12px 0; }
+  .rev-highlight {
+    font-weight: 700;
+    font-size: 18px;
+  }
+
+  /* ── Tags ── */
+  .tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .tag-blue { background: rgba(96,165,250,0.15); color: var(--accent-blue); }
+  .tag-purple { background: rgba(167,139,250,0.15); color: var(--accent-purple); }
+  .tag-cyan { background: rgba(34,211,238,0.15); color: var(--accent-cyan); }
+  .tag-amber { background: rgba(251,191,36,0.15); color: var(--accent-amber); }
+  .tag-green { background: rgba(52,211,153,0.15); color: var(--accent-green); }
+  .tag-rose { background: rgba(251,113,133,0.15); color: var(--accent-rose); }
+
+  /* ── Content helpers ── */
+  .content-left {
+    width: 100%;
+    max-width: 1100px;
+    text-align: left;
+  }
+  .section-header {
+    margin-bottom: 32px;
+  }
+  .section-header .slide-tag { margin-bottom: 8px; }
+  .section-header .slide-title { font-size: 34px; margin-bottom: 8px; }
+  .section-header .slide-subtitle { font-size: 15px; }
+
+  .feature-list {
+    list-style: none;
+    padding: 0;
+  }
+  .feature-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    color: var(--text-secondary);
+  }
+  .feature-list li:last-child { border-bottom: none; }
+  .feature-list .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    flex-shrink: 0;
+  }
+
+  /* ── Cover special ── */
+  .cover-bg {
+    position: absolute;
+    width: 100%; height: 100%;
+    top: 0; left: 0;
+    overflow: hidden;
+  }
+  .cover-bg .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.4;
+  }
+  .cover-bg .orb-1 { width: 400px; height: 400px; background: #3b82f6; top: 10%; left: 15%; }
+  .cover-bg .orb-2 { width: 350px; height: 350px; background: #8b5cf6; bottom: 15%; right: 15%; }
+  .cover-bg .orb-3 { width: 250px; height: 250px; background: #06b6d4; top: 50%; left: 55%; }
+
+  .grid-lines {
+    position: absolute;
+    width: 100%; height: 100%;
+    top: 0; left: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  /* ── Waterfall chart (CSS) ── */
+  .waterfall {
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+    height: 220px;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  .waterfall-bar {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    position: relative;
+  }
+  .bar-fill {
+    width: 60px;
+    border-radius: 8px 8px 4px 4px;
+    transition: height 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+  }
+  .bar-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 10px;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .bar-value {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  /* ── Bonus slide ── */
+  .bonus-glow {
+    position: absolute;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(251,191,36,0.08) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  /* ── Animate in ── */
+  .slide.active .fade-up {
+    animation: fadeUp 0.6s ease forwards;
+  }
+  .slide.active .fade-up:nth-child(2) { animation-delay: 0.1s; }
+  .slide.active .fade-up:nth-child(3) { animation-delay: 0.2s; }
+  .slide.active .fade-up:nth-child(4) { animation-delay: 0.3s; }
+  .slide.active .fade-up:nth-child(5) { animation-delay: 0.4s; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-up { opacity: 0; }
+
+  /* ── Summary total card ── */
+  .total-card {
+    background: linear-gradient(135deg, rgba(96,165,250,0.1), rgba(167,139,250,0.1));
+    border: 1px solid rgba(96,165,250,0.2);
+    border-radius: 16px;
+    padding: 32px 48px;
+    text-align: center;
+    margin-top: 24px;
+    box-shadow: 0 0 60px rgba(96,165,250,0.08);
+  }
+
+  /* ── Keyboard hint ── */
+  .key-hint {
+    position: fixed;
+    bottom: 32px;
+    left: 50px;
+    font-size: 12px;
+    color: var(--text-muted);
+    z-index: 100;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .key-hint kbd {
+    display: inline-block;
+    padding: 2px 8px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: inherit;
+  }
+
+  /* ── Version bar ── */
+  .version-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    align-items: center;
+  }
+  .version-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    min-width: 160px;
+    text-align: right;
+  }
+  .version-bar-track {
+    flex: 1;
+    height: 32px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .version-bar-fill {
+    height: 100%;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
+    white-space: nowrap;
+    position: absolute;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ SLIDE 1: Cover ============ -->
+<div class="slide active" id="s1">
+  <div class="cover-bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-lines"></div>
+  </div>
+  <div style="position:relative;z-index:1;text-align:center;">
+    <div class="fade-up" style="font-size:13px;font-weight:600;letter-spacing:3px;color:var(--accent-blue);margin-bottom:24px;">AI 老师团队</div>
+    <h1 class="fade-up" style="font-size:52px;font-weight:900;letter-spacing:-0.04em;line-height:1.15;background:linear-gradient(135deg,#f1f5f9 0%,#60a5fa 50%,#a78bfa 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:20px;">
+      Q2-Q3 产品规划<br>与商业化路径
+    </h1>
+    <p class="fade-up" style="font-size:17px;color:var(--text-secondary);margin-bottom:40px;">NeoLearning 培训项目 + Neo Course 生产平台&nbsp;&nbsp;|&nbsp;&nbsp;双引擎驱动增长</p>
+    <div class="fade-up" style="font-size:14px;color:var(--text-muted);">2025 年 Q2 - Q3 规划汇报</div>
+  </div>
+</div>
+
+<!-- ============ SLIDE 2: Two Engines ============ -->
+<div class="slide" id="s2">
+  <div class="content-left">
+    <div class="section-header fade-up">
+      <div class="slide-tag">Overview</div>
+      <div class="slide-title">两大交付形态</div>
+      <div class="slide-subtitle">一个产品团队，两种交付模式 —— NeoLearning 打标杆、Neo Course 做规模，双轮驱动商业化</div>
+    </div>
+    <div class="card-grid cols-2 fade-up">
+      <div class="card">
+        <div class="card-icon" style="background:rgba(96,165,250,0.15);">
+          <span style="color:var(--accent-blue);">&#9670;</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <div class="card-title">培训项目 (NeoLearning)</div>
+          <span class="tag tag-blue">高客单价</span>
+        </div>
+        <div class="card-desc">
+          基于 AI 的自适应培训项目，覆盖基层管理者、AI组织等场景。<br>
+          支持纯线上 (Online) 和线上线下混合式两种交付模式。<br><br>
+          <strong style="color:var(--text-primary);">核心能力：</strong>测评 / AI辅导 / 萃取 / 报告Agent解读 / 记忆工程
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(167,139,250,0.15);">
+          <span style="color:var(--accent-purple);">&#9830;</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <div class="card-title">Neo Course 生产平台</div>
+          <span class="tag tag-purple">规模化</span>
+        </div>
+        <div class="card-desc">
+          帮助企业将已有内容快速 AI 化，优先落地"AI伴学"场景。<br>
+          将视频老课升级为带互动检测、智能答疑、学习报告的新形态。<br><br>
+          <strong style="color:var(--text-primary);">核心能力：</strong>Quiz检测 / 自由答疑 / Agent学习报告 / 项目运营
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SLIDE 3: NeoLearning - 基层管理者 ============ -->
+<div class="slide" id="s3">
+  <div class="content-left">
+    <div class="section-header fade-up">
+      <div class="slide-tag">NeoLearning</div>
+      <div class="slide-title">基层管理者培训</div>
+      <div class="slide-subtitle">多版本、多场景，覆盖从标准管理到销售场景的基层管理者能力提升</div>
+    </div>
+    <div class="card-grid cols-3 fade-up">
+      <div class="card">
+        <span class="tag tag-blue" style="margin-bottom:12px;">V1 标准版</span>
+        <div class="card-title" style="font-size:16px;">基层管理者 · 标准版</div>
+        <div class="card-desc" style="margin-top:8px;">
+          以"横向协同"单点课程验证，包含学员端与管理端。<br><br>
+          <strong>5月中旬</strong> 内测<br>
+          <strong>5月底</strong> 天使客户体验<br>
+          <strong>6月底</strong> Online MVP上线
+        </div>
+      </div>
+      <div class="card">
+        <span class="tag tag-purple" style="margin-bottom:12px;">V2 高级版</span>
+        <div class="card-title" style="font-size:16px;">基层管理者 · 在岗/中层</div>
+        <div class="card-desc" style="margin-top:8px;">
+          面向在岗人群或偏中层管理者的进阶培训方案。<br><br>
+          <strong>8月初</strong> Online MVP 完成上线
+        </div>
+      </div>
+      <div class="card">
+        <span class="tag tag-cyan" style="margin-bottom:12px;">销售场景版</span>
+        <div class="card-title" style="font-size:16px;">基层管理者 · 销售场景</div>
+        <div class="card-desc" style="margin-top:8px;">
+          针对销售团队基层管理者的专属培训场景。<br><br>
+          <strong>8月初</strong> 线上版本完成<br>
+          <strong>8月中旬</strong> 混合式版本交付
+        </div>
+      </div>
+    </div>
+    <div class="fade-up" style="margin-top:24px;padding:16px 24px;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;gap:16px;">
+      <span class="tag tag-green">混合式</span>
+      <span style="font-size:14px;color:var(--text-secondary);">
+        V1 标准版将于 <strong style="color:var(--text-primary);">7月中旬</strong> 结合线下讲师培训（2-3天），形成混合式学习项目，可独立售卖
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SLIDE 4: NeoLearning - AI组织 ============ -->
+<div class="slide" id="s4">
+  <div class="content-left">
+    <div class="section-header fade-up">
+      <div class="slide-tag">NeoLearning</div>
+      <div class="slide-title">AI 组织培训</div>
+      <div class="slide-subtitle">帮助企业快速适应人与AI协同的新工作模式</div>
+    </div>
+    <div class="card-grid cols-2 fade-up">
+      <div class="card" style="flex:1;">
+        <div class="card-icon" style="background:rgba(34,211,238,0.15);">
+          <span style="color:var(--accent-cyan);">&#10038;</span>
+        </div>
+        <div class="card-title">产品定位</div>
+        <div class="card-desc" style="margin-top:8px;">
+          面向企业管理层和全员，解决"如何让组织和团队快速适应AI时代"的核心命题。<br><br>
+          帮助企业建立 AI 与人积极协同的工作方式，提升组织 AI 就绪度。
+        </div>
+      </div>
+      <div class="card" style="flex:1;">
+        <div class="card-icon" style="background:rgba(52,211,153,0.15);">
+          <span style="color:var(--accent-green);">&#9200;</span>
+        </div>
+        <div class="card-title">交付节奏</div>
+        <ul class="feature-list" style="margin-top:8px;">
+          <li><span class="dot"></span><strong style="color:var(--text-primary);">6月底</strong>&nbsp;&nbsp;标准版 Online MVP 完成</li>
+          <li><span class="dot"></span>纯线上交付，覆盖学习 + 互动 + 报告全流程</li>
+          <li><span class="dot"></span>目标客户：100家企业，每家约50个账号</li>
+          <li><span class="dot"></span>定价：<strong style="color:var(--accent-amber);">800 ~ 1,000 元/账号</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SLIDE 5: Neo Course ============ -->
+<div class="slide" id="s5">
+  <div class="content-left">
+    <div class="section-header fade-up">
+      <div class="slide-tag">Neo Course</div>
+      <div class="slide-title">Neo Course 生产平台</div>
+      <div class="slide-subtitle">让企业的视频老课焕发新生 —— AI 伴学一站式升级</div>
+    </div>
+    <div class="card-grid cols-2 fade-up">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;">AI 伴学能力矩阵</div>
+        <ul class="feature-list">
+          <li><span class="dot"></span>视频课程 + AI 互动检测 (Check / Quiz)</li>
+          <li><span class="dot"></span>智能自由答疑，基于课程内容精准回答</li>
+          <li><span class="dot"></span>Agent 自动生成完整学习报告</li>
+          <li><span class="dot"></span>项目运营管理功能</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;">6月底实战目标</div>
+        <div class="card-desc">
+          将内部销量最好的 <strong style="color:var(--accent-amber);">4 门自评课</strong> 率先完成AI伴学升级：
+        </div>
+        <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;">
+          <span class="tag tag-blue">启航</span>
+          <span class="tag tag-purple">积极协同</span>
+          <span class="tag tag-cyan">跳出困局</span>
+          <span class="tag tag-amber">王牌销售</span>
+        </div>
+        <div class="card-desc" style="margin-top:16px;">
+          升级后作为新商品上架，开辟边缘收入渠道
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SLIDE 7: 新产品赋能 ============ -->
+<div class="slide" id="s6">
+  <div class="content-left">
+    <div class="section-header fade-up">
+      <div class="slide-tag">Neo Course · 应用场景</div>
+      <div class="slide-title">新产品赋能微型项目</div>
+      <div class="slide-subtitle">Neo Course 生产平台的核心落地场景 —— 帮助企业代理商和一线销售快速掌握新产品卖点</div>
+    </div>
+    <div class="fade-up">
+      <!-- Flow -->
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:32px;flex-wrap:wrap;">
+        <div style="background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.2);border-radius:12px;padding:16px 20px;text-align:center;min-width:120px;">
+          <div style="font-size:20px;margin-bottom:6px;">&#128270;</div>
+          <div style="font-size:13px;font-weight:600;color:var(--accent-blue);">萃取</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">产品经理 / 市场专员<br>/ 绩优销售</div>
+        </div>
+        <div style="color:var(--text-muted);font-size:20px;">&#8594;</div>
+        <div style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2);border-radius:12px;padding:16px 20px;text-align:center;min-width:120px;">
+          <div style="font-size:20px;margin-bottom:6px;">&#128218;</div>
+          <div style="font-size:13px;font-weight:600;color:var(--accent-purple);">制课</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">PPT生成 / Quiz检查<br>/ 案例视频</div>
+        </div>
+        <div style="color:var(--text-muted);font-size:20px;">&#8594;</div>
+        <div style="background:rgba(34,211,238,0.1);border:1px solid rgba(34,211,238,0.2);border-radius:12px;padding:16px 20px;text-align:center;min-width:120px;">
+          <div style="font-size:20px;margin-bottom:6px;">&#127891;</div>
+          <div style="font-size:13px;font-weight:600;color:var(--accent-cyan);">下发学习</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">学员完成学习<br>+ 互动反馈</div>
+        </div>
+        <div style="color:var(--text-muted);font-size:20px;">&#8594;</div>
+        <div style="background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.2);border-radius:12px;padding:16px 20px;text-align:center;min-width:120px;">
+          <div style="font-size:20px;margin-bottom:6px;">&#128200;</div>
+          <div style="font-size:13px;font-weight:600;color:var(--accent-green);">报告</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Agent 学习报告<br>可结合 SalesMate</div>
+        </div>
+      </div>
+      <div class="card-grid cols-2">
+        <div class="card">
+          <div class="card-title" style="font-size:15px;">定价模型</div>
+          <div class="card-desc" style="margin-top:8px;">
+            <strong style="color:var(--accent-amber);font-size:20px;">~3 万</strong><span style="color:var(--text-muted);"> / 项目</span><br><br>
+            后续增购 AI 豆或账号包（如 30 账号/包）
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="font-size:15px;">下半年目标</div>
+          <div class="card-desc" style="margin-top:8px;">
+            <strong style="color:var(--accent-amber);font-size:20px;">200 ~ 300 份</strong><br><br>
+            贡献预计收入 600 ~ 900 万
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SLIDE 7: Sandbox ============ -->
+<div class="slide" id="s7">
+  <div class="bonus-glow"></div>
+  <div style="position:relative;z-index:1;text-align:center;max-width:800px;">
+    <div class="fade-up">
+      <span class="tag tag-amber" style="font-size:14px;padding:6px 16px;">&#9733; 彩蛋产品</span>
+    </div>
+    <div class="fade-up slide-title" style="margin-top:20px;font-size:38px;">
+      沙盘模拟与沙盘教练
+    </div>
+    <div class="fade-up slide-subtitle" style="margin:16px auto 32px;text-align:center;">
+      计划于 <strong style="color:var(--accent-amber);">9月底</strong> 完成首个沙盘模拟与沙盘教练产品形态<br>
+      优先以基层管理者场景设计线上沙盘体验
+    </div>
+    <div class="card-grid cols-2 fade-up" style="max-width:700px;margin:0 auto;">
+      <div class="card" style="text-align:left;">
+        <div class="card-title" style="font-size:15px;">定位</div>
+        <div class="card-desc" style="margin-top:8px;">
+          作为基层管理者培训项目的<strong style="color:var(--accent-amber);">增购服务</strong>，丰富项目交付的形态类型
+        </div>
+      </div>
+      <div class="card" style="text-align:left;">
+        <div class="card-title" style="font-size:15px;">进展</div>
+        <div class="card-desc" style="margin-top:8px;">
+          已完成调研阶段，与多家专业沙盘模拟与沙盘教练服务商完成 Know-How 交流
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SLIDE 8: Milestones ============ -->
+<div class="slide" id="s8">
+  <div class="content-left" style="max-width:1200px;">
+    <div class="section-header fade-up" style="text-align:center;">
+      <div class="slide-tag">Roadmap</div>
+      <div class="slide-title">关键里程碑</div>
+      <div class="slide-subtitle" style="text-align:center;margin:0 auto;">2025年4月 — 9月</div>
+    </div>
+    <div class="fade-up" style="width:100%;max-width:1100px;margin:0 auto;position:relative;">
+      <!-- Timeline axis -->
+      <div style="position:relative;padding:0 0 0 0;">
+        <!-- Month headers -->
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);margin-bottom:8px;padding-left:0;">
+          <div style="text-align:center;font-size:13px;font-weight:700;color:var(--text-muted);letter-spacing:0.5px;">4月</div>
+          <div style="text-align:center;font-size:13px;font-weight:700;color:var(--accent-blue);letter-spacing:0.5px;">5月</div>
+          <div style="text-align:center;font-size:13px;font-weight:700;color:var(--accent-cyan);letter-spacing:0.5px;">6月</div>
+          <div style="text-align:center;font-size:13px;font-weight:700;color:var(--accent-green);letter-spacing:0.5px;">7月</div>
+          <div style="text-align:center;font-size:13px;font-weight:700;color:var(--accent-purple);letter-spacing:0.5px;">8月</div>
+          <div style="text-align:center;font-size:13px;font-weight:700;color:var(--accent-amber);letter-spacing:0.5px;">9月</div>
+        </div>
+        <!-- Horizontal line -->
+        <div style="height:3px;background:linear-gradient(90deg,var(--text-muted),var(--accent-blue),var(--accent-cyan),var(--accent-green),var(--accent-purple),var(--accent-amber));border-radius:2px;opacity:0.4;margin-bottom:4px;"></div>
+        <!-- Month tick marks -->
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);margin-bottom:16px;">
+          <div style="text-align:center;"><div style="width:2px;height:8px;background:var(--text-muted);margin:0 auto;border-radius:1px;"></div></div>
+          <div style="text-align:center;"><div style="width:2px;height:8px;background:var(--accent-blue);margin:0 auto;border-radius:1px;"></div></div>
+          <div style="text-align:center;"><div style="width:2px;height:8px;background:var(--accent-cyan);margin:0 auto;border-radius:1px;"></div></div>
+          <div style="text-align:center;"><div style="width:2px;height:8px;background:var(--accent-green);margin:0 auto;border-radius:1px;"></div></div>
+          <div style="text-align:center;"><div style="width:2px;height:8px;background:var(--accent-purple);margin:0 auto;border-radius:1px;"></div></div>
+          <div style="text-align:center;"><div style="width:2px;height:8px;background:var(--accent-amber);margin:0 auto;border-radius:1px;"></div></div>
+        </div>
+
+        <!-- Milestone cards positioned by percentage -->
+        <div style="position:relative;width:100%;min-height:340px;">
+
+          <!-- 5月中旬 (位置 ≈ 12.5%) -->
+          <div style="position:absolute;left:12%;top:0;transform:translateX(-50%);">
+            <div style="width:2px;height:16px;background:var(--accent-blue);margin:0 auto 6px;"></div>
+            <div style="background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.25);border-radius:10px;padding:10px 16px;text-align:center;white-space:nowrap;">
+              <div style="font-size:10px;color:var(--accent-blue);font-weight:700;margin-bottom:3px;">5月中旬</div>
+              <div style="font-size:13px;color:var(--text-primary);font-weight:600;">横向协同内测</div>
+              <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">学员端 + 管理端验证</div>
+            </div>
+          </div>
+
+          <!-- 6月初 (位置 ≈ 30%) -->
+          <div style="position:absolute;left:30%;top:0;transform:translateX(-50%);">
+            <div style="width:2px;height:16px;background:var(--accent-cyan);margin:0 auto 6px;"></div>
+            <div style="background:rgba(34,211,238,0.10);border:1px solid rgba(34,211,238,0.25);border-radius:10px;padding:10px 16px;text-align:center;">
+              <div style="font-size:10px;color:var(--accent-cyan);font-weight:700;margin-bottom:4px;">6月初</div>
+              <div style="font-size:13px;color:var(--text-primary);font-weight:600;line-height:1.7;">
+                基管 V1 Online MVP 上线<br>
+                新产品赋能 Mini Project 交付<br>
+                <span style="font-size:10px;color:var(--text-muted);font-weight:400;">萃取 → 制课 → 学习反馈 → 报告</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6月底 (位置 ≈ 44%) -->
+          <div style="position:absolute;left:44%;top:110px;transform:translateX(-50%);">
+            <div style="width:2px;height:16px;background:var(--accent-cyan);margin:0 auto 6px;"></div>
+            <div style="background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.20);border-radius:10px;padding:10px 16px;text-align:center;">
+              <div style="font-size:10px;color:var(--accent-cyan);font-weight:700;margin-bottom:4px;">6月底</div>
+              <div style="font-size:13px;color:var(--text-primary);font-weight:600;line-height:1.7;">
+                AI组织 Online MVP 上线<br>
+                AI伴学 4门老课交付
+              </div>
+            </div>
+          </div>
+
+          <!-- 7月中旬 (位置 ≈ 55%) -->
+          <div style="position:absolute;left:55%;top:0;transform:translateX(-50%);">
+            <div style="width:2px;height:16px;background:var(--accent-green);margin:0 auto 6px;"></div>
+            <div style="background:rgba(52,211,153,0.10);border:1px solid rgba(52,211,153,0.25);border-radius:10px;padding:10px 16px;text-align:center;">
+              <div style="font-size:10px;color:var(--accent-green);font-weight:700;margin-bottom:4px;">7月中旬</div>
+              <div style="font-size:13px;color:var(--text-primary);font-weight:600;line-height:1.7;">
+                V1 混合式项目交付<br>
+                学员端移动端上线
+              </div>
+            </div>
+          </div>
+
+          <!-- 7月底 (位置 ≈ 66%) -->
+          <div style="position:absolute;left:66%;top:110px;transform:translateX(-50%);">
+            <div style="width:2px;height:16px;background:var(--accent-green);margin:0 auto 6px;"></div>
+            <div style="background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.20);border-radius:10px;padding:10px 16px;text-align:center;">
+              <div style="font-size:10px;color:var(--accent-green);font-weight:700;margin-bottom:4px;">7月底</div>
+              <div style="font-size:13px;color:var(--text-primary);font-weight:600;line-height:1.7;">
+                Neo Course 生产平台上线
+              </div>
+            </div>
+          </div>
+
+          <!-- 8月初~中旬 (位置 ≈ 78%) -->
+          <div style="position:absolute;left:78%;top:0;transform:translateX(-50%);">
+            <div style="width:2px;height:16px;background:var(--accent-purple);margin:0 auto 6px;"></div>
+            <div style="background:rgba(167,139,250,0.10);border:1px solid rgba(167,139,250,0.25);border-radius:10px;padding:10px 16px;text-align:center;">
+              <div style="font-size:10px;color:var(--accent-purple);font-weight:700;margin-bottom:4px;">8月初 — 8月中旬</div>
+              <div style="font-size:13px;color:var(--text-primary);font-weight:600;line-height:1.7;">
+                基管 V2 (中层) 上线<br>
+                基管 · 销售场景上线<br>
+                销售场景混合式交付
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div style="display:flex;gap:20px;justify-content:center;margin-top:24px;">
+        <div style="display:flex;align-items:center;gap:6px;"><div style="width:8px;height:8px;border-radius:50%;background:var(--accent-blue);"></div><span style="font-size:11px;color:var(--text-muted);">NeoLearning</span></div>
+        <div style="display:flex;align-items:center;gap:6px;"><div style="width:8px;height:8px;border-radius:50%;background:var(--accent-cyan);"></div><span style="font-size:11px;color:var(--text-muted);">平台交付</span></div>
+        <div style="display:flex;align-items:center;gap:6px;"><div style="width:8px;height:8px;border-radius:50%;background:var(--accent-green);"></div><span style="font-size:11px;color:var(--text-muted);">混合式 & 移动端</span></div>
+        <div style="display:flex;align-items:center;gap:6px;"><div style="width:8px;height:8px;border-radius:50%;background:var(--accent-purple);"></div><span style="font-size:11px;color:var(--text-muted);">扩展版本</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SLIDE 9: Revenue Breakdown ============ -->
+<div class="slide" id="s9">
+  <div class="content-left" style="max-width:1050px;">
+    <div class="section-header fade-up">
+      <div class="slide-tag">Revenue</div>
+      <div class="slide-title">业绩目标拆解</div>
+    </div>
+    <div class="fade-up">
+      <table class="rev-table">
+        <thead>
+          <tr>
+            <th>产品线</th>
+            <th>单价</th>
+            <th>规模假设</th>
+            <th style="text-align:right;">预计收入</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tag tag-blue">NeoLearning</span>&nbsp; 基管 Online</td>
+            <td>1,600 ~ 1,800 / 账号<br><span style="font-size:12px;color:var(--text-muted);">8模块 · 25-30个挑战场景</span></td>
+            <td>30人/项目 ≈ 4.5万<br><span style="font-size:12px;color:var(--text-muted);">+ 线下混合式 ≈ 10万/项目</span></td>
+            <td style="text-align:right;" class="rev-highlight"><span style="color:var(--accent-blue);">200 万</span><br><span style="font-size:12px;font-weight:400;color:var(--text-muted);">20 个签单</span></td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-cyan">NeoLearning</span>&nbsp; AI 组织</td>
+            <td>800 ~ 1,000 / 账号<br><span style="font-size:12px;color:var(--text-muted);">纯线上交付</span></td>
+            <td>50 账号/企业 × 100 企业<br><span style="font-size:12px;color:var(--text-muted);">= 5,000 份</span></td>
+            <td style="text-align:right;" class="rev-highlight"><span style="color:var(--accent-cyan);">500 万</span></td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-purple">Tool</span>&nbsp; 新产品赋能</td>
+            <td>~3 万 / 项目<br><span style="font-size:12px;color:var(--text-muted);">+ AI豆/账号包增购</span></td>
+            <td>200 ~ 300 份</td>
+            <td style="text-align:right;" class="rev-highlight"><span style="color:var(--accent-purple);">600 ~ 900 万</span></td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-amber">附加</span>&nbsp; AI伴学老课 + 差价</td>
+            <td colspan="2"><span style="font-size:14px;color:var(--text-secondary);">启航/积极协同/跳出困局 AI化上架 + 基管各版本差价收入</span></td>
+            <td style="text-align:right;"><span style="color:var(--text-secondary);">边缘收入</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SLIDE 10: Q&A ============ -->
+<div class="slide" id="s10">
+  <div class="cover-bg">
+    <div class="orb orb-1" style="opacity:0.2;"></div>
+    <div class="orb orb-2" style="opacity:0.2;"></div>
+    <div class="grid-lines"></div>
+  </div>
+  <div style="position:relative;z-index:1;text-align:center;">
+    <div class="fade-up" style="font-size:13px;font-weight:600;letter-spacing:3px;color:var(--accent-blue);margin-bottom:20px;">AI 老师团队</div>
+    <div class="fade-up slide-title" style="font-size:48px;">感谢聆听</div>
+    <div class="fade-up" style="font-size:18px;color:var(--text-secondary);margin-top:16px;">Q & A</div>
+  </div>
+</div>
+
+<!-- Navigation -->
+<button class="arrow-nav arrow-left" onclick="prevSlide()">&#8592;</button>
+<button class="arrow-nav arrow-right" onclick="nextSlide()">&#8594;</button>
+
+<div class="nav" id="navDots"></div>
+<div class="page-num" id="pageNum"></div>
+<div class="key-hint"><kbd>&#8592;</kbd><kbd>&#8594;</kbd> 或点击翻页</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const totalSlides = slides.length;
+  let current = 0;
+
+  // Build dots
+  const navDots = document.getElementById('navDots');
+  slides.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    dot.onclick = () => goTo(i);
+    navDots.appendChild(dot);
+  });
+
+  function updatePageNum() {
+    document.getElementById('pageNum').textContent = `${current + 1} / ${totalSlides}`;
+  }
+  updatePageNum();
+
+  function goTo(idx) {
+    if (idx < 0 || idx >= totalSlides || idx === current) return;
+    const forward = idx > current;
+
+    // Remove all state classes from every slide
+    slides.forEach(s => s.classList.remove('active', 'exit-left', 'exit-right', 'enter-left'));
+
+    // Old slide exits in the opposite direction
+    slides[current].classList.add(forward ? 'exit-left' : 'exit-right');
+
+    // New slide: temporarily disable transition, position it off-screen on the correct side
+    const newSlide = slides[idx];
+    newSlide.style.transition = 'none';
+    newSlide.style.transform = forward ? 'translateX(60px)' : 'translateX(-60px)';
+    newSlide.style.opacity = '0';
+
+    // Force reflow, then re-enable transition and activate
+    void newSlide.offsetWidth;
+    newSlide.style.transition = '';
+    newSlide.style.transform = '';
+    newSlide.style.opacity = '';
+    newSlide.classList.add('active');
+
+    current = idx;
+
+    // Update dots
+    document.querySelectorAll('.nav-dot').forEach((d, i) => {
+      d.classList.toggle('active', i === current);
+    });
+    updatePageNum();
+  }
+
+  function nextSlide() { goTo(current + 1); }
+  function prevSlide() { goTo(current - 1); }
+
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') { e.preventDefault(); nextSlide(); }
+    if (e.key === 'ArrowLeft' || e.key === 'Backspace') { e.preventDefault(); prevSlide(); }
+    if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+    if (e.key === 'End') { e.preventDefault(); goTo(totalSlides - 1); }
+  });
+
+  // Touch support
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; });
+  document.addEventListener('touchend', e => {
+    const diff = e.changedTouches[0].screenX - touchStartX;
+    if (Math.abs(diff) > 50) {
+      diff > 0 ? prevSlide() : nextSlide();
+    }
+  });
+</script>
+</body>
+</html>
