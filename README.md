@@ -4,29 +4,59 @@
 
 ## 项目状态
 
-**产品设计阶段** -- 需求规格 v2.0 已完成（16章），正在细化用户故事、进入模块设计。
-
-评分 **7.3/10 -- CONDITIONAL GO**。核心优势：品类空白 + 12-18月窗口 + 1700客户分发。核心风险：定价未验证 + 商业模式清晰度 5/10。
+**产品设计阶段** -- 需求规格已迭代至 v0.4.0，产品规格说明书按模块拆分完成，部分模块已审阅。
 
 关键数字：6月 MVP、30-40人/项目、6个月周期。
+
+---
+
+## 从这里开始看
+
+**产品规格说明书（spec/design/）是本项目最核心的交付物。** 如果时间有限，只看这个目录即可。
+
+路径：[`00-public/1-product/spec/design/`](00-public/1-product/spec/design/)
+
+| 文件 | 说明 | 状态 |
+|------|------|------|
+| [requirements-v0.4.0.md](00-public/1-product/spec/design/requirements-v0.4.0.md) | 总需求规格书 v0.4.0 | 最新版 |
+| **common/** | 通用模块（概览、通用规则、通知） | |
+| -- [已审阅]00-overview.md | 系统概览 | 已审阅 |
+| -- [已审阅]01-general.md | 通用规则 | 已审阅 |
+| -- [已审阅]02-notification.md | 通知体系 | 已审阅 |
+| **learner/** | 学员端模块 | |
+| -- [已审阅]00-overview.md | 学员端概览 | 已审阅 |
+| -- [已审阅]01-hall.md | 大厅页 | 已审阅 |
+| -- [已审阅]02-teaching-classroom.md | 授课教室 | 已审阅 |
+| -- [待审阅]03-drill-classroom.md | 对练教室 | 待审阅 |
+| -- [待审阅]04-assessment-classroom.md | 测评教室 | 待审阅 |
+| -- [待审阅]05-report-classroom.md | 报告教室 | 待审阅 |
+| -- [待审阅]06-notes.md | 笔记 | 待审阅 |
+| **management/** | 管理端模块 | |
+| -- [待审阅]01-dashboard.md | 仪表盘 | 待审阅 |
+| -- [待审阅]02-report.md | 报告 | 待审阅 |
+| -- [待审阅]03-project-config.md | 项目配置 | 待审阅 |
+
+---
 
 ## 目录结构
 
 ```
-├── 1-product/      产品设计（需求规格、用户流程、模块设计、功能树、原型、UI/UX）
-├── 2-business/     商业分析（市场调研、战略、品牌、财务、验证 -- 参考性质）
-├── 3-tech/         技术分析（Prosona/AOM/对练 架构分析 + 未来新架构设计）
-├── 4-decisions/    ADR 设计决策记录（001-006）
-├── 5-process/      过程记录（设计日志、辩论、backlog、行动计划）
-├── 6-content/      课程内容（原始知识文档 + AOM 样例）
-├── ref/            外部参考素材（产品创意、demo录屏、演示文稿）
-└── temp/           临时文件（定期清理）
+├── 00-public/              正式交付物
+│   ├── 1-product/          产品设计
+│   │   └── spec/design/    ** 产品规格说明书（重点看这里）**
+│   ├── 2-business/         商业分析（市场、战略、财务、验证）
+│   ├── 3-tech/             技术分析（Prosona/AOM 架构分析）
+│   ├── 4-decisions/        ADR 设计决策记录
+│   ├── 5-process/          过程记录（辩论、日志、backlog）
+│   └── 6-content/          课程内容参考
+├── 01-ref/                 外部参考素材（demo 录屏、演示文稿、产品创意）
+├── 02-temp/                临时文件
+└── DM_Temp/                工作暂存区
 ```
 
-## 阅读路径
+## 更多阅读路径
 
-- **如果你只看一个文件** --> [1-product/spec/requirements.md](1-product/spec/requirements.md)（产品需求规格 v2.0，16章完整定义）
-- **如果你想了解商业背景** --> [2-business/README.md](2-business/README.md)（startup-design 评估全景）
-- **如果你想了解技术现状** --> [3-tech/README.md](3-tech/README.md)（Prosona 引擎已实现/未实现什么）
-- **如果你想了解关键决策** --> [4-decisions/README.md](4-decisions/README.md)（6个 ADR）
-- **如果你想了解设计过程** --> [5-process/README.md](5-process/README.md)（辩论、日志、backlog）
+- **商业背景** --> [00-public/2-business/](00-public/2-business/)
+- **技术现状** --> [00-public/3-tech/](00-public/3-tech/)
+- **关键决策** --> [00-public/4-decisions/](00-public/4-decisions/)
+- **设计过程** --> [00-public/5-process/](00-public/5-process/)
