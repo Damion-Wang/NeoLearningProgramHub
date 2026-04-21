@@ -77,12 +77,29 @@ AI 老师是面向企业培训场景的 AI 原生学习陪伴系统。通过"辅
 ```
 Project（培训项目）
   └── Course（课程/模块，共 8 个）
-       └── Activity（活动：授课/对练/测评/报告，15-25分钟）
+       └── Activity（活动：授课/对练/调研/报告，15-25分钟）
             └── SCO（最小学习内容单元）
                  └── Segment（SCO 的版本，用于自适应切换）
 ```
 
 **SCO 类型**：`NARRATION`（PPT讲解）、`VIDEO`（案例视频）、`QUIZ`（互动测验）、`QA`（小解答）、`FEEDBACK_COLLECT`（闭环-课前采集）、`FEEDBACK_REVIEW`（闭环-课后复盘）、`ASSESSMENT_TAG`（打标判定，纯后台）
+
+---
+
+## 5.5 角色架构：Leo（Coach）与 Neo（Tutor）
+
+学员端有两个独立的 AI 角色：
+
+| 角色 | 前台名称 | 类型 | 作用位置 | 知识范围 |
+|------|---------|------|---------|---------|
+| **Leo** | Leo | Coach（教练） | 大厅（课堂外） | Program 全量知识 |
+| **Neo** | Neo | Tutor（老师） | 教室（课堂内） | Activity 内 + 已完成 Activity + 学员画像 |
+
+**核心区分**：Leo 做全局的、长期的、跨课程的陪伴辅导；Neo 做即时的、Activity 内的、教学驱动的结构化教学。两者记忆打通（共享统一 Database），但引用时 Leo 不提 Neo，Neo 不提 Leo。
+
+**对练教室特殊架构**：对练教室中还有独立的演员 Actor（由剧本驱动的角色扮演对象，如"张总"），与 Neo 分开对话窗口（左栏模拟对话+右栏 Neo 辅导）。Neo 在对练中承担情景导入、新手辅导、反思复盘三个任务。
+
+**管理端 Agent**：管理端右侧的 Agent 与 Leo/Neo 是完全独立的角色系统，本期未命名。
 
 ---
 
@@ -94,11 +111,11 @@ Project（培训项目）
 
 | # | 模块 | 一句话描述 | 子文档 |
 |---|------|----------|--------|
-| 1 | **大厅** | 学员的"家"——学习看板 + 辅导教练 + 工具库 + 热力图进度可视化 | [modules/learner/01-hall.md](modules/learner/01-hall.md) |
-| 2 | **授课教室** | AI 按 AOM 脚本执行结构化教学——PPT 自主讲解、视频、Quiz、闭环反馈 | [modules/learner/02-teaching-classroom.md](modules/learner/02-teaching-classroom.md) |
-| 3 | **对练教室** | 基于场景的角色扮演训练——三种变体（基础Roleplay+角色互换+费曼）+ 重练机制 | [modules/learner/03-drill-classroom.md](modules/learner/03-drill-classroom.md) |
-| 4 | **测评教室** | AI 通过对话或量表采集学员信息并评估——三阶段（说明+执行+信息确认复盘）。测评和BEI本质上是同一件事，BEI是测评的一种剧本玩法，通过剧本设置实现 | [modules/learner/04-assessment-classroom.md](modules/learner/04-assessment-classroom.md) |
-| 5 | **报告教室** | 个人学习报告——三部分结构（内容回顾+表现复盘+应用计划）+ AI 解读讨论 | [modules/learner/05-report-classroom.md](modules/learner/05-report-classroom.md) |
+| 1 | **大厅** | 学员的"家"——学习看板 + Leo（Coach） + 工具库 + 热力图进度可视化 | [modules/learner/01-hall.md](modules/learner/01-hall.md) |
+| 2 | **授课教室** | AI 按 AOM 脚本执行结构化教学——PPT 自主讲解、视频、Quiz、闭环反馈 | [modules/learner/02-lecture-classroom.md](modules/learner/02-lecture-classroom.md) |
+| 3 | **对练教室(Practice)** | 基于场景的角色扮演训练——Actor（演员）角色扮演（三种变体）+ Neo 情景导入/答疑与辅导/反思复盘 + 重练机制 | [modules/learner/03-practice-classroom.md](modules/learner/03-practice-classroom.md) |
+| 4 | **调研教室(Inquiry)** | Neo 通过对话或量表采集学员信息并评估——三阶段（说明+执行+信息确认复盘）。调研和BEI本质上是同一件事，BEI是调研的一种剧本玩法，通过剧本设置实现 | [modules/learner/04-inquiry-classroom.md](modules/learner/04-inquiry-classroom.md) |
+| 5 | **报告教室(Report)** | 个人学习报告——三部分结构（内容回顾+表现复盘+应用计划）+ Neo 解读讨论 | [modules/learner/05-report-classroom.md](modules/learner/05-report-classroom.md) |
 
 ### 管理端模块
 
@@ -116,7 +133,7 @@ Project（培训项目）
 | 10 | **账号管理** | 个人账号管理（个人信息/切换端口/退出登录） | [modules/common/01-account.md](modules/common/01-account.md) |
 | 11 | **消息提醒** | 通用栏提醒按钮🔔展开消息面板（未读标记+点击跳转）；催学规则配置在管理端 | [modules/common/02-notification.md](modules/common/02-notification.md) |
 | 12 | **个人偏好设置** | 个人偏好设置（当前仅AI语速） | [modules/common/03-settings.md](modules/common/03-settings.md) |
-| 13 | **笔记** | 悬浮窗/悬浮球形态，贯穿大厅和所有教室，支持打字+粘贴+截图，本期不与授课打通 | [modules/learner/06-notes.md](modules/learner/06-notes.md) |
+| 13 | **笔记** | 悬浮窗/悬浮球形态，贯穿大厅和所有教室，支持打字+粘贴+截图。手动笔记不与授课打通；P1 推荐笔记卡片（Neo 生成高光卡片）如做则是首个打通点 | [modules/learner/06-notes.md](modules/learner/06-notes.md) |
 
 ---
 
@@ -124,15 +141,15 @@ Project（培训项目）
 
 ### 7.1 内容驱动 [ADR-004]
 
-平台是引擎，内容是燃料。所有教学行为（AI 何时出题、如何评判、情绪天花板、结束条件）由 AOM 脚本 / 对练剧本 / 测评剧本控制，平台不硬编码。
+平台是引擎，内容是燃料。所有教学行为（AI 何时出题、如何评判、情绪天花板、结束条件）由 AOM 脚本 / 对练剧本 / 调研剧本控制，平台不硬编码。
 
 **v0.4.0 变更**：SCO 间互动由 AI 根据内容逻辑和学员状态自主决定是否插入——不与时间绑定（"每5分钟一次"太机械），而与内容逻辑绑定（"讲完一个完整知识点模块后，如果偏抽象理论，就插互动"）。AI 自主出题场景放在答疑模块，不新增 SCO。
 
 ### 7.2 记忆工程 [ADR-005]
 
 三级记忆管道，本期全做：
-1. **课堂内采集**：授课/对练/测评中的所有对话 + Quiz 回答 + 行为观察 + 被动信号（停留/回翻/点击）
-2. **大厅辅导引用**：辅导教练读取课堂数据，跨 Course 记忆打通
+1. **课堂内采集**：授课/对练/调研中的所有对话 + Quiz 回答 + 行为观察 + 被动信号（停留/回翻/点击）
+2. **大厅辅导引用**：Leo（Coach）读取课堂数据，跨 Course 记忆打通
 3. **管理端汇聚**：报告智能体拉取全链路数据生成证据报告
 
 统一 Database，三端按权限读取。半结构化记录（含 `passive_signals` 字段）。
@@ -183,7 +200,7 @@ Project（培训项目）
 
 ### P1 可选
 
-- 测评模块（三阶段，含BEI——由内容决定是否使用）、企业微信/钉钉催学渠道
+- 调研模块（三阶段，含BEI——由内容决定是否使用）、企业微信/钉钉催学渠道
 
 ### V2+ 不做
 
@@ -210,12 +227,12 @@ Project（培训项目）
 | 2 | 防挂机（5分钟提醒/暂停） | 新增 |
 | 3 | 笔记改为悬浮窗/悬浮球（独立于授课，本期不打通） | 修改 |
 | 4 | AI 自主出题放答疑而非新增 SCO | 新增 |
-| 5 | 测评从两段改三段（说明→执行→信息确认复盘） | 修改 |
-| 6 | 测评复盘=信息确认（不是苏格拉底） | 修改 |
+| 5 | 调研从两段改三段（说明→执行→信息确认复盘） | 修改 |
+| 6 | 调研复盘=信息确认（不是苏格拉底） | 修改 |
 | 7 | 报告简化为三部分（内容回顾+表现复盘+应用计划） | 修改 |
 | 8 | 工具库随进度逐步解锁+可下载 | 新增 |
 | 9 | 热力图+悬停卡片的进度可视化 | 新增 |
-| 10 | AI 语速调整（后台设置，1~1.5倍） | 新增 |
+| 10 | AI 语速三挡（舒适/标准/明快，1.0x/1.2x/1.4x），全局设置+教室局部覆盖 | 新增 |
 | 11 | 后台设置模块（提醒配置/个性化/角色/统计） | 新增 |
 | 12 | 运营端/HR 端本期完全一致 | 确认 |
 | 13 | 项目周期由管理员配置（1个月~1年），内容包由内部团队预配置，管理员导入名单后分配角色 | 修改 |
@@ -232,7 +249,7 @@ Project（培训项目）
 |-----|------|---------|
 | ADR-001 | 三端合一 Web 应用 | 学员/HR/运营同一 Web 应用，权限区分 |
 | ADR-002 | 第一版预制菜模式 | KGP 生产全部内容，管理员不配置课程 |
-| ADR-003 | 辅导模块作为主入口 | 辅导教练是学员端主界面 |
+| ADR-003 | 辅导模块作为主入口 | Leo（Coach）是学员端主界面 |
 | ADR-004 | 半结构化内容驱动 | 平台是引擎，内容是燃料，行为由脚本控制 |
 | ADR-005 | 记忆工程三级管道 | 课堂→大厅→管理端，统一 Database |
 | ADR-006 | 辅导知识库渐进式披露 | 不用 RAG，用文件层级逐层检索 |
