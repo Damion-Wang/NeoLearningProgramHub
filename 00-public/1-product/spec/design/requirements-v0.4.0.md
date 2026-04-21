@@ -8,7 +8,7 @@
 
 ## 1. 产品定义与愿景
 
-AI 老师是面向企业培训场景的 AI 原生学习陪伴系统。通过"辅导大厅 + 多间教室"的空间模型，让 30-40 名基层管理者在 6 个月周期内，获得 1v1 AI 教练的持续陪伴、结构化课程的自适应学习、沉浸式对练的行为训练，最终产出可举证的行为改变报告。
+AI 老师是面向企业培训场景的 AI 原生学习陪伴系统。通过"辅导大厅 + 多个场域"的空间模型，让 30-40 名基层管理者在 6 个月周期内，获得 1v1 AI 教练的持续陪伴、结构化课程的自适应学习、沉浸式对练的行为训练，最终产出可举证的行为改变报告。
 
 **核心比喻**：平台是钢琴，内容是乐谱，AI 是演奏者。更换乐谱（AOM 内容包），就能交付完全不同主题的培训项目。
 
@@ -93,11 +93,11 @@ Project（培训项目）
 | 角色 | 前台名称 | 类型 | 作用位置 | 知识范围 |
 |------|---------|------|---------|---------|
 | **Leo** | Leo | Coach（教练） | 大厅（课堂外） | Program 全量知识 |
-| **Neo** | Neo | Tutor（老师） | 教室（课堂内） | Activity 内 + 已完成 Activity + 学员画像 |
+| **Neo** | Neo | Tutor（老师） | 场域（课堂内） | Activity 内 + 已完成 Activity + 学员画像 |
 
 **核心区分**：Leo 做全局的、长期的、跨课程的陪伴辅导；Neo 做即时的、Activity 内的、教学驱动的结构化教学。两者记忆打通（共享统一 Database），但引用时 Leo 不提 Neo，Neo 不提 Leo。
 
-**对练教室特殊架构**：对练教室中还有独立的演员 Actor（由剧本驱动的角色扮演对象，如"张总"），与 Neo 分开对话窗口（左栏模拟对话+右栏 Neo 辅导）。Neo 在对练中承担情景导入、新手辅导、反思复盘三个任务。
+**对练场域特殊架构**：对练场域中还有独立的演员 Actor（由剧本驱动的角色扮演对象，如"张总"），与 Neo 分开对话窗口（左栏模拟对话+右栏 Neo 辅导）。Neo 在对练中承担情景导入、新手辅导、反思复盘三个任务。
 
 **管理端 Agent**：管理端右侧的 Agent 与 Leo/Neo 是完全独立的角色系统，本期未命名。
 
@@ -112,10 +112,10 @@ Project（培训项目）
 | # | 模块 | 一句话描述 | 子文档 |
 |---|------|----------|--------|
 | 1 | **大厅** | 学员的"家"——学习看板 + Leo（Coach） + 工具库 + 热力图进度可视化 | [modules/learner/01-hall.md](modules/learner/01-hall.md) |
-| 2 | **授课教室** | AI 按 AOM 脚本执行结构化教学——PPT 自主讲解、视频、Quiz、闭环反馈 | [modules/learner/02-lecture-classroom.md](modules/learner/02-lecture-classroom.md) |
-| 3 | **对练教室(Practice)** | 基于场景的角色扮演训练——Actor（演员）角色扮演（三种变体）+ Neo 情景导入/答疑与辅导/反思复盘 + 重练机制 | [modules/learner/03-practice-classroom.md](modules/learner/03-practice-classroom.md) |
-| 4 | **调研教室(Inquiry)** | Neo 通过对话或量表采集学员信息并评估——三阶段（说明+执行+信息确认复盘）。调研和BEI本质上是同一件事，BEI是调研的一种剧本玩法，通过剧本设置实现 | [modules/learner/04-inquiry-classroom.md](modules/learner/04-inquiry-classroom.md) |
-| 5 | **报告教室(Report)** | 个人学习报告——三部分结构（内容回顾+表现复盘+应用计划）+ Neo 解读讨论 | [modules/learner/05-report-classroom.md](modules/learner/05-report-classroom.md) |
+| 2 | **授课场域** | AI 按 AOM 脚本执行结构化教学——PPT 自主讲解、视频、Quiz、闭环反馈 | [modules/learner/02-lecture-classroom.md](modules/learner/02-lecture-classroom.md) |
+| 3 | **对练场域(Practice)** | 基于场景的角色扮演训练——Actor（演员）角色扮演（三种变体）+ Neo 情景导入/答疑与辅导/反思复盘 + 重练机制 | [modules/learner/03-practice-classroom.md](modules/learner/03-practice-classroom.md) |
+| 4 | **调研场域(Inquiry)** | Neo 通过对话或量表采集学员信息并评估——三阶段（说明+执行+信息确认复盘）。调研和BEI本质上是同一件事，BEI是调研的一种剧本玩法，通过剧本设置实现 | [modules/learner/04-inquiry-classroom.md](modules/learner/04-inquiry-classroom.md) |
+| 5 | **报告场域(Report)** | 个人学习报告——三部分结构（内容回顾+表现复盘+应用计划）+ Neo 解读讨论 | [modules/learner/05-report-classroom.md](modules/learner/05-report-classroom.md) |
 
 ### 管理端模块
 
@@ -133,7 +133,7 @@ Project（培训项目）
 | 10 | **账号管理** | 个人账号管理（个人信息/切换端口/退出登录） | [modules/common/01-account.md](modules/common/01-account.md) |
 | 11 | **消息提醒** | 通用栏提醒按钮🔔展开消息面板（未读标记+点击跳转）；催学规则配置在管理端 | [modules/common/02-notification.md](modules/common/02-notification.md) |
 | 12 | **个人偏好设置** | 个人偏好设置（当前仅AI语速） | [modules/common/03-settings.md](modules/common/03-settings.md) |
-| 13 | **笔记** | 悬浮窗/悬浮球形态，贯穿大厅和所有教室，支持打字+粘贴+截图。手动笔记不与授课打通；P1 推荐笔记卡片（Neo 生成高光卡片）如做则是首个打通点 | [modules/learner/06-notes.md](modules/learner/06-notes.md) |
+| 13 | **笔记** | 悬浮窗/悬浮球形态，贯穿大厅和所有场域，支持打字+粘贴+截图。手动笔记不与授课打通；P1 推荐笔记卡片（Neo 生成高光卡片）如做则是首个打通点 | [modules/learner/06-notes.md](modules/learner/06-notes.md) |
 
 ---
 
@@ -232,7 +232,7 @@ Project（培训项目）
 | 7 | 报告简化为三部分（内容回顾+表现复盘+应用计划） | 修改 |
 | 8 | 工具库随进度逐步解锁+可下载 | 新增 |
 | 9 | 热力图+悬停卡片的进度可视化 | 新增 |
-| 10 | AI 语速三挡（舒适/标准/明快，1.0x/1.2x/1.4x），全局设置+教室局部覆盖 | 新增 |
+| 10 | AI 语速三挡（舒适/标准/明快，1.0x/1.2x/1.4x），全局设置+场域局部覆盖 | 新增 |
 | 11 | 后台设置模块（提醒配置/个性化/角色/统计） | 新增 |
 | 12 | 运营端/HR 端本期完全一致 | 确认 |
 | 13 | 项目周期由管理员配置（1个月~1年），内容包由内部团队预配置，管理员导入名单后分配角色 | 修改 |
