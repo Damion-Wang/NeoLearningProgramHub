@@ -1,6 +1,10 @@
 > **审阅状态：已审阅** | 审阅人：DM | 日期：2026-04-21
 
+<<<<<<< HEAD:00-public/1-product/spec/design/learner/[已审阅]04-inquiry-zone.md
 # 调研场域模块（Inquiry Zone）
+=======
+# 调研场域模块（Inquiry Classroom）
+>>>>>>> 02e07ba216824de6d236522527d86dd2eecbb3f7:00-public/1-product/spec/design/learner/[已审阅]04-inquiry-classroom.md
 
 ## 模块定位
 
