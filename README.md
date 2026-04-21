@@ -4,9 +4,23 @@
 
 ## 项目状态
 
-**产品设计阶段** -- 需求规格已迭代至 v0.4.0，产品规格说明书按模块拆分完成，部分模块已审阅。
+**产品设计阶段** -- 需求规格已迭代至 v0.4.0，产品规格说明书按模块拆分完成，大部分模块已审阅。
 
 关键数字：6月 MVP、30-40人/项目、6个月周期。
+
+---
+
+## 核心架构：Leo / Neo / Actor
+
+学员端有两个独立的 AI 角色 + 对练中的模拟角色：
+
+| 角色 | 位置 | 职责 |
+|------|------|------|
+| **Leo**（Coach） | 大厅（课堂外） | 1v1 成长伙伴，长期陪伴辅导，知识应用与迁移引导 |
+| **Neo**（Tutor） | 教室（课堂内） | 按 AOM 脚本结构化教学，答疑与辅导 |
+| **Actor**（演员） | 对练教室 | 由剧本驱动的角色扮演对象（如"张总"），独立于 Neo |
+
+四间教室：**授课(Lecture)** / **对练(Practice)** / **调研(Inquiry)** / **报告(Report)**
 
 ---
 
@@ -18,23 +32,23 @@
 
 | 文件 | 说明 | 状态 |
 |------|------|------|
-| [requirements-v0.4.0.md](00-public/1-product/spec/design/requirements-v0.4.0.md) | 总需求规格书 v0.4.0 | 最新版 |
-| **common/** | 通用模块（概览、通用规则、通知） | |
-| -- [已审阅]00-overview.md | 系统概览 | 已审阅 |
-| -- [已审阅]01-general.md | 通用规则 | 已审阅 |
-| -- [已审阅]02-notification.md | 通知体系 | 已审阅 |
+| [requirements-v0.4.0.md](00-public/1-product/spec/design/requirements-v0.4.0.md) | 总需求规格书 v0.4.0（含 Leo/Neo 角色架构总纲） | 最新版 |
+| **common/** | 通用模块 | |
+| -- [已审阅]00-overview.md | 通用模块总览（Topbar、通用功能入口） | 已审阅 |
+| -- [已审阅]01-general.md | 通用功能（账号管理、个人设置、帮助） | 已审阅 |
+| -- [已审阅]02-notification.md | 消息提醒（站内消息、催学效果追踪） | 已审阅 |
 | **learner/** | 学员端模块 | |
-| -- [已审阅]00-overview.md | 学员端概览 | 已审阅 |
-| -- [已审阅]01-hall.md | 大厅页 | 已审阅 |
-| -- [已审阅]02-lecture-classroom.md | 授课教室 | 已审阅 |
-| -- [待审阅]03-practice-classroom.md | 对练教室 | 待审阅 |
-| -- [待审阅]04-inquiry-classroom.md | 调研教室(Inquiry) | 待审阅 |
-| -- [待审阅]05-report-classroom.md | 报告教室 | 待审阅 |
-| -- [待审阅]06-notes.md | 笔记 | 待审阅 |
+| -- [已审阅]00-overview.md | 学员端总览（空间模型、用户故事） | 已审阅 |
+| -- [已审阅]01-hall.md | 大厅（Leo Coach、学习看板、工具库、社区） | 已审阅 |
+| -- [已审阅]02-lecture-classroom.md | 授课教室 Lecture（Neo 结构化教学） | 已审阅 |
+| -- [已审阅]03-practice-classroom.md | 对练教室 Practice（Actor 角色扮演 + Neo 答疑与辅导） | 已审阅 |
+| -- [已审阅]04-inquiry-classroom.md | 调研教室 Inquiry（Neo 访谈/量表，P1可选） | 已审阅 |
+| -- [待审阅]05-report-classroom.md | 报告教室 Report（Neo 报告解读） | 待审阅 |
+| -- [待审阅]06-notes.md | 笔记（悬浮球 + P1推荐笔记卡片） | 待审阅 |
 | **management/** | 管理端模块 | |
-| -- [待审阅]00-overview.md | 管理端概览 | 待审阅 |
-| -- [待审阅]01-dashboard.md | 仪表盘 | 待审阅 |
-| -- [待审阅]02-report.md | 报告 | 待审阅 |
+| -- [待审阅]00-overview.md | 管理端总览（Leo/Neo/Agent 关系说明） | 待审阅 |
+| -- [待审阅]01-dashboard.md | 首页看板 | 待审阅 |
+| -- [待审阅]02-report.md | 报告页 | 待审阅 |
 | -- [待审阅]03-project-config.md | 项目配置 | 待审阅 |
 | **design 根目录** | | |
 | -- [待审阅]00-future-iterations.md | 未来迭代计划 | 待审阅 |
