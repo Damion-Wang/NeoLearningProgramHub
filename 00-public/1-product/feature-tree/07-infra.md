@@ -1,6 +1,6 @@
 # 功能树 07：Infra（平台底座）
 
-**Owner：** 显华、葛演
+**Owner：** 显华、葛演、李灿
 **日期：** 2026-04-21
 **版本：** v0.4.0 对齐版（L1+L2）
 **对应 Spec：** `spec/design/common/00-overview.md` + `01-general.md` + `02-notification.md` + `requirements-v0.4.0.md §4`
@@ -78,24 +78,43 @@ G. 帮助 + 反馈
    G1 产品使用手册（新窗口，文档形式）
    G2 反馈入口（本期空，占位）
 
-H. 语音引擎（TTS + STT）
+H. 生成式引擎（语音 + 图像 + 数字人）
+   【TTS 语音合成】
    H1 TTS — Leo 语音输出（大厅）
    H2 TTS — Neo 语音输出（授课 / 对练 / 调研 / 报告）
    H3 TTS — Actor 语音输出（对练，不同剧本不同音色）
    H4 TTS 语速参数接入 F1（全局 + 场域覆盖）
    H5 TTS 音色配置（Operation F5 平台个性化配置默认音色）
+   H5a ★TTS 引擎与语言路由
+       - 国内中文：字节音色库（byte）
+       - 海外：ByteDance Plus（byteplus）/ Google TTS
+       - 按语言 zh / en / ja 路由
+   【STT 语音识别】
    H6 ★STT — 学员语音输入转文字（Quiz 问答 / 对练对话 / 调研访谈 / Leo 对话）
    H7 STT 识别质量降级（识别失败时提示重录，不强制打字）
    H8 STT 引擎选型（本期待定：Web Speech API / 讯飞 / 自建；纳入 I 模型管理场景路由）
+   【文生图】
+   H9 ★文生图 — 用途：Actor 头像（Practice F1）/ 未来报告配图
+   H10 ★文生图引擎
+       - 国内：Doubao-Seedream-5.0
+       - 海外：Gemini
+   【数字人形象】
+   H11 ★数字人形象 — ProsonaAgent（内部服务，海波团队维护）
+   H12 ★数字人服务接入 — `digital_human_server.py` 发音人接口对接
 
 I. 模型管理
-   I1 LLM 模型接入（供应商 / 模型版本）
+   I1 ★LLM 统一网关 — 全部经**云学堂多模型网关** `ymcas-d.yxt.com/multi-model/v1`
    I2 模型切换 / 参数配置
    I3 按场景路由（Leo / Neo / Actor / 导演 / 管理端 Agent / 打标 / 报告生成）
-   I4 降级策略（超时 / 失败 / 限流）
+       - 配置位：`model.routing.aliases`
+       - 不直接绑定具体模型 ID，用 alias 解耦
+   I4 ★降级与故障保护
+       - 配置位：`model_groups.default_group`
+       - primary + fallback 模型组
+       - 5 分钟故障保护窗口（primary 失败后自动切 fallback，5 分钟内不重试 primary）
 
 J. 用量统计
-   J1 Token 消耗采集（按用户 / 按场景 / 按时间）
+   J1 Token 消耗采集 — ★**以云学堂多模型网关 usage metrics 为准**（不从本地 prompt/response 推算），按用户 / 按场景 / 按时间聚合
    J2 学员端口径（F4 个人设置展示）
    J3 管理端口径（Operation C4 数据展示 Tab 聚合）
    J4 成本核算输出（财务 / 运营侧）
@@ -146,6 +165,25 @@ O. 未来扩展（占位）
    O2 多语言 / 国际化
    O3 移动端
    O4 灾备 / 高可用
+
+P. ★外部平台对接（集成清单）[补漏]
+   P1 云学堂多模型网关 — `ymcas-d.yxt.com/multi-model/v1`
+       - 用途：所有 LLM 调用（见 I）
+       - 接入形式：HTTP + alias 路由 + 故障保护组
+   P2 ProsonaAgent 数字人服务 — 海波团队
+       - 用途：Actor 形象、未来可扩展 Leo/Neo 可视化
+       - 接入形式：`digital_human_server.py` 发音人接口（见 H11/H12）
+   P3 TTS 供应商矩阵
+       - 字节音色库（byte，国内）
+       - ByteDance Plus（byteplus，海外）
+       - Google TTS（海外）
+       - 按 zh/en/ja 路由（见 H5a）
+   P4 文生图供应商
+       - Doubao-Seedream-5.0（国内）
+       - Gemini（海外）（见 H10）
+   P5 SMTP / 企微 OpenAPI / 钉钉开放平台 — 通知渠道（见 B5 + Operation E4）
+
+> **说明**：SIDE（对练剧本系统）属于**自研内部系统**，不列入 P 节外部对接。其功能归属见 10-KGP D 对练剧本编辑器。当前稳定性问题作为 KGP 工程关注项追踪。
 ```
 
 ---
@@ -185,3 +223,4 @@ O. 未来扩展（占位）
 | 3b | STT 引擎选型（H8）及成本纳入用量统计的方案？ | 需与业务方确认识别精度要求，三方服务成本应纳入 J 用量 |
 | 4 | N4 跨模块数据 schema 由谁定义？ | 建议 Evaluation + Infra 共同制定，Evaluation 主导碎片 schema |
 | 5 | 平台个性化配置到底在 Infra 还是 Operation？ | 配置入口在 Operation F5；生效引擎（Logo 替换 / 音色路由）在 Infra D1 / H5 |
+| 6 | 数字人 ProsonaAgent（P2）在本期 Actor 头像场景是否必选？还是文生图静态头像兜底？ | 建议：本期静态头像兜底（见 Practice F1），ProsonaAgent P1 增强 |

@@ -59,7 +59,7 @@ C. 教学提示设计
    C3 referenceSlots 配置（必选 required:true / 可选 required:false）
    C4 tutorMode 开关（SCO 级，是否按标签选变体）
 
-D. 对练剧本编辑器
+D. 对练剧本编辑器（内部代号 **SIDE**，自研子系统）
    D1 characterProfile（心理画像：显性目标 / 隐性目标 / 触发点 / 软化点 / 底线）
    D2 behaviorChain（递进反应链）
    D3 constraints（防剧透指令）
@@ -162,4 +162,5 @@ M. 未来扩展（占位）
 | 4 | 剧本字段（D / E 各字段）在 AOM 里的具体 schema 何时定？ | 需与 Practice / Inquiry Owner 尽快对齐，是 ContentMgt B 校验的前置 |
 | 5 | KGP 发布前必经 Simulation 跑通是强制还是推荐？ | 建议对"新课包"强制（J4 闭环），修订版推荐 |
 | 6 | 本期是否做 G4 工具卡片分享功能？ | 建议本期不做，V2 |
+| 7 | ⚠️ SIDE（D 节自研对练剧本系统）目前稳定性较差，需要工程侧讨论加固方案 | 建议定义：异常重试策略 / 本地缓存兜底 / 故障时降级只读 / 监控告警接入 |
 ```
