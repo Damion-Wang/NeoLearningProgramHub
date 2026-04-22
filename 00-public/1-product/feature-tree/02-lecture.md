@@ -1,7 +1,7 @@
 # 功能树 02：Lecture（授课场域）
 
 **Owner：** 银江、张青、李灿、周毅、冲哥
-**日期：** 2026-04-21
+**日期：** 2026-04-22
 **版本：** v0.4.0 对齐版（L1+L2）
 **对应 Spec：** `spec/design/learner/02-lecture-classroom.md`
 
@@ -17,10 +17,10 @@ Neo（Tutor）按 AOM 脚本执行结构化教学——PPT / 视频 / Quiz / 闭
 
 ```
 A. Neo（Tutor）角色
-   A1 Neo 身份（Activity 内 + 已完成 Activity + 学员画像）
+   A1 Neo 身份（Tutor，可访问统一 Database 全部数据，关注点聚焦当前 Activity + 学员画像）
    A2 结构化教学（按 AOM 脚本演绎）
-   A3 即时教学反馈（5 种教学信号 ①缺概念 ②遗忘 ③误用 ④选错工具 ⑥错误心智模型）
-   A4 InsightCaptureSkill 轻量版（高光瞬间推荐卡片，P1，产出写入 Hall F4）
+   A3 即时教学反馈（5 种教学信号 ①缺概念 ②遗忘 ③误用 ④选错工具 ⑥错误心智模型；⑤⑦⑧ 由 Leo 处理，见 01.A4）
+   A4 InsightCaptureSkill 轻量版（高光瞬间推荐卡片，P3，产出写入 Hall F4）
 
 B. SCO 调度引擎
    B1 顺序推进（按 scoFlow）
@@ -28,10 +28,7 @@ B. SCO 调度引擎
    B3 条件跳转（打标完成后按结果匹配 Segment，消费 Evaluation）
    B4 ★SCO 锁定机制（未播放 = 🔒，只能回顾已学）
    B5 ★防挂机（每 5 分钟提醒 / 暂停）
-   B6 ★AI 双轨运行约束 [req §7.6，与 Evaluation A8 对称]
-       B6.1 前台教学主线不被后台打标 / 采集阻塞（打标慢则降级使用默认 Segment）
-       B6.2 采集失败对学员无感（错误缓存重试，不弹错误提示）
-       B6.3 打标结果异步回写（不阻塞下一个 SCO 进入）
+   B6 ★AI 双轨运行约束（前台不被后台打标/采集阻塞 · 采集失败学员无感 · 打标异步回写）[req §7.6 / 对称 09-A.A8]
 
 C. SCO 类型与看板呈现
    C1 NARRATION（PPT 图片 / HTML 渲染）
@@ -73,7 +70,7 @@ I. 信号采集
    I1 被动信号（停留 / 离开 / 回翻 / 点击工具）
    I2 对话记录（半结构化）
    I3 Quiz 答题过程
-   → 产出写入统一 Database，供 Evaluation 消费
+   （产出写入 07.N 统一 Database，供 09-A 消费）
 
 J. 工具卡片产出
    J1 预制工具卡片（KGP 预设）
@@ -91,22 +88,24 @@ K. 断点续播 + 重新学习
 
 ## 跨模块依赖
 
-| 对象模块 | 依赖关系 |
-|---------|---------|
-| Evaluation (09-A) | F 自适应 + C7 打标引擎 + I 信号采集数据流 |
-| ContentMgt (08) | AOM 内容包（SCO / 讲解 blueprint / referenceSlots 配置） |
-| KGP (10) | E3 互动设计、E5 referenceSlots 源头、J1 工具卡片预制 |
-| Infra (07) | 布局 + TTS + 断点恢复 + 模型路由 |
-| Hall (01) | J3 工具卡片 → 工具库 / A4 推荐卡片 → 笔记库 |
+| 对象模块 | 依赖关系（本模块节点 ← 对方节点） |
+|---------|--------------------------------|
+| Evaluation (09-A) | F 自适应 ← `09-A.A` 打标结果 · C7 打标引擎 ← `09-A.A` · I 信号采集 → `09-A.B` 碎片生产 |
+| ContentMgt (08) | C 所有 SCO 类型内容 / E1 blueprint+rule / E5 referenceSlots ← `08.E` |
+| KGP (10) | E3 互动设计 / E5 referenceSlots / J1 预制工具卡片 ← `10.B/C/G` |
+| Infra (07) | 布局 ← `07.K` · TTS ← `07.H` · 断点 ← `07.M` · 模型路由 ← `07.I` |
+| Hall (01) | A4 推荐卡片 → `01.F4` · J3 工具库 → `01.E4` |
 
 ---
 
-## 与 v0.3.3 差异
+## 术语速查
 
-- ★ 新增 B4 SCO 锁定 + B5 防挂机（v0.4.0 核心新增）
-- ★ 新增 E4 AI 自主出题放答疑（0.3.3 原计划"每 5 分钟一次"被否，改为内容逻辑驱动）
-- 0.3.3 A1.2.4 待确认（KGP 未设计互动时 fallback）→ v0.4.0 已明确：由 AI 自主
-- 场域内 AI 正式命名为 Neo（0.3.3 无统一命名）
+- **AOM** = 平台结构化内容模型（Project / Course / Activity / SCO / Segment 五层）
+- **scoFlow** = Activity 内 SCO 的执行序列（KGP 在脚本中定义）
+- **blueprint + rule** = SCO 的教学意图 + 交互规则（KGP 定义）
+- **referenceSlots** = AI 讲解时引用学员真实场景的插槽（数据来自 FEEDBACK_COLLECT 记忆）
+- **separateTag / groupKey / tutorMode** = L2 自适应的标签 / 版本槽位 / SCO 级开关（见 `10.F`）
+- **memory_id** = 跨 SCO 数据关联 ID（主定义见 `07.N3`）
 
 ---
 
