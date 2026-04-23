@@ -167,6 +167,44 @@ Neo 在复盘中指出："你第 3 轮改变策略后，张总的态度明显缓
 
 ---
 
+## 反向补充：笔记悬浮球跨页同步
+
+原设计：笔记悬浮球在各场域独立记录。
+
+demo 演化为：**通过 localStorage 跨页实时同步**：
+
+- 场域中记笔记 → 写入 localStorage
+- 大厅笔记库读取 localStorage 渲染
+- 跨 Tab/跨页保持一致
+- 每条笔记带 `source: ActivityID·zoneType` 字段
+- 按时间倒序显示
+
+### 笔记数据结构
+
+```json
+{
+  "id": "n" + timestamp,
+  "title": "自我归因策略要点",
+  "source": "A3·授课",
+  "sourceDetail": {
+    "activityId": "A3",
+    "activityName": "重构被动型员工",
+    "zone": "lecture",
+    "scoId": "sco-06"  // 可选
+  },
+  "date": "4/20",
+  "content": "自我归因的核心是...",
+  "tags": ["策略","GROW"]
+}
+```
+
+### 笔记悬浮球视觉
+- 原设计：amber 色球
+- demo 更新：cyan→violet 渐变球（与品牌色统一）
+- 图标：notebook-pen（替代原 edit-3）
+
+---
+
 ## 本期不做的功能
 
 - 笔记与授课内容打通——不关联课程时间点，不在笔记中跳转到课程位置
