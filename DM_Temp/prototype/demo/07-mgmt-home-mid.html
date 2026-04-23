@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>睿学 · 管理端 · 首页（运营中）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        base: { 900:'#07080C', 800:'#0A0B10', 700:'#0E1016', 600:'#12141C', 500:'#181B25', 400:'#1F232F', 300:'#2A2F3E' },
+        ink:  { 100:'#F1F3F8', 200:'#E6E8EE', 300:'#C4C8D4', 400:'#8B92A5', 500:'#6A7085', 600:'#4A5061', 700:'#353A48' },
+        cyan: { 300:'#67E8F9', 400:'#22D3EE', 500:'#06B6D4', 600:'#0891B2' },
+        violet: { 300:'#C4B5FD', 400:'#A78BFA', 500:'#8B5CF6', 600:'#7C3AED' },
+        amber: { 300:'#FCD34D', 400:'#F4A855', 500:'#F59E0B' },
+        emerald: { 400:'#34D399' },
+        rose: { 400:'#FB7185', 500:'#F43F5E' },
+      },
+      fontFamily: { sans: ['Inter','-apple-system','PingFang SC','HarmonyOS Sans SC','Microsoft YaHei','sans-serif'], mono: ['JetBrains Mono','ui-monospace','Consolas','monospace'] },
+      boxShadow: { 'glow-cyan':'0 0 24px rgba(34,211,238,0.35)', 'glow-violet':'0 0 24px rgba(167,139,250,0.30)', 'glow-amber':'0 0 20px rgba(244,168,85,0.30)' },
+      animation: { breathe: 'breathe 4s ease-in-out infinite', aurora:  'aurora 18s ease-in-out infinite' },
+      keyframes: {
+        breathe: { '0%,100%': { opacity:'0.85', filter:'brightness(1)' }, '50%': { opacity:'1', filter:'brightness(1.25)' } },
+        aurora:  { '0%,100%': { transform:'translate3d(0,0,0) scale(1)' }, '50%': { transform:'translate3d(30px,-20px,0) scale(1.08)' } },
+      },
+    },
+  },
+}
+</script>
+<style>
+html,body { height:100%; margin:0; background:#0A0B10; color:#E6E8EE; font-family:Inter,-apple-system,'PingFang SC',sans-serif; -webkit-font-smoothing:antialiased; letter-spacing:-0.01em; }
+::selection { background: rgba(167,139,250,0.35); color:#fff; }
+.aurora-bg { position:relative; isolation:isolate; }
+.aurora-bg::before, .aurora-bg::after { content:''; position:fixed; inset:0; z-index:-1; pointer-events:none; }
+.aurora-bg::before {
+  background:
+    radial-gradient(60% 45% at 12% 12%, rgba(34,211,238,0.18) 0%, transparent 60%),
+    radial-gradient(55% 50% at 92% 88%, rgba(167,139,250,0.22) 0%, transparent 60%),
+    radial-gradient(40% 30% at 80% 15%, rgba(244,168,85,0.10) 0%, transparent 60%),
+    linear-gradient(180deg, #0A0B10 0%, #07080C 100%);
+  animation: aurora 18s ease-in-out infinite;
+}
+.aurora-bg::after {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.25 0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.6'/></svg>");
+  opacity:0.04; mix-blend-mode:overlay;
+}
+.glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border:1px solid rgba(255,255,255,0.06); box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.04); }
+.glass-strong { background: rgba(24,27,37,0.94); backdrop-filter: blur(28px); border:1px solid rgba(255,255,255,0.1); box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.06), 0 24px 60px -20px rgba(0,0,0,0.6); }
+.card { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border:1px solid rgba(255,255,255,0.06); border-radius: 1rem; box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.04); }
+.hairline { border-color: rgba(255,255,255,0.06); }
+.chip { display:inline-flex; align-items:center; gap:4px; border-radius:999px; padding: 2px 8px; font-size:11px; font-weight:500; letter-spacing:-0.01em; }
+.scrollbar-thin::-webkit-scrollbar { width:6px; height:6px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius:999px; }
+.fade-in { animation: fadeIn 0.3s ease-out both; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+[data-lucide] { width:1em; height:1em; }
+.hm-cell { width:18px; height:18px; border-radius:4px; border:1px solid rgba(255,255,255,0.04); }
+.ora-avatar { display:inline-flex; align-items:center; justify-content:center; overflow:hidden; background:linear-gradient(135deg,#F4A855,#F59E0B); color:#0A0B10; }
+</style>
+</head>
+<body class="aurora-bg h-full">
+
+<template id="oraSvg">
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+  <defs>
+    <radialGradient id="ora-bg" cx="0.5" cy="0.4" r="0.7"><stop offset="0" stop-color="#FCD34D"/><stop offset="1" stop-color="#F59E0B"/></radialGradient>
+  </defs>
+  <rect width="64" height="64" fill="url(#ora-bg)"/>
+  <!-- abstract amber orb -->
+  <circle cx="32" cy="32" r="16" fill="#FDE68A" opacity="0.6"/>
+  <circle cx="32" cy="32" r="10" fill="#FFF8E1"/>
+  <!-- spark -->
+  <path d="M32 22 l2 6 6 2 -6 2 -2 6 -2 -6 -6 -2 6 -2z" fill="#F59E0B"/>
+</svg>
+</template>
+
+<div class="h-full flex flex-col">
+
+  <!-- TOPBAR -->
+  <header class="h-14 shrink-0 px-5 flex items-center justify-between z-30 border-b hairline backdrop-blur-xl" style="background: rgba(10,11,16,0.6)">
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2">
+        <div class="relative h-8 w-8 rounded-xl flex items-center justify-center shadow-glow-violet" style="background: linear-gradient(135deg,#22D3EE,#8B5CF6)">
+          <i data-lucide="sparkles" class="h-4 w-4" style="color:#0A0B10;stroke-width:2.4"></i>
+        </div>
+        <span class="text-[13px] font-medium text-ink-100">睿学 · 管理端</span>
+      </div>
+      <span class="h-4 w-px bg-white/10"></span>
+      <span class="chip bg-white/[0.04] text-ink-300 border border-white/5">运营中</span>
+      <span id="proj-name" class="text-[11px] text-ink-500 hidden xl:inline font-mono">A公司基层管理者发展项目 · W5/16</span>
+    </div>
+    <div class="flex items-center gap-1">
+      <div class="relative">
+        <button onclick="toggle('user')" class="flex items-center gap-2 rounded-lg p-0.5 pr-2 hover:bg-white/[0.05] transition">
+          <div id="adm-avatar" class="h-7 w-7 rounded-lg flex items-center justify-center text-[11px] font-semibold shadow-glow-cyan" style="background:linear-gradient(135deg,#22D3EE,#06B6D4);color:#0A0B10">张</div>
+          <span id="adm-name" class="text-xs text-ink-300 hidden md:inline">张磊</span>
+        </button>
+        <div id="user" class="hidden absolute right-0 mt-2 w-56 glass-strong rounded-xl p-1.5 z-50 fade-in">
+          <div class="px-3 py-2 border-b hairline">
+            <div id="menu-name" class="text-xs font-medium text-ink-100">张磊</div>
+            <div class="text-[10px] text-ink-400 mt-0.5">区域销售主管 · 兼管理员</div>
+          </div>
+          <div class="flex items-center gap-2 px-2.5 py-1.5 text-xs text-ink-300 rounded-md hover:bg-white/[0.05] cursor-pointer"><i data-lucide="user" class="h-3.5 w-3.5"></i>账号管理</div>
+          <div class="flex items-center gap-2 px-2.5 py-1.5 text-xs text-ink-300 rounded-md hover:bg-white/[0.05] cursor-pointer"><i data-lucide="help-circle" class="h-3.5 w-3.5"></i>帮助</div>
+          <div class="relative" onmouseenter="document.getElementById('portSub').classList.remove('hidden')" onmouseleave="document.getElementById('portSub').classList.add('hidden')">
+            <div class="flex items-center justify-between px-2.5 py-1.5 text-xs text-ink-300 rounded-md hover:bg-white/[0.05] cursor-pointer">
+              <span class="inline-flex items-center gap-2"><i data-lucide="repeat" class="h-3.5 w-3.5"></i>端口切换</span>
+              <i data-lucide="chevron-right" class="h-3 w-3 text-ink-500"></i>
+            </div>
+            <div id="portSub" class="hidden absolute left-full top-0 ml-1 w-44 glass-strong rounded-xl p-1.5 z-50 fade-in">
+              <a href="02-hall-mid.html" class="flex items-center gap-2 px-2.5 py-1.5 text-xs text-ink-300 rounded-md hover:bg-white/[0.05] cursor-pointer">
+                <span class="h-3 w-3"></span>学员端
+              </a>
+              <div class="flex items-center gap-2 px-2.5 py-1.5 text-xs text-ink-500 rounded-md cursor-default">
+                <i data-lucide="check" class="h-3 w-3 text-cyan-300"></i>管理端
+                <span class="chip bg-cyan-400/5 text-cyan-300 border border-cyan-400/20 text-[9px] ml-auto">当前</span>
+              </div>
+            </div>
+          </div>
+          <div class="my-1 border-t hairline"></div>
+          <a href="01-login.html" class="flex items-center gap-2 px-2.5 py-1.5 text-xs rounded-md hover:bg-white/[0.05] cursor-pointer text-rose-400"><i data-lucide="log-out" class="h-3.5 w-3.5"></i>退出登录</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex-1 min-h-0 flex">
+
+    <!-- ICON NAV -->
+    <nav class="w-14 shrink-0 border-r hairline backdrop-blur-md flex flex-col items-center py-4 gap-1.5" style="background:rgba(10,11,16,0.4)">
+      <a href="07-mgmt-home-mid.html" class="group relative h-10 w-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-cyan-400/20 to-violet-500/20 text-cyan-300 ring-1 ring-cyan-400/20 shadow-glow-cyan">
+        <i data-lucide="layout-grid" class="h-4 w-4"></i>
+        <span class="pointer-events-none absolute left-full ml-2 whitespace-nowrap rounded-md border hairline backdrop-blur px-2 py-1 text-[11px] text-ink-200 opacity-0 group-hover:opacity-100 transition z-50" style="background:rgba(14,16,22,0.9)">首页</span>
+      </a>
+      <a href="08-mgmt-report.html" class="group relative h-10 w-10 rounded-xl flex items-center justify-center text-ink-400 hover:text-ink-100 hover:bg-white/[0.04] transition">
+        <i data-lucide="file-text" class="h-4 w-4"></i>
+        <span class="pointer-events-none absolute left-full ml-2 whitespace-nowrap rounded-md border hairline backdrop-blur px-2 py-1 text-[11px] text-ink-200 opacity-0 group-hover:opacity-100 transition z-50" style="background:rgba(14,16,22,0.9)">报告</span>
+      </a>
+      <a href="09-mgmt-message.html" class="group relative h-10 w-10 rounded-xl flex items-center justify-center text-ink-400 hover:text-ink-100 hover:bg-white/[0.04] transition">
+        <i data-lucide="mail" class="h-4 w-4"></i>
+        <span class="pointer-events-none absolute left-full ml-2 whitespace-nowrap rounded-md border hairline backdrop-blur px-2 py-1 text-[11px] text-ink-200 opacity-0 group-hover:opacity-100 transition z-50" style="background:rgba(14,16,22,0.9)">消息</span>
+      </a>
+      <a href="10-mgmt-config.html" class="group relative h-10 w-10 rounded-xl flex items-center justify-center text-ink-400 hover:text-ink-100 hover:bg-white/[0.04] transition">
+        <i data-lucide="settings" class="h-4 w-4"></i>
+        <span class="pointer-events-none absolute left-full ml-2 whitespace-nowrap rounded-md border hairline backdrop-blur px-2 py-1 text-[11px] text-ink-200 opacity-0 group-hover:opacity-100 transition z-50" style="background:rgba(14,16,22,0.9)">配置</span>
+      </a>
+    </nav>
+
+    <!-- MAIN -->
+    <main class="flex-1 min-w-0 overflow-y-auto scrollbar-thin">
+      <div class="px-6 py-5 space-y-6">
+
+        <!-- KPI CARDS -->
+        <div class="grid grid-cols-3 gap-4">
+          <div class="card p-4">
+            <div class="text-[10px] text-cyan-300 font-mono tracking-[0.15em] uppercase mb-2">项目进度</div>
+            <div class="text-2xl font-bold text-ink-100">32%</div>
+            <div class="text-[11px] text-ink-500 mt-1">42天 / 180天</div>
+            <div class="mt-2 h-[3px] rounded-full bg-white/5 overflow-hidden">
+              <div class="h-full rounded-full" style="width:32%;background:linear-gradient(90deg,#22D3EE,#A78BFA)"></div>
+            </div>
+            <div class="text-[10px] text-ink-500 mt-1.5">项目整体进度（32人平均）</div>
+          </div>
+          <div class="card p-4">
+            <div class="text-[10px] text-violet-300 font-mono tracking-[0.15em] uppercase mb-2">学员活跃</div>
+            <div class="text-2xl font-bold text-ink-100">25<span class="text-sm text-ink-400 font-normal"> / 32人</span></div>
+            <div class="flex items-center gap-1 mt-1">
+              <span class="text-[11px] text-rose-400 flex items-center gap-0.5"><i data-lucide="trending-down" class="h-3 w-3"></i>0.4天/人</span>
+              <span class="text-[11px] text-ink-500">环比</span>
+            </div>
+          </div>
+          <div class="card p-4">
+            <div class="text-[10px] text-emerald-400 font-mono tracking-[0.15em] uppercase mb-2">学员概览</div>
+            <div class="text-2xl font-bold text-ink-100">32<span class="text-sm text-ink-400 font-normal">人在学</span></div>
+            <div class="flex gap-2 mt-2">
+              <span class="chip bg-emerald-400/10 text-emerald-400 border border-emerald-400/20">活跃 25</span>
+              <span class="chip bg-amber-400/10 text-amber-400 border border-amber-400/20">风险 4</span>
+              <span class="chip bg-ink-600/30 text-ink-400 border border-white/5">沉默 3</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- HEATMAPS -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="card p-4">
+            <div class="text-[10px] text-cyan-300 font-mono tracking-[0.15em] uppercase mb-3">日活热力图</div>
+            <div class="flex gap-1.5">
+              <div class="flex flex-col gap-1.5 text-[9px] text-ink-600 font-mono mr-1 justify-between" style="padding-top:2px;padding-bottom:2px;">
+                <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+              </div>
+              <div id="heatmap-active" class="flex gap-1.5"></div>
+            </div>
+            <div class="text-[10px] text-ink-500 mt-2 leading-relaxed">颜色越深代表当日登录人数越多（0 → 20+ 人/日）</div>
+          </div>
+          <div class="card p-4">
+            <div class="text-[10px] text-violet-300 font-mono tracking-[0.15em] uppercase mb-3">学习投入度热力图</div>
+            <div class="flex gap-1.5">
+              <div class="flex flex-col gap-1.5 text-[9px] text-ink-600 font-mono mr-1 justify-between" style="padding-top:2px;padding-bottom:2px;">
+                <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+              </div>
+              <div id="heatmap-intensity" class="flex gap-1.5"></div>
+            </div>
+            <div class="text-[10px] text-ink-500 mt-2 leading-relaxed">颜色越深代表当日学习时长越长（0 → 60+ 分钟/人）</div>
+          </div>
+        </div>
+
+        <!-- LEARNER LIST -->
+        <div>
+          <div class="flex items-baseline gap-3 mb-3">
+            <div class="text-[10px] text-cyan-300 font-mono tracking-[0.15em] uppercase">学员列表 · LEARNERS</div>
+            <span class="text-[11px] text-ink-500 font-mono">32人</span>
+          </div>
+          <div class="card overflow-hidden">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="border-b hairline text-left">
+                  <th class="px-4 py-3 text-[11px] text-ink-500 font-medium font-mono">姓名</th>
+                  <th class="px-4 py-3 text-[11px] text-ink-500 font-medium font-mono">部门</th>
+                  <th class="px-4 py-3 text-[11px] text-ink-500 font-medium font-mono">进度</th>
+                  <th class="px-4 py-3 text-[11px] text-ink-500 font-medium font-mono">最近登录</th>
+                  <th class="px-4 py-3 text-[11px] text-ink-500 font-medium font-mono">状态</th>
+                </tr>
+              </thead>
+              <tbody id="learner-table"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- CONTENT COMPLETION -->
+        <div>
+          <div class="flex items-baseline gap-3 mb-3">
+            <div class="text-[10px] text-amber-300 font-mono tracking-[0.15em] uppercase">内容完成率 · CONTENT</div>
+          </div>
+          <div class="card p-5 mb-4">
+            <div class="space-y-3">
+              <div class="flex items-center gap-3">
+                <span class="text-xs text-ink-300 w-24 shrink-0 text-right">辅导型管理</span>
+                <div class="flex-1 h-6 rounded-lg bg-white/5 overflow-hidden relative">
+                  <div class="h-full rounded-lg flex items-center px-2" style="width:58%;background:linear-gradient(90deg,#22D3EE,#06B6D4)">
+                    <span class="text-[10px] font-mono font-bold" style="color:#0A0B10">58%</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-xs text-ink-300 w-24 shrink-0 text-right">横向协作</span>
+                <div class="flex-1 h-6 rounded-lg bg-white/5 overflow-hidden relative">
+                  <div class="h-full rounded-lg flex items-center px-2" style="width:32%;background:linear-gradient(90deg,#A78BFA,#8B5CF6)">
+                    <span class="text-[10px] font-mono font-bold" style="color:#0A0B10">32%</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-xs text-ink-300 w-24 shrink-0 text-right">向上沟通</span>
+                <div class="flex-1 h-6 rounded-lg bg-white/5 overflow-hidden relative">
+                  <div class="h-full rounded-lg" style="width:0%"></div>
+                  <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] font-mono text-ink-500">0%</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-xs text-ink-300 w-24 shrink-0 text-right">团队激励</span>
+                <div class="flex-1 h-6 rounded-lg bg-white/5 overflow-hidden relative">
+                  <div class="h-full rounded-lg" style="width:0%"></div>
+                  <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] font-mono text-ink-500">0%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="py-6 text-center text-[10px] text-ink-600 font-mono tracking-wider">· MGMT · HOME MID · v0.4 ·</footer>
+      </div>
+    </main>
+
+    <!-- ORA CHAT -->
+    <aside class="w-[400px] shrink-0 border-l hairline backdrop-blur-md flex flex-col" style="background:rgba(10,11,16,0.4)">
+      <div class="px-5 pt-4 pb-3 border-b hairline">
+        <div class="flex items-center gap-3">
+          <div class="relative">
+            <div id="ora-header-avatar" class="ora-avatar h-10 w-10 rounded-xl shadow-glow-amber"></div>
+            <span class="absolute inset-0 rounded-xl animate-breathe" style="background:rgba(244,168,85,0.2)"></span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <span class="text-sm font-medium text-ink-100">Ora</span>
+            <div class="text-[10px] text-ink-500 font-mono">运营助理</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex-1 overflow-y-auto scrollbar-thin px-5 py-5 space-y-5">
+        <div class="flex gap-2.5">
+          <div class="ora-avatar h-7 w-7 rounded-lg shrink-0 shadow-glow-amber"></div>
+          <div class="max-w-[84%] space-y-1.5 min-w-0">
+            <div class="rounded-2xl px-4 py-3 text-sm leading-relaxed text-ink-100 whitespace-pre-wrap relative overflow-hidden" style="background:linear-gradient(135deg,rgba(244,168,85,0.08),rgba(245,158,11,0.04));border:1px solid rgba(244,168,85,0.2);border-top-left-radius:0.375rem">
+              <div class="absolute -top-10 -right-10 h-32 w-32 rounded-full blur-2xl pointer-events-none" style="background:rgba(244,168,85,0.1)"></div>
+              <span class="relative">上午好张磊！本项目当前32人在学，上周平均活跃3.2天/人，环比下降0.4天。有什么想了解的？</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex justify-end gap-2">
+          <div class="max-w-[82%]">
+            <div class="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed text-ink-100 whitespace-pre-wrap" style="background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.25);border-top-right-radius:0.375rem">上周进度提升最快的3个人是谁？</div>
+          </div>
+          <div class="h-7 w-7 rounded-lg flex items-center justify-center shrink-0 text-[11px] font-medium border border-white/10" style="background:rgba(255,255,255,0.06);color:#E6E8EE">张</div>
+        </div>
+        <div class="flex gap-2.5">
+          <div class="ora-avatar h-7 w-7 rounded-lg shrink-0 shadow-glow-amber"></div>
+          <div class="max-w-[84%] space-y-1.5 min-w-0">
+            <div class="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed border border-white/[0.08] text-ink-100 whitespace-pre-wrap" style="background:rgba(255,255,255,0.04);border-top-left-radius:0.375rem">根据截至4/22的数据：
+<span class="text-cyan-300 font-medium">1. 张磊</span>  22% → 35%（+13%）
+<span class="text-cyan-300 font-medium">2. 王红</span>  25% → 38%（+13%）
+<span class="text-cyan-300 font-medium">3. 陈思</span>  22% → 35%（+13%）</div>
+          </div>
+        </div>
+        <div class="flex justify-end gap-2">
+          <div class="max-w-[82%]">
+            <div class="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed text-ink-100 whitespace-pre-wrap" style="background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.25);border-top-right-radius:0.375rem">李婷的情况需要关注吗？</div>
+          </div>
+          <div class="h-7 w-7 rounded-lg flex items-center justify-center shrink-0 text-[11px] font-medium border border-white/10" style="background:rgba(255,255,255,0.06);color:#E6E8EE">张</div>
+        </div>
+        <div class="flex gap-2.5">
+          <div class="ora-avatar h-7 w-7 rounded-lg shrink-0 shadow-glow-amber"></div>
+          <div class="max-w-[84%] space-y-1.5 min-w-0">
+            <div class="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed border border-white/[0.08] text-ink-100 whitespace-pre-wrap" style="background:rgba(255,255,255,0.04);border-top-left-radius:0.375rem"><span class="text-rose-400 font-medium">李婷</span>连续5天未登录，进度18%低于平均（28%）。建议发送催学消息或安排一对一沟通。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-3 border-t hairline">
+        <div class="rounded-2xl overflow-hidden border border-white/10 focus-within:border-amber-400/40 transition" style="background:rgba(255,255,255,0.02)">
+          <textarea placeholder="问 Ora 任何运营问题..." class="w-full bg-transparent px-4 py-3 text-sm text-ink-100 placeholder:text-ink-500 outline-none resize-none h-[60px] scrollbar-thin"></textarea>
+          <div class="flex items-center justify-between px-3 py-2 border-t hairline">
+            <span class="text-[10px] text-ink-500 font-mono">Enter 发送 · Shift+Enter 换行</span>
+            <button class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] font-medium transition shadow-glow-amber hover:brightness-110" style="background:linear-gradient(135deg,#F4A855,#F59E0B);color:#0A0B10"><i data-lucide="send" class="h-3 w-3"></i>发送</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script>
+function toggle(id){ const el=document.getElementById(id); if(el) el.classList.toggle('hidden'); }
+document.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ ['user'].forEach(id=>{ const el=document.getElementById(id); if(el&&!el.classList.contains('hidden')) el.classList.add('hidden'); }); } });
+
+// [#10] Dropdown 外部点击关闭（用户菜单 + 端口切换子菜单）
+document.addEventListener('click', (e) => {
+  const userMenu = document.getElementById('user');
+  if (userMenu && !userMenu.classList.contains('hidden')) {
+    // 找到触发按钮（头像按钮）
+    const trigger = document.querySelector('button[onclick*="toggle(\'user\')"]');
+    if (!userMenu.contains(e.target) && (!trigger || !trigger.contains(e.target))) {
+      userMenu.classList.add('hidden');
+      // 同时收起二级菜单
+      const sub = document.getElementById('portSub');
+      if (sub) sub.classList.add('hidden');
+    }
+  }
+});
+
+// ---------- Mock learners (32 total, show 12 with diversity) ----------
+const MOCK_LEARNERS = [
+  { name:'张磊', dept:'销售部', progress:42, lastLogin:'今天 09:12', status:'active' },
+  { name:'王红', dept:'市场部', progress:38, lastLogin:'今天 08:45', status:'active' },
+  { name:'陈思', dept:'人力部', progress:35, lastLogin:'昨天 21:30', status:'active' },
+  { name:'刘军', dept:'技术部', progress:28, lastLogin:'昨天 14:20', status:'active' },
+  { name:'赵强', dept:'销售部', progress:32, lastLogin:'今天 08:10', status:'active' },
+  { name:'孙丽', dept:'市场部', progress:30, lastLogin:'昨天 18:20', status:'active' },
+  { name:'周翔', dept:'技术部', progress:28, lastLogin:'昨天 11:30', status:'active' },
+  { name:'吴芳', dept:'运营部', progress:26, lastLogin:'昨天 09:40', status:'active' },
+  { name:'李婷', dept:'财务部', progress:18, lastLogin:'4/17（5天前）', status:'at_risk' },
+  { name:'钱华', dept:'人力部', progress:22, lastLogin:'4/18（4天前）', status:'at_risk' },
+  { name:'周明', dept:'运营部', progress:12, lastLogin:'4/12（10天前）', status:'inactive' },
+  { name:'孙洋', dept:'财务部', progress:10, lastLogin:'4/11（11天前）', status:'inactive' },
+];
+
+const statusMap = {
+  active: { label:'活跃', cls:'bg-emerald-400/10 text-emerald-400 border-emerald-400/20' },
+  at_risk: { label:'风险', cls:'bg-rose-400/10 text-rose-400 border-rose-400/20' },
+  inactive: { label:'沉默', cls:'bg-ink-600/30 text-ink-400 border-white/5' },
+};
+
+function renderLearners() {
+  const tbody = document.getElementById('learner-table');
+  tbody.innerHTML = '';
+  MOCK_LEARNERS.forEach((l) => {
+    const s = statusMap[l.status];
+    const tr = document.createElement('tr');
+    tr.className = 'border-b hairline hover:bg-white/[0.02] transition';
+    tr.innerHTML = `
+      <td class="px-4 py-3 text-ink-200 font-medium">${l.name}</td>
+      <td class="px-4 py-3 text-ink-400 text-xs">${l.dept}</td>
+      <td class="px-4 py-3">
+        <div class="flex items-center gap-2">
+          <div class="w-16 h-1.5 rounded-full bg-white/5 overflow-hidden">
+            <div class="h-full rounded-full" style="width:${l.progress}%;background:linear-gradient(90deg,#22D3EE,#A78BFA)"></div>
+          </div>
+          <span class="text-ink-300 font-mono text-xs">${l.progress}%</span>
+        </div>
+      </td>
+      <td class="px-4 py-3 text-ink-400 text-xs font-mono">${l.lastLogin}</td>
+      <td class="px-4 py-3"><span class="chip border ${s.cls}">${s.label}</span></td>
+    `;
+    tbody.appendChild(tr);
+  });
+  // 摘要行：其余 20 人
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td colspan="5" class="px-4 py-3 text-center text-[11px] text-ink-500 font-mono">… 其余 20 名学员</td>`;
+  tbody.appendChild(tr);
+}
+
+function buildHeatmap(id, baseColor) {
+  const grid = document.getElementById(id);
+  const levels = [0.05, 0.12, 0.25, 0.45, 0.7];
+  const data = [[3,4,3,4,2,1,0],[4,3,4,3,3,1,0],[3,2,3,2,2,0,0],[2,2,1,1,0,0,0]];
+  for (let w = 0; w < 4; w++) {
+    const col = document.createElement('div');
+    col.className = 'flex flex-col gap-1.5';
+    for (let d = 0; d < 7; d++) {
+      const cell = document.createElement('div');
+      cell.className = 'hm-cell';
+      const level = data[w][d];
+      cell.style.background = baseColor.replace('A', levels[level]);
+      col.appendChild(cell);
+    }
+    grid.appendChild(col);
+  }
+}
+
+function applyOraAvatar() {
+  const tpl = document.getElementById('oraSvg').innerHTML;
+  document.querySelectorAll('.ora-avatar').forEach(el => el.innerHTML = tpl);
+}
+
+(function init() {
+  // Set current account marker
+  localStorage.setItem('srxCurrentAccount', 'zhanglei');
+  // Pull learner info from state if exists
+  try {
+    const s = JSON.parse(localStorage.getItem('srxDemoState_zhanglei') || '{}');
+    const learner = s.learner || {};
+    if (learner.initial) document.getElementById('adm-avatar').textContent = learner.initial;
+    if (learner.name) {
+      document.getElementById('adm-name').textContent = learner.name;
+      document.getElementById('menu-name').textContent = learner.name;
+    }
+  } catch(e) {}
+  renderLearners();
+  buildHeatmap('heatmap-active', 'rgba(34,211,238,A)');
+  buildHeatmap('heatmap-intensity', 'rgba(167,139,250,A)');
+  applyOraAvatar();
+  lucide.createIcons();
+})();
+</script>
+</body>
+</html>

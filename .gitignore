@@ -1,1 +1,6 @@
 .claude/rules/sdd/
+
+# Playwright MCP cache and root-level screenshots
+.playwright-mcp/
+/*.png
+DM_Temp/prototype/ref/neo-female-options/

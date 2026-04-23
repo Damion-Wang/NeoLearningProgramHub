@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Segment 1.1",
+    "url": "https://stc.yxt.com/aitutor/b777972b-7ae5-416f-9777-ce15108e8e3c.jpg"
+  },
+  {
+    "name": "Segment 2.1",
+    "url": "https://stc.yxt.com/aitutor/d5b636aa-2a03-47d9-96e8-26aea64330ae.jpg"
+  },
+  {
+    "name": "Segment 2.2",
+    "url": "https://stc.yxt.com/aitutor/51de804e-e46e-4eaa-8168-b7b913f6aba4.jpg"
+  },
+  {
+    "name": "Segment 3.1",
+    "url": "https://stc.yxt.com/aitutor/9a39ec57-028e-46ca-9d81-ed7afadceab9.jpg"
+  },
+  {
+    "name": "Segment 4.1",
+    "url": "https://stc.yxt.com/aitutor/cade11f3-d1f5-4ed0-ab25-0ccbf2def331.jpg"
+  },
+  {
+    "name": "Segment 4.2",
+    "url": "https://stc.yxt.com/aitutor/53df8606-9830-45f6-8917-c4acc7eafc2a.jpg"
+  },
+  {
+    "name": "Segment 5.1",
+    "url": "https://stc.yxt.com/aitutor/f31b6aa1-ca24-419b-93d4-54062ac33d36.jpg"
+  },
+  {
+    "name": "Segment 6.1",
+    "url": "https://stc.yxt.com/aitutor/cd890c5e-b986-48d7-8f99-7447a9813933.jpg"
+  },
+  {
+    "name": "Segment 6.2",
+    "url": "https://stc.yxt.com/aitutor/65a5a41c-6709-4cc3-8a14-4e3bfe16f362.jpg"
+  },
+  {
+    "name": "Segment 6.3",
+    "url": "https://stc.yxt.com/aitutor/e9a1ae85-8d06-48b4-9ecb-b47810225b1a.jpg"
+  },
+  {
+    "name": "Segment 7.1",
+    "url": "https://stc.yxt.com/aitutor/7b0b4805-2429-4e63-a2b0-9abbab18826a.jpg"
+  },
+  {
+    "name": "Segment 8.1",
+    "url": "https://stc.yxt.com/aitutor/49a69a93-430e-4401-8c49-8a1bf6d2219f.jpg"
+  },
+  {
+    "name": "Segment 8.2",
+    "url": "https://stc.yxt.com/aitutor/b5f1b9d1-35b9-4130-8e85-b06e5ceb4e35.jpg"
+  },
+  {
+    "name": "Segment 9.1",
+    "url": "https://stc.yxt.com/aitutor/0ae0b17f-4253-4fc8-b588-82c747d065e0.jpg"
+  },
+  {
+    "name": "Segment 10.1",
+    "url": "https://stc.yxt.com/aitutor/d4bfb53d-b047-4330-a6e6-89d07c2b61ec.jpg"
+  }
+]

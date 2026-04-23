@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>睿学 · 管理端 · 配置</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        base: { 900:'#07080C', 800:'#0A0B10', 700:'#0E1016', 600:'#12141C', 500:'#181B25', 400:'#1F232F', 300:'#2A2F3E' },
+        ink:  { 100:'#F1F3F8', 200:'#E6E8EE', 300:'#C4C8D4', 400:'#8B92A5', 500:'#6A7085', 600:'#4A5061', 700:'#353A48' },
+        cyan: { 300:'#67E8F9', 400:'#22D3EE', 500:'#06B6D4' },
+        violet: { 300:'#C4B5FD', 400:'#A78BFA', 500:'#8B5CF6' },
+        amber: { 300:'#FCD34D', 400:'#F4A855', 500:'#F59E0B' },
+        emerald: { 400:'#34D399' },
+        rose: { 400:'#FB7185' },
+      },
+      fontFamily: { sans: ['Inter','-apple-system','PingFang SC','HarmonyOS Sans SC','Microsoft YaHei','sans-serif'], mono: ['JetBrains Mono','ui-monospace','Consolas','monospace'] },
+      boxShadow: { 'glow-cyan':'0 0 24px rgba(34,211,238,0.35)', 'glow-violet':'0 0 24px rgba(167,139,250,0.30)' },
+      animation: { aurora:  'aurora 18s ease-in-out infinite' },
+      keyframes: { aurora:  { '0%,100%': { transform:'translate3d(0,0,0) scale(1)' }, '50%': { transform:'translate3d(30px,-20px,0) scale(1.08)' } } },
+    },
+  },
+}
+</script>
+<style>
+html,body { height:100%; margin:0; background:#0A0B10; color:#E6E8EE; font-family:Inter,-apple-system,'PingFang SC',sans-serif; -webkit-font-smoothing:antialiased; letter-spacing:-0.01em; }
+.aurora-bg { position:relative; isolation:isolate; }
+.aurora-bg::before, .aurora-bg::after { content:''; position:fixed; inset:0; z-index:-1; pointer-events:none; }
+.aurora-bg::before {
+  background:
+    radial-gradient(60% 45% at 12% 12%, rgba(34,211,238,0.18) 0%, transparent 60%),
+    radial-gradient(55% 50% at 92% 88%, rgba(167,139,250,0.22) 0%, transparent 60%),
+    radial-gradient(40% 30% at 80% 15%, rgba(244,168,85,0.10) 0%, transparent 60%),
+    linear-gradient(180deg, #0A0B10 0%, #07080C 100%);
+  animation: aurora 18s ease-in-out infinite;
+}
+.aurora-bg::after {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.25 0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.6'/></svg>");
+  opacity:0.04; mix-blend-mode:overlay;
+}
+.glass-strong { background: rgba(24,27,37,0.94); backdrop-filter: blur(28px); border:1px solid rgba(255,255,255,0.1); }
+.card { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border:1px solid rgba(255,255,255,0.06); border-radius: 1rem; box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.04); }
+.hairline { border-color: rgba(255,255,255,0.06); }
+.chip { display:inline-flex; align-items:center; gap:4px; border-radius:999px; padding: 2px 8px; font-size:11px; font-weight:500; letter-spacing:-0.01em; }
+.scrollbar-thin::-webkit-scrollbar { width:6px; height:6px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius:999px; }
+.fade-in { animation: fadeIn 0.3s ease-out both; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+[data-lucide] { width:1em; height:1em; }
+input[type="checkbox"] { accent-color: #22D3EE; }
+.sub-nav-link { display:block; padding:6px 12px; font-size:13px; color:#6A7085; border-radius:8px; transition:all 0.15s; border-left:2px solid transparent; cursor:pointer;}
+.sub-nav-link:hover { color:#C4C8D4; background:rgba(255,255,255,0.02); }
+.sub-nav-link.active { color:#22D3EE; border-left-color:#22D3EE; background:rgba(34,211,238,0.05); }
+.form-input { width:100%; background:rgba(18,20,28,1); border:1px solid rgba(53,58,72,1); border-radius:10px; padding:8px 12px; font-size:13px; color:#E6E8EE; outline:none; transition:border-color 0.2s; }
+.form-input:focus { border-color: rgba(34,211,238,0.5); box-shadow: 0 0 0 3px rgba(34,211,238,0.1); }
+.toggle { position:relative; width:44px; height:24px; border-radius:999px; cursor:pointer; transition:background 0.3s; }
+.toggle.on { background:linear-gradient(135deg,#22D3EE,#06B6D4); }
+.toggle.off { background:#353A48; }
+.toggle::after { content:''; position:absolute; top:2px; width:20px; height:20px; border-radius:50%; background:#fff; transition:left 0.3s; }
+.toggle.on::after { left:22px; }
+.toggle.off::after { left:2px; }
+.modal-overlay { position:fixed; inset:0; z-index:100; background:rgba(7,8,12,0.7); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; }
+.config-section { scroll-margin-top: 20px; }
+.locked .form-input, .locked select, .locked textarea, .locked button:not(.always-active), .locked .toggle { opacity:0.4; pointer-events:none; }
+</style>
+</head>
+<body class="aurora-bg h-full">
+<div class="h-full flex flex-col">
+
+  <!-- TOPBAR -->
+  <header class="h-14 shrink-0 px-5 flex items-center justify-between z-30 border-b hairline backdrop-blur-xl" style="background: rgba(10,11,16,0.6)">
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2">
+        <div class="relative h-8 w-8 rounded-xl flex items-center justify-center shadow-glow-violet" style="background: linear-gradient(135deg,#22D3EE,#8B5CF6)">
+          <i data-lucide="sparkles" class="h-4 w-4" style="color:#0A0B10;stroke-width:2.4"></i>
+        </div>
+        <span class="text-[13px] font-medium text-ink-100">睿学 · 管理端</span>
+      </div>
+      <span class="h-4 w-px bg-white/10"></span>
+      <span class="chip bg-white/[0.04] text-ink-300 border border-white/5">配置</span>
+    </div>
+    <div class="flex items-center gap-1">
+      <div class="relative">
+        <button onclick="toggle('user')" class="flex items-center gap-2 rounded-lg p-0.5 pr-2 hover:bg-white/[0.05] transition">
+          <div id="adm-avatar" class="h-7 w-7 rounded-lg flex items-center justify-center text-[11px] font-semibold shadow-glow-cyan" style="background:linear-gradient(135deg,#22D3EE,#06B6D4);color:#0A0B10">管</div>
+          <span id="adm-name" class="text-xs text-ink-300 hidden md:inline">管理员</span>
+        </button>
+        <div id="user" class="hidden absolute right-0 mt-2 w-56 glass-strong rounded-xl p-1.5 z-50 fade-in">
+          <div class="px-3 py-2 border-b hairline">
+            <div id="menu-name" class="text-xs font-medium text-ink-100">管理员</div>
+            <div class="text-[10px] text-ink-400 mt-0.5">运营 · 管理端</div>
+          </div>
+          <div class="flex items-center gap-2 px-2.5 py-1.5 text-xs text-ink-300 rounded-md hover:bg-white/[0.05] cursor-pointer"><i data-lucide="user" class="h-3.5 w-3.5"></i>账号管理</div>
+          <div class="flex items-center gap-2 px-2.5 py-1.5 text-xs text-ink-300 rounded-md hover:bg-white/[0.05] cursor-pointer"><i data-lucide="help-circle" class="h-3.5 w-3.5"></i>帮助</div>
+          <div class="relative" onmouseenter="document.getElementById('portSub').classList.remove('hidden')" onmouseleave="document.getElementById('portSub').classList.add('hidden')">
+            <div class="flex items-center justify-between px-2.5 py-1.5 text-xs text-ink-300 rounded-md hover:bg-white/[0.05] cursor-pointer">
+              <span class="inline-flex items-center gap-2"><i data-lucide="repeat" class="h-3.5 w-3.5"></i>端口切换</span>
+              <i data-lucide="chevron-right" class="h-3 w-3 text-ink-500"></i>
+            </div>
+            <div id="portSub" class="hidden absolute left-full top-0 ml-1 w-44 glass-strong rounded-xl p-1.5 z-50 fade-in">
+              <a id="learnerPortLink" href="02-hall-mid.html" class="flex items-center gap-2 px-2.5 py-1.5 text-xs text-ink-300 rounded-md hover:bg-white/[0.05] cursor-pointer">
+                <span class="h-3 w-3"></span>学员端
+              </a>
+              <div class="flex items-center gap-2 px-2.5 py-1.5 text-xs text-ink-500 rounded-md cursor-default">
+                <i data-lucide="check" class="h-3 w-3 text-cyan-300"></i>管理端
+                <span class="chip bg-cyan-400/5 text-cyan-300 border border-cyan-400/20 text-[9px] ml-auto">当前</span>
+              </div>
+            </div>
+          </div>
+          <div class="my-1 border-t hairline"></div>
+          <a href="01-login.html" class="flex items-center gap-2 px-2.5 py-1.5 text-xs rounded-md hover:bg-white/[0.05] cursor-pointer text-rose-400"><i data-lucide="log-out" class="h-3.5 w-3.5"></i>退出登录</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex-1 min-h-0 flex">
+    <nav class="w-14 shrink-0 border-r hairline backdrop-blur-md flex flex-col items-center py-4 gap-1.5" style="background:rgba(10,11,16,0.4)">
+      <a id="nav-home" href="07-mgmt-home-mid.html" class="group relative h-10 w-10 rounded-xl flex items-center justify-center text-ink-400 hover:text-ink-100 hover:bg-white/[0.04] transition">
+        <i data-lucide="layout-grid" class="h-4 w-4"></i>
+        <span class="pointer-events-none absolute left-full ml-2 whitespace-nowrap rounded-md border hairline backdrop-blur px-2 py-1 text-[11px] text-ink-200 opacity-0 group-hover:opacity-100 transition z-50" style="background:rgba(14,16,22,0.9)">首页</span>
+      </a>
+      <a href="08-mgmt-report.html" class="group relative h-10 w-10 rounded-xl flex items-center justify-center text-ink-400 hover:text-ink-100 hover:bg-white/[0.04] transition">
+        <i data-lucide="file-text" class="h-4 w-4"></i>
+        <span class="pointer-events-none absolute left-full ml-2 whitespace-nowrap rounded-md border hairline backdrop-blur px-2 py-1 text-[11px] text-ink-200 opacity-0 group-hover:opacity-100 transition z-50" style="background:rgba(14,16,22,0.9)">报告</span>
+      </a>
+      <a href="09-mgmt-message.html" class="group relative h-10 w-10 rounded-xl flex items-center justify-center text-ink-400 hover:text-ink-100 hover:bg-white/[0.04] transition">
+        <i data-lucide="mail" class="h-4 w-4"></i>
+        <span class="pointer-events-none absolute left-full ml-2 whitespace-nowrap rounded-md border hairline backdrop-blur px-2 py-1 text-[11px] text-ink-200 opacity-0 group-hover:opacity-100 transition z-50" style="background:rgba(14,16,22,0.9)">消息</span>
+      </a>
+      <a href="10-mgmt-config.html" class="group relative h-10 w-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-cyan-400/20 to-violet-500/20 text-cyan-300 ring-1 ring-cyan-400/20 shadow-glow-cyan">
+        <i data-lucide="settings" class="h-4 w-4"></i>
+        <span class="pointer-events-none absolute left-full ml-2 whitespace-nowrap rounded-md border hairline backdrop-blur px-2 py-1 text-[11px] text-ink-200 opacity-0 group-hover:opacity-100 transition z-50" style="background:rgba(14,16,22,0.9)">配置</span>
+      </a>
+    </nav>
+
+    <div class="flex-1 min-w-0 flex">
+
+      <!-- Sub Nav -->
+      <div class="w-[180px] shrink-0 border-r hairline py-5 px-3 space-y-1" style="background:rgba(10,11,16,0.2)">
+        <a href="#sec-info" class="sub-nav-link active" onclick="activateSubNav(this)">项目信息</a>
+        <a href="#sec-import" class="sub-nav-link" onclick="activateSubNav(this)">学员导入</a>
+        <a href="#sec-roles" class="sub-nav-link" onclick="activateSubNav(this)">角色分配</a>
+        <a href="#sec-nudge" class="sub-nav-link" onclick="activateSubNav(this)">催学规则</a>
+        <a href="#sec-custom" class="sub-nav-link" onclick="activateSubNav(this)">平台个性化</a>
+        <a href="#sec-content" class="sub-nav-link" onclick="activateSubNav(this)">内容预览</a>
+      </div>
+
+      <div id="form-area" class="flex-1 min-w-0 min-h-0 flex flex-col overflow-hidden">
+        <div class="shrink-0 border-b hairline backdrop-blur-xl px-8 py-4 flex items-center justify-between" style="background:rgba(10,11,16,0.7)">
+          <div>
+            <div class="text-[10px] text-cyan-300 font-mono tracking-[0.2em] uppercase">CONFIG &middot; 配置页</div>
+            <h1 class="mt-1 text-lg text-ink-100 font-medium tracking-tight">A公司基层管理者发展项目</h1>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="status-chip" class="chip" style="background:rgba(244,168,85,0.1);color:#FCD34D;border:1px solid rgba(244,168,85,0.2)">待开营</span>
+            <button class="inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-[12px] font-medium transition shadow-glow-cyan" style="background:linear-gradient(135deg,#22D3EE,#A78BFA);color:#0A0B10">
+              <i data-lucide="save" class="h-3.5 w-3.5"></i>保存配置
+            </button>
+          </div>
+        </div>
+        <div class="flex-1 min-h-0 overflow-y-auto scrollbar-thin">
+          <div class="max-w-2xl mx-auto px-8 py-6 space-y-8">
+
+            <section id="sec-info" class="config-section space-y-4">
+              <div class="text-[10px] text-cyan-300 font-mono tracking-[0.15em] uppercase">项目基本信息</div>
+              <div class="card p-5 space-y-4">
+                <div class="space-y-1.5"><label class="text-xs text-ink-400">项目名称</label><input type="text" value="A公司基层管理者发展项目" class="form-input" /></div>
+                <div class="space-y-1.5"><label class="text-xs text-ink-400">课程包</label><select class="form-input"><option selected>A公司基层管理者发展路径包</option></select></div>
+                <div class="space-y-1.5"><label class="text-xs text-ink-400">项目周期</label>
+                  <div class="flex items-center gap-2"><input type="text" value="2026-03-15" class="form-input font-mono" /><span class="text-ink-500 text-sm">~</span><input type="text" value="2026-06-30" class="form-input font-mono" /></div>
+                </div>
+              </div>
+            </section>
+
+            <section id="sec-import" class="config-section space-y-4">
+              <div class="text-[10px] text-violet-300 font-mono tracking-[0.15em] uppercase">学员名单导入</div>
+              <div class="card p-5 space-y-4">
+                <button class="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-medium border border-ink-700 text-ink-300 hover:bg-white/[0.03]">
+                  <i data-lucide="upload" class="h-3.5 w-3.5"></i>上传 Excel
+                </button>
+                <div class="flex items-center gap-4 text-xs">
+                  <span class="text-emerald-400 flex items-center gap-1"><i data-lucide="check-circle" class="h-3.5 w-3.5"></i>成功 32 人</span>
+                  <span class="text-amber-400 flex items-center gap-1"><i data-lucide="alert-triangle" class="h-3.5 w-3.5"></i>重复 0 人</span>
+                </div>
+              </div>
+            </section>
+
+            <section id="sec-roles" class="config-section space-y-4">
+              <div class="text-[10px] text-amber-300 font-mono tracking-[0.15em] uppercase">角色分配</div>
+              <div class="card overflow-hidden">
+                <table class="w-full text-sm">
+                  <thead>
+                    <tr class="border-b hairline text-left">
+                      <th class="px-4 py-2.5 w-10"><input type="checkbox" /></th>
+                      <th class="px-4 py-2.5 text-[11px] text-ink-500 font-medium font-mono">姓名</th>
+                      <th class="px-4 py-2.5 text-[11px] text-ink-500 font-medium font-mono">邮箱</th>
+                      <th class="px-4 py-2.5 text-[11px] text-ink-500 font-medium font-mono w-32">角色</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="border-b hairline"><td class="px-4 py-2"><input type="checkbox" /></td><td class="px-4 py-2 text-ink-200">张磊</td><td class="px-4 py-2 text-ink-400 font-mono text-xs">zhanglei@a-corp.com</td><td class="px-4 py-2"><select class="form-input py-1 text-xs"><option selected>学员</option><option>管理员</option></select></td></tr>
+                    <tr class="border-b hairline"><td class="px-4 py-2"><input type="checkbox" /></td><td class="px-4 py-2 text-ink-200">李明</td><td class="px-4 py-2 text-ink-400 font-mono text-xs">liming@a-corp.com</td><td class="px-4 py-2"><select class="form-input py-1 text-xs"><option>学员</option><option selected>管理员</option></select></td></tr>
+                    <tr class="border-b hairline"><td class="px-4 py-2"><input type="checkbox" /></td><td class="px-4 py-2 text-ink-200">王红</td><td class="px-4 py-2 text-ink-400 font-mono text-xs">wanghong@a-corp.com</td><td class="px-4 py-2"><select class="form-input py-1 text-xs"><option selected>学员</option><option>管理员</option></select></td></tr>
+                    <tr class="border-b hairline"><td class="px-4 py-2"><input type="checkbox" /></td><td class="px-4 py-2 text-ink-200">陈思</td><td class="px-4 py-2 text-ink-400 font-mono text-xs">chensi@a-corp.com</td><td class="px-4 py-2"><select class="form-input py-1 text-xs"><option selected>学员</option><option>管理员</option></select></td></tr>
+                    <tr><td class="px-4 py-2" colspan="4" class="text-center"><div class="text-center text-[11px] text-ink-500 font-mono">… 其余 28 名学员</div></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section id="sec-nudge" class="config-section space-y-4">
+              <div class="text-[10px] text-rose-400 font-mono tracking-[0.15em] uppercase">催学规则</div>
+              <div class="card p-5 space-y-4">
+                <div class="p-4 rounded-xl space-y-3" style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);">
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm text-ink-200">规则 1 · 未登录 ≥ 3 天</span>
+                    <div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off');"></div>
+                  </div>
+                  <div class="flex items-center gap-2 text-sm text-ink-300 flex-wrap">
+                    <span>未登录超过</span><input type="number" value="3" class="form-input w-14 text-center py-1" /><span>天</span>
+                    <span class="text-ink-500">→</span><span>发送催学消息</span>
+                  </div>
+                  <div class="space-y-1.5">
+                    <label class="text-[11px] text-ink-500">消息模板</label>
+                    <textarea rows="2" class="form-input text-xs leading-relaxed resize-none">{姓名}，你已经{天数}天没有学习了。「{课程}」课程还在等你，快来继续吧！</textarea>
+                  </div>
+                </div>
+                <button class="text-xs text-cyan-400 hover:text-cyan-300 transition flex items-center gap-1">
+                  <i data-lucide="plus" class="h-3.5 w-3.5"></i>添加规则
+                </button>
+              </div>
+            </section>
+
+            <section id="sec-custom" class="config-section space-y-4">
+              <div class="text-[10px] text-emerald-400 font-mono tracking-[0.15em] uppercase">平台个性化</div>
+              <div class="card p-5 space-y-4">
+                <div class="space-y-1.5"><label class="text-xs text-ink-400">企业 Logo</label>
+                  <div class="w-full h-24 rounded-xl border-2 border-dashed border-ink-700 flex items-center justify-center">
+                    <span class="text-xs text-ink-500 flex items-center gap-1.5"><i data-lucide="image-plus" class="h-4 w-4"></i>点击上传或拖放文件</span>
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="space-y-1.5"><label class="text-xs text-ink-400">AI 形象</label><select class="form-input"><option selected>默认形象</option></select></div>
+                  <div class="space-y-1.5"><label class="text-xs text-ink-400">AI 音色</label><select class="form-input"><option selected>标准男声</option><option>标准女声</option></select></div>
+                </div>
+              </div>
+            </section>
+
+            <section id="sec-content" class="config-section space-y-4">
+              <div class="text-[10px] text-violet-300 font-mono tracking-[0.15em] uppercase">内容预览</div>
+              <div class="card p-5 space-y-2">
+                <div class="rounded-xl overflow-hidden" style="border:1px solid rgba(255,255,255,0.04);">
+                  <button onclick="toggleCourse('c1')" class="w-full flex items-center justify-between px-4 py-3 hover:bg-white/[0.02] transition text-left">
+                    <div class="flex items-center gap-2"><i data-lucide="chevron-right" class="h-3.5 w-3.5 text-ink-500" id="c1-arrow"></i><span class="text-sm text-ink-200 font-medium">Course 1 · 辅导型管理</span></div>
+                    <span class="text-[11px] text-ink-500 font-mono">5 Activity</span>
+                  </button>
+                  <div id="c1" class="hidden px-4 pb-3 space-y-1">
+                    <div class="flex items-center gap-2 px-3 py-1.5 text-xs text-ink-400"><span class="w-1 h-1 rounded-full bg-cyan-400"></span>GROW 模型讲授</div>
+                    <div class="flex items-center gap-2 px-3 py-1.5 text-xs text-ink-400"><span class="w-1 h-1 rounded-full bg-violet-400"></span>GROW 辅导对练</div>
+                    <div class="flex items-center gap-2 px-3 py-1.5 text-xs text-ink-400"><span class="w-1 h-1 rounded-full bg-cyan-400"></span>催化主动型员工</div>
+                    <div class="flex items-center gap-2 px-3 py-1.5 text-xs text-ink-400"><span class="w-1 h-1 rounded-full bg-cyan-400"></span>激活被动型员工</div>
+                    <div class="flex items-center gap-2 px-3 py-1.5 text-xs text-ink-400"><span class="w-1 h-1 rounded-full bg-violet-400"></span>综合辅导对练</div>
+                  </div>
+                </div>
+                <div class="rounded-xl overflow-hidden" style="border:1px solid rgba(255,255,255,0.04);">
+                  <button onclick="toggleCourse('c2')" class="w-full flex items-center justify-between px-4 py-3 hover:bg-white/[0.02] transition text-left">
+                    <div class="flex items-center gap-2"><i data-lucide="chevron-right" class="h-3.5 w-3.5 text-ink-500" id="c2-arrow"></i><span class="text-sm text-ink-200 font-medium">Course 2 · 横向协作</span></div>
+                    <span class="text-[11px] text-ink-500 font-mono">4 Activity</span>
+                  </button>
+                  <div id="c2" class="hidden px-4 pb-3 space-y-1">
+                    <div class="flex items-center gap-2 px-3 py-1.5 text-xs text-ink-400"><span class="w-1 h-1 rounded-full bg-cyan-400"></span>跨部门沟通基础</div>
+                    <div class="flex items-center gap-2 px-3 py-1.5 text-xs text-ink-400"><span class="w-1 h-1 rounded-full bg-violet-400"></span>协作对练</div>
+                  </div>
+                </div>
+                <div class="rounded-xl overflow-hidden" style="border:1px solid rgba(255,255,255,0.04);">
+                  <button onclick="toggleCourse('c3')" class="w-full flex items-center justify-between px-4 py-3 hover:bg-white/[0.02] transition text-left">
+                    <div class="flex items-center gap-2"><i data-lucide="chevron-right" class="h-3.5 w-3.5 text-ink-500" id="c3-arrow"></i><span class="text-sm text-ink-200 font-medium">Course 3 · 向上沟通</span></div>
+                    <span class="text-[11px] text-ink-500 font-mono">4 Activity</span>
+                  </button>
+                  <div id="c3" class="hidden px-4 pb-3 space-y-1">
+                    <div class="flex items-center gap-2 px-3 py-1.5 text-xs text-ink-400"><span class="w-1 h-1 rounded-full bg-cyan-400"></span>向上汇报框架</div>
+                  </div>
+                </div>
+                <div class="rounded-xl overflow-hidden" style="border:1px solid rgba(255,255,255,0.04);">
+                  <button onclick="toggleCourse('c4')" class="w-full flex items-center justify-between px-4 py-3 hover:bg-white/[0.02] transition text-left">
+                    <div class="flex items-center gap-2"><i data-lucide="chevron-right" class="h-3.5 w-3.5 text-ink-500" id="c4-arrow"></i><span class="text-sm text-ink-200 font-medium">Course 4 · 团队激励</span></div>
+                    <span class="text-[11px] text-ink-500 font-mono">5 Activity</span>
+                  </button>
+                  <div id="c4" class="hidden px-4 pb-3 space-y-1">
+                    <div class="flex items-center gap-2 px-3 py-1.5 text-xs text-ink-400"><span class="w-1 h-1 rounded-full bg-cyan-400"></span>激励理论基础</div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <div class="pt-4 pb-8">
+              <button id="btn-launch" onclick="showLaunchModal()" class="w-full py-3 rounded-xl text-sm font-semibold text-white tracking-wider transition hover:brightness-110 active:scale-[0.99] shadow-glow-cyan" style="background:linear-gradient(135deg,#22D3EE,#A78BFA);">
+                确认开营
+              </button>
+            </div>
+
+            <footer class="py-6 text-center text-[10px] text-ink-600 font-mono tracking-wider">· MGMT · CONFIG · v0.4 ·</footer>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LAUNCH MODAL -->
+<div id="modal-launch" class="modal-overlay hidden" onclick="if(event.target===this)closeLaunchModal()">
+  <div class="w-[420px] rounded-2xl p-6 space-y-4 fade-in" style="background:rgba(18,20,28,0.96);border:1px solid rgba(255,255,255,0.08);">
+    <div class="flex items-center gap-3">
+      <div class="h-10 w-10 rounded-xl flex items-center justify-center" style="background:rgba(244,168,85,0.15);">
+        <i data-lucide="alert-triangle" class="h-5 w-5 text-amber-400"></i>
+      </div>
+      <h2 class="text-base font-semibold text-ink-100">确认开营</h2>
+    </div>
+    <div class="space-y-2 text-sm text-ink-400 pl-[52px]">
+      <p>开营后以下内容将锁定，无法再修改：</p>
+      <ul class="list-disc pl-4 space-y-1 text-ink-500 text-xs">
+        <li>项目基本信息</li>
+        <li>课程包选择</li>
+        <li>学员名单</li>
+      </ul>
+      <p class="text-rose-400 text-xs font-medium">此操作不可撤回。</p>
+    </div>
+    <div class="flex justify-end gap-3 pt-2">
+      <button onclick="closeLaunchModal()" class="rounded-lg px-4 py-2 text-xs text-ink-300 border border-ink-700 hover:bg-white/[0.03] transition">取消</button>
+      <button onclick="confirmLaunch()" class="rounded-lg px-4 py-2 text-xs font-medium transition hover:brightness-110 shadow-glow-cyan" style="background:linear-gradient(135deg,#22D3EE,#A78BFA);color:#0A0B10">确认开营</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script>
+function toggle(id){ const el=document.getElementById(id); if(el) el.classList.toggle('hidden'); }
+
+// [#10] Esc + Dropdown 外部点击关闭
+document.addEventListener('keydown', (e)=>{
+  if(e.key==='Escape'){
+    const modal = document.getElementById('modal-launch');
+    if (modal && !modal.classList.contains('hidden')) { closeLaunchModal(); return; }
+    ['user','portSub'].forEach(id=>{ const el=document.getElementById(id); if(el&&!el.classList.contains('hidden')) el.classList.add('hidden'); });
+  }
+});
+document.addEventListener('click', (e) => {
+  const userMenu = document.getElementById('user');
+  if (userMenu && !userMenu.classList.contains('hidden')) {
+    const trigger = document.querySelector('button[onclick*="toggle(\'user\')"]');
+    if (!userMenu.contains(e.target) && (!trigger || !trigger.contains(e.target))) {
+      userMenu.classList.add('hidden');
+      const sub = document.getElementById('portSub');
+      if (sub) sub.classList.add('hidden');
+    }
+  }
+});
+
+function activateSubNav(el) {
+  document.querySelectorAll('.sub-nav-link').forEach(a => a.classList.remove('active'));
+  el.classList.add('active');
+}
+function toggleCourse(id) {
+  const el = document.getElementById(id);
+  const arrow = document.getElementById(id + '-arrow');
+  el.classList.toggle('hidden');
+  if (arrow) arrow.style.transform = el.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(90deg)';
+}
+
+function showLaunchModal() {
+  const account = localStorage.getItem('srxCurrentAccount') || 'zhanglei';
+  if (account === 'zhanglei') {
+    alert('项目已开营，不能重复操作。');
+    return;
+  }
+  document.getElementById('modal-launch').classList.remove('hidden');
+  lucide.createIcons();
+}
+function closeLaunchModal(){ document.getElementById('modal-launch').classList.add('hidden'); }
+function confirmLaunch() {
+  closeLaunchModal();
+  const account = localStorage.getItem('srxCurrentAccount') || 'zhanglei';
+  if (account === 'newbie') {
+    // Mark the newbie state as launched (upgrade to running)
+    try {
+      const s = JSON.parse(localStorage.getItem('srxDemoState_newbie') || '{}');
+      s.project = s.project || {};
+      s.project.status = 'running';
+      s.project.currentWeek = 0;
+      localStorage.setItem('srxDemoState_newbie', JSON.stringify(s));
+    } catch(e) {}
+    // Jump to zhanglei's operation home (象征开营成功)
+    window.location.href = '07-mgmt-home-mid.html';
+  } else {
+    lockForm();
+  }
+}
+
+function lockForm() {
+  document.getElementById('form-area').classList.add('locked');
+  const btn = document.getElementById('btn-launch');
+  btn.textContent = '已开营 · 2026-03-15';
+  btn.style.background = 'rgba(255,255,255,0.04)';
+  btn.style.color = '#6A7085';
+  btn.style.boxShadow = 'none';
+  btn.style.cursor = 'default';
+  btn.onclick = null;
+  btn.classList.add('always-active');
+  const chip = document.getElementById('status-chip');
+  if (chip) {
+    chip.textContent = '已开营';
+    chip.style.cssText = 'background:rgba(52,211,153,0.1);color:#34D399;border:1px solid rgba(52,211,153,0.2)';
+  }
+}
+
+(function init() {
+  const account = localStorage.getItem('srxCurrentAccount') || 'zhanglei';
+  const stateKey = 'srxDemoState_' + account;
+  try {
+    const s = JSON.parse(localStorage.getItem(stateKey) || '{}');
+    const l = s.learner || {};
+    if (l.initial) document.getElementById('adm-avatar').textContent = l.initial;
+    if (l.name) { document.getElementById('adm-name').textContent = l.name; document.getElementById('menu-name').textContent = l.name; }
+  } catch(e) {}
+  const learnerTarget = account === 'newbie' ? '02-hall-new.html' : '02-hall-mid.html';
+  const homeTarget = account === 'newbie' ? '07-mgmt-home-new.html' : '07-mgmt-home-mid.html';
+  const lp = document.getElementById('learnerPortLink'); if (lp) lp.href = learnerTarget;
+  const nh = document.getElementById('nav-home'); if (nh) nh.href = homeTarget;
+  // If account is zhanglei, project already launched — lock the form
+  if (account === 'zhanglei') {
+    lockForm();
+  }
+  lucide.createIcons();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1104 @@
+{
+  "project": {
+    "id": "PRJ-2026-001",
+    "name": "A公司基层管理者发展项目",
+    "company": "A公司",
+    "startDate": "2026-03-15",
+    "endDate": "2026-06-30",
+    "cycleWeeks": 16,
+    "currentWeek": 5,
+    "status": "in_progress",
+    "totalLearners": 32,
+    "activeLearners": 25,
+    "admins": 2,
+    "adminNames": ["张晓峰", "李雨萌"],
+    "description": "面向基层管理者的领导力发展项目，涵盖辅导型管理、横向协作、向上沟通与团队激励四大核心能力模块"
+  },
+
+  "courses": [
+    {
+      "id": "CRS-001",
+      "name": "辅导型管理",
+      "description": "掌握GROW模型，从指令式管理转型为教练式管理",
+      "order": 1,
+      "status": "in_progress",
+      "totalActivities": 5,
+      "completedActivities": 2,
+      "activities": [
+        {
+          "id": "ACT-001-01",
+          "name": "从指责到赋能：GROW模型",
+          "type": "授课",
+          "contentRef": "MANAGER1_BP",
+          "duration": 45,
+          "scoCount": 14,
+          "completedScoCount": 14,
+          "status": "completed",
+          "order": 1,
+          "description": "通过痛点唤醒、角色认知跃迁、案例演示与GROW模型原子化拆解，建立教练式管理的心智模型"
+        },
+        {
+          "id": "ACT-001-02",
+          "name": "催化主动型员工",
+          "type": "授课",
+          "contentRef": "MANAGER2_BP",
+          "duration": 50,
+          "scoCount": 16,
+          "completedScoCount": 16,
+          "status": "completed",
+          "order": 2,
+          "description": "针对高意愿高觉察的主动型员工，掌握标准化GROW引导流程与询问许可机制"
+        },
+        {
+          "id": "ACT-001-03",
+          "name": "重构被动型员工",
+          "type": "授课",
+          "contentRef": "MANAGER3_BP",
+          "duration": 50,
+          "scoCount": 15,
+          "completedScoCount": 6,
+          "status": "in_progress",
+          "order": 3,
+          "description": "针对低意愿或有防御心理的被动型员工，掌握心理防御穿透与责任意识重构技术"
+        },
+        {
+          "id": "ACT-001-04",
+          "name": "GROW辅导对练",
+          "type": "对练",
+          "contentRef": null,
+          "duration": 30,
+          "scoCount": 5,
+          "completedScoCount": 0,
+          "status": "locked",
+          "order": 4,
+          "description": "与AI扮演的下属角色进行GROW辅导对话实战演练"
+        },
+        {
+          "id": "ACT-001-05",
+          "name": "辅导型管理报告",
+          "type": "报告",
+          "contentRef": null,
+          "duration": 10,
+          "scoCount": 1,
+          "completedScoCount": 0,
+          "status": "locked",
+          "order": 5,
+          "description": "基于学习与对练数据生成的个人辅导能力发展报告"
+        }
+      ]
+    },
+    {
+      "id": "CRS-002",
+      "name": "横向协作",
+      "description": "掌握PIN法与跨部门协作技巧，打破部门墙",
+      "order": 2,
+      "status": "locked",
+      "totalActivities": 4,
+      "completedActivities": 0,
+      "activities": [
+        {
+          "id": "ACT-002-01",
+          "name": "跨部门协作的认知陷阱",
+          "type": "授课",
+          "contentRef": null,
+          "duration": 40,
+          "scoCount": 12,
+          "completedScoCount": 0,
+          "status": "locked",
+          "order": 1,
+          "description": "识别部门墙的成因与跨部门沟通的常见误区"
+        },
+        {
+          "id": "ACT-002-02",
+          "name": "PIN法：立场-利益-需求分析",
+          "type": "授课",
+          "contentRef": null,
+          "duration": 45,
+          "scoCount": 14,
+          "completedScoCount": 0,
+          "status": "locked",
+          "order": 2,
+          "description": "掌握PIN分析法，从立场对抗转向利益协同"
+        },
+        {
+          "id": "ACT-002-03",
+          "name": "跨部门协作对练",
+          "type": "对练",
+          "contentRef": null,
+          "duration": 30,
+          "scoCount": 5,
+          "completedScoCount": 0,
+          "status": "locked",
+          "order": 3,
+          "description": "与AI扮演的平级同事进行跨部门协作沟通演练"
+        },
+        {
+          "id": "ACT-002-04",
+          "name": "横向协作报告",
+          "type": "报告",
+          "contentRef": null,
+          "duration": 10,
+          "scoCount": 1,
+          "completedScoCount": 0,
+          "status": "locked",
+          "order": 4,
+          "description": "个人横向协作能力发展报告"
+        }
+      ]
+    },
+    {
+      "id": "CRS-003",
+      "name": "向上沟通",
+      "description": "掌握结构化汇报与向上管理技巧，获取上级资源支持",
+      "order": 3,
+      "status": "locked",
+      "totalActivities": 4,
+      "completedActivities": 0,
+      "activities": [
+        {
+          "id": "ACT-003-01",
+          "name": "读懂上级的决策逻辑",
+          "type": "授课",
+          "contentRef": null,
+          "duration": 35,
+          "scoCount": 10,
+          "completedScoCount": 0,
+          "status": "locked",
+          "order": 1,
+          "description": "理解上级的决策框架与信息需求，建立向上沟通的基础认知"
+        },
+        {
+          "id": "ACT-003-02",
+          "name": "结构化汇报与资源争取",
+          "type": "授课",
+          "contentRef": null,
+          "duration": 40,
+          "scoCount": 12,
+          "completedScoCount": 0,
+          "status": "locked",
+          "order": 2,
+          "description": "掌握金字塔汇报法和SCQA框架，高效争取资源"
+        },
+        {
+          "id": "ACT-003-03",
+          "name": "向上沟通对练",
+          "type": "对练",
+          "contentRef": null,
+          "duration": 30,
+          "scoCount": 5,
+          "completedScoCount": 0,
+          "status": "locked",
+          "order": 3,
+          "description": "与AI扮演的上级进行汇报与资源争取演练"
+        },
+        {
+          "id": "ACT-003-04",
+          "name": "向上沟通报告",
+          "type": "报告",
+          "contentRef": null,
+          "duration": 10,
+          "scoCount": 1,
+          "completedScoCount": 0,
+          "status": "locked",
+          "order": 4,
+          "description": "个人向上沟通能力发展报告"
+        }
+      ]
+    },
+    {
+      "id": "CRS-004",
+      "name": "团队激励",
+      "description": "掌握非物质激励手段，打造高绩效团队氛围",
+      "order": 4,
+      "status": "locked",
+      "totalActivities": 4,
+      "completedActivities": 0,
+      "activities": [
+        {
+          "id": "ACT-004-01",
+          "name": "激励的心理学根基",
+          "type": "授课",
+          "contentRef": null,
+          "duration": 35,
+          "scoCount": 10,
+          "completedScoCount": 0,
+          "status": "locked",
+          "order": 1,
+          "description": "理解内在动机与外在激励的关系，掌握自决理论基础"
+        },
+        {
+          "id": "ACT-004-02",
+          "name": "非物质激励工具箱",
+          "type": "授课",
+          "contentRef": null,
+          "duration": 40,
+          "scoCount": 12,
+          "completedScoCount": 0,
+          "status": "locked",
+          "order": 2,
+          "description": "掌握认可、赋权、成长三大非物质激励手段"
+        },
+        {
+          "id": "ACT-004-03",
+          "name": "团队激励对练",
+          "type": "对练",
+          "contentRef": null,
+          "duration": 30,
+          "scoCount": 5,
+          "completedScoCount": 0,
+          "status": "locked",
+          "order": 3,
+          "description": "与AI扮演的不同类型下属进行激励对话演练"
+        },
+        {
+          "id": "ACT-004-04",
+          "name": "团队激励报告",
+          "type": "报告",
+          "contentRef": null,
+          "duration": 10,
+          "scoCount": 1,
+          "completedScoCount": 0,
+          "status": "locked",
+          "order": 4,
+          "description": "个人团队激励能力发展报告"
+        }
+      ]
+    }
+  ],
+
+  "scoList": {
+    "activityId": "ACT-001-01",
+    "activityName": "从指责到赋能：GROW模型",
+    "totalScos": 14,
+    "items": [
+      {
+        "id": "SCO-001-01",
+        "order": 1,
+        "type": "FEEDBACK_COLLECT",
+        "blockType": null,
+        "title": "课前场景采集",
+        "subtitle": "分享你在管理中遇到的辅导困境",
+        "status": "completed",
+        "duration": 3,
+        "imageFile": null
+      },
+      {
+        "id": "SCO-001-02",
+        "order": 2,
+        "type": "PPT",
+        "blockType": "Hook",
+        "title": "职场巨婴与保姆经理的困境",
+        "subtitle": "你是在培养独当一面的下属，还是在喂养一群嗷嗷待哺的职场巨婴？",
+        "status": "completed",
+        "duration": 4,
+        "imageFile": "ppt/ACT01_SCO02_hook.png"
+      },
+      {
+        "id": "SCO-001-03",
+        "order": 3,
+        "type": "PPT",
+        "blockType": "Explain",
+        "title": "从指令下达向效能教练转型",
+        "subtitle": "从「我告诉你怎么做」到「你觉得可以怎么做」",
+        "status": "completed",
+        "duration": 4,
+        "imageFile": "ppt/ACT01_SCO03_explain_coach.png"
+      },
+      {
+        "id": "SCO-001-04",
+        "order": 4,
+        "type": "PPT",
+        "blockType": "Explain",
+        "title": "从归咎责任向解决问题转型",
+        "subtitle": "指责是锁住过去的枷锁，辅导是开启未来的钥匙",
+        "status": "completed",
+        "duration": 4,
+        "imageFile": "ppt/ACT01_SCO04_explain_solution.png"
+      },
+      {
+        "id": "SCO-001-05",
+        "order": 5,
+        "type": "QUIZ",
+        "blockType": "Observe",
+        "title": "辅导焦点的识别：你的本能反应是什么？",
+        "subtitle": "面对下属项目延期，你脱口而出的第一句话是追责还是解决？",
+        "status": "completed",
+        "duration": 3,
+        "imageFile": null
+      },
+      {
+        "id": "SCO-001-06",
+        "order": 6,
+        "type": "VIDEO",
+        "blockType": "Case",
+        "title": "王经理的蜕变：从咆哮到引导",
+        "subtitle": "正反两个场景，看教练式管理如何改变对话走向",
+        "status": "completed",
+        "duration": 5,
+        "imageFile": "ppt/ACT01_SCO06_video_thumb.png"
+      },
+      {
+        "id": "SCO-001-07",
+        "order": 7,
+        "type": "PPT",
+        "blockType": "Explain",
+        "title": "GROW模型全景图",
+        "subtitle": "Goal-Reality-Options-Will：从目标到行动的闭环逻辑",
+        "status": "current",
+        "duration": 4,
+        "imageFile": "ppt/ACT01_SCO07_grow_overview.png"
+      },
+      {
+        "id": "SCO-001-08",
+        "order": 8,
+        "type": "PPT",
+        "blockType": "Explain",
+        "title": "Goal：目标锚定与SMART审计",
+        "subtitle": "清晰、可衡量、可实现、相关、有时限",
+        "status": "locked",
+        "duration": 4,
+        "imageFile": "ppt/ACT01_SCO08_goal_smart.png"
+      },
+      {
+        "id": "SCO-001-09",
+        "order": 9,
+        "type": "PPT",
+        "blockType": "Explain",
+        "title": "Reality：现状评估与事实萃取",
+        "subtitle": "如果摄像机在现场，它拍到的是什么？",
+        "status": "locked",
+        "duration": 4,
+        "imageFile": "ppt/ACT01_SCO09_reality_facts.png"
+      },
+      {
+        "id": "SCO-001-10",
+        "order": 10,
+        "type": "PPT",
+        "blockType": "Explain",
+        "title": "Options：路径生成与头脑风暴",
+        "subtitle": "数量优先，批判暂停——还有吗？",
+        "status": "locked",
+        "duration": 4,
+        "imageFile": "ppt/ACT01_SCO10_options_brainstorm.png"
+      },
+      {
+        "id": "SCO-001-11",
+        "order": 11,
+        "type": "PPT",
+        "blockType": "Explain",
+        "title": "Will：行动锁定与决心评估",
+        "subtitle": "定人、定时、定心——你有几分把握完成？",
+        "status": "locked",
+        "duration": 4,
+        "imageFile": "ppt/ACT01_SCO11_will_action.png"
+      },
+      {
+        "id": "SCO-001-12",
+        "order": 12,
+        "type": "QUIZ",
+        "blockType": "Observe",
+        "title": "GROW环节识别：这属于哪一步？",
+        "subtitle": "管理者问「有哪些障碍？有哪些资源？」——这是R还是O？",
+        "status": "locked",
+        "duration": 3,
+        "imageFile": null
+      },
+      {
+        "id": "SCO-001-13",
+        "order": 13,
+        "type": "PPT",
+        "blockType": "Review",
+        "title": "从指责到赋能的闭环",
+        "subtitle": "别做天花板，要做梯子",
+        "status": "locked",
+        "duration": 3,
+        "imageFile": "ppt/ACT01_SCO13_review_summary.png"
+      },
+      {
+        "id": "SCO-001-14",
+        "order": 14,
+        "type": "FEEDBACK_REVIEW",
+        "blockType": null,
+        "title": "课后场景复盘",
+        "subtitle": "结合课前采集的场景，用GROW模型重新审视你的管理挑战",
+        "status": "locked",
+        "duration": 5,
+        "imageFile": null
+      }
+    ]
+  },
+
+  "learners": [
+    {
+      "id": "LRN-001",
+      "name": "陈志远",
+      "avatar": "avatar_chen.png",
+      "department": "销售一部",
+      "title": "销售主管",
+      "progress": 42,
+      "lastLogin": "2026-04-22T08:32:00",
+      "lastLoginRelative": "今天 08:32",
+      "status": "active",
+      "currentActivity": "ACT-001-03",
+      "currentActivityName": "重构被动型员工",
+      "completedActivities": 2,
+      "totalStudyMinutes": 128,
+      "avgDaysPerWeek": 4.2,
+      "practiceScore": 82,
+      "highlights": [
+        "GROW模型应用流畅度在团队前20%",
+        "对练中「询问许可」使用率高达90%",
+        "课后场景复盘质量评分A"
+      ]
+    },
+    {
+      "id": "LRN-002",
+      "name": "林小燕",
+      "avatar": "avatar_lin.png",
+      "department": "产品部",
+      "title": "产品经理",
+      "progress": 38,
+      "lastLogin": "2026-04-21T17:45:00",
+      "lastLoginRelative": "昨天 17:45",
+      "status": "active",
+      "currentActivity": "ACT-001-03",
+      "currentActivityName": "重构被动型员工",
+      "completedActivities": 2,
+      "totalStudyMinutes": 112,
+      "avgDaysPerWeek": 3.5,
+      "practiceScore": 76,
+      "highlights": [
+        "目标设定SMART合规率95%",
+        "现状评估中事实与观点区分能力突出",
+        "学习节奏稳定，连续5周无缺席"
+      ]
+    },
+    {
+      "id": "LRN-003",
+      "name": "王大伟",
+      "avatar": "avatar_wang.png",
+      "department": "技术部",
+      "title": "开发组长",
+      "progress": 28,
+      "lastLogin": "2026-04-22T09:10:00",
+      "lastLoginRelative": "今天 09:10",
+      "status": "active",
+      "currentActivity": "ACT-001-02",
+      "currentActivityName": "催化主动型员工",
+      "completedActivities": 1,
+      "totalStudyMinutes": 86,
+      "avgDaysPerWeek": 3.0,
+      "practiceScore": 71,
+      "highlights": [
+        "视频案例反思深度评分高",
+        "课前场景采集内容丰富（共提交3个管理场景）"
+      ]
+    },
+    {
+      "id": "LRN-004",
+      "name": "赵敏华",
+      "avatar": "avatar_zhao.png",
+      "department": "客服部",
+      "title": "客服主管",
+      "progress": 18,
+      "lastLogin": "2026-04-18T14:22:00",
+      "lastLoginRelative": "4天前",
+      "status": "at_risk",
+      "currentActivity": "ACT-001-02",
+      "currentActivityName": "催化主动型员工",
+      "completedActivities": 1,
+      "totalStudyMinutes": 52,
+      "avgDaysPerWeek": 1.5,
+      "practiceScore": 0,
+      "highlights": [
+        "第一课完成质量不错，Quiz全部正确",
+        "学习频率下降，近一周未登录"
+      ]
+    },
+    {
+      "id": "LRN-005",
+      "name": "周明杰",
+      "avatar": "avatar_zhou.png",
+      "department": "运营部",
+      "title": "运营主管",
+      "progress": 35,
+      "lastLogin": "2026-04-21T20:15:00",
+      "lastLoginRelative": "昨天 20:15",
+      "status": "active",
+      "currentActivity": "ACT-001-03",
+      "currentActivityName": "重构被动型员工",
+      "completedActivities": 2,
+      "totalStudyMinutes": 105,
+      "avgDaysPerWeek": 3.8,
+      "practiceScore": 79,
+      "highlights": [
+        "学习时间偏好晚间，集中在20:00-22:00",
+        "对练中情绪管理评分优秀"
+      ]
+    },
+    {
+      "id": "LRN-006",
+      "name": "孙丽娟",
+      "avatar": "avatar_sun.png",
+      "department": "财务部",
+      "title": "财务主管",
+      "progress": 12,
+      "lastLogin": "2026-04-15T10:05:00",
+      "lastLoginRelative": "7天前",
+      "status": "inactive",
+      "currentActivity": "ACT-001-01",
+      "currentActivityName": "从指责到赋能：GROW模型",
+      "completedActivities": 0,
+      "totalStudyMinutes": 28,
+      "avgDaysPerWeek": 0.8,
+      "practiceScore": 0,
+      "highlights": [
+        "仅完成第一课前6个SCO",
+        "超过7天未登录，建议发送催学提醒"
+      ]
+    }
+  ],
+
+  "dashboardMetrics": {
+    "projectProgress": 28,
+    "activeLearners": 25,
+    "totalLearners": 32,
+    "inactiveLearners": 4,
+    "atRiskLearners": 3,
+    "avgDaysPerWeek": 3.2,
+    "avgStudyMinutesPerDay": 18,
+    "totalStudyHours": 482,
+    "courseCompletion": [
+      { "courseId": "CRS-001", "courseName": "辅导型管理", "rate": 38, "activeLearners": 25 },
+      { "courseId": "CRS-002", "courseName": "横向协作", "rate": 0, "activeLearners": 0 },
+      { "courseId": "CRS-003", "courseName": "向上沟通", "rate": 0, "activeLearners": 0 },
+      { "courseId": "CRS-004", "courseName": "团队激励", "rate": 0, "activeLearners": 0 }
+    ],
+    "activityCompletion": [
+      { "activityId": "ACT-001-01", "name": "从指责到赋能：GROW模型", "completionRate": 85, "avgScore": 82 },
+      { "activityId": "ACT-001-02", "name": "催化主动型员工", "completionRate": 62, "avgScore": 78 },
+      { "activityId": "ACT-001-03", "name": "重构被动型员工", "completionRate": 18, "avgScore": 75 },
+      { "activityId": "ACT-001-04", "name": "GROW辅导对练", "completionRate": 0, "avgScore": 0 },
+      { "activityId": "ACT-001-05", "name": "辅导型管理报告", "completionRate": 0, "avgScore": 0 }
+    ],
+    "heatmapData": {
+      "description": "周学习热力图：4周 x 7天，值0-4表示学习强度",
+      "weekLabels": ["第2周 (3/22-3/28)", "第3周 (3/29-4/4)", "第4周 (4/5-4/11)", "第5周 (4/12-4/18)"],
+      "dayLabels": ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],
+      "grid": [
+        [3, 2, 4, 3, 2, 1, 0],
+        [4, 3, 3, 4, 2, 1, 1],
+        [3, 4, 2, 3, 3, 2, 0],
+        [2, 3, 4, 2, 1, 1, 0]
+      ]
+    },
+    "weeklyTrend": [
+      { "week": "第1周", "activeCount": 28, "avgMinutes": 22 },
+      { "week": "第2周", "activeCount": 27, "avgMinutes": 20 },
+      { "week": "第3周", "activeCount": 26, "avgMinutes": 19 },
+      { "week": "第4周", "activeCount": 25, "avgMinutes": 18 },
+      { "week": "第5周", "activeCount": 25, "avgMinutes": 18 }
+    ]
+  },
+
+  "leoDialogues": {
+    "firstLogin": {
+      "description": "学习者首次登录，Leo自我介绍并进行需求感知",
+      "turns": [
+        {
+          "speaker": "Leo",
+          "type": "greeting",
+          "text": "你好！我是Leo，你在睿学平台上的学习伙伴。接下来的几个月里，我会陪你一起完成「基层管理者发展项目」的全部学习旅程。",
+          "delay": 500
+        },
+        {
+          "speaker": "Leo",
+          "type": "introduction",
+          "text": "在正式开始之前，我想先了解一下你的情况——这样我可以帮你制定更合适的学习节奏。你现在带团队大概多久了？",
+          "delay": 1200,
+          "expectInput": true,
+          "inputPlaceholder": "比如：半年 / 一年多 / 刚升上来..."
+        },
+        {
+          "speaker": "learner",
+          "type": "response",
+          "text": "大概一年了，还是觉得管人比干活难多了",
+          "isExample": true
+        },
+        {
+          "speaker": "Leo",
+          "type": "empathy",
+          "text": "一年了还有这种感觉，说明你是个认真在思考管理这件事的人。很多新晋管理者都有同感——从「自己干」到「带人干」确实是一次跨越。",
+          "delay": 800
+        },
+        {
+          "speaker": "Leo",
+          "type": "recommendation",
+          "text": "你的第一课是「从指责到赋能：GROW模型」。它会帮你建立一套和下属沟通的结构化方法——不再是凭感觉管人。准备好了就点击开始吧！",
+          "delay": 1000,
+          "action": {
+            "type": "navigate",
+            "target": "ACT-001-01",
+            "buttonText": "开始第一课"
+          }
+        }
+      ]
+    },
+    "dailyReturn": {
+      "description": "学习者日常登录，Leo问候并推荐任务",
+      "turns": [
+        {
+          "speaker": "Leo",
+          "type": "greeting",
+          "text": "早上好！新的一天，精力充沛吗？",
+          "delay": 300,
+          "variants": [
+            "下午好！工作忙完了来充个电？",
+            "晚上好！今天辛苦了，趁现在安静学一会儿？"
+          ]
+        },
+        {
+          "speaker": "Leo",
+          "type": "emotion_check",
+          "text": "你今天的状态怎么样？",
+          "delay": 800,
+          "expectInput": true,
+          "quickReplies": ["精力充沛，想多学点", "一般般，简单过一下", "有点累，轻松一点"]
+        },
+        {
+          "speaker": "learner",
+          "type": "response",
+          "text": "一般般，简单过一下",
+          "isExample": true
+        },
+        {
+          "speaker": "Leo",
+          "type": "adaptive",
+          "text": "了解。那今天咱们不赶进度，轻松推进就好。",
+          "delay": 600
+        },
+        {
+          "speaker": "Leo",
+          "type": "task_recommendation",
+          "text": "你上次学到了「重构被动型员工」的第二个知识块——心理安全基石构建。今天可以继续看「吊桥隐喻」那个部分，大概10分钟就能完成。要继续吗？",
+          "delay": 1000,
+          "action": {
+            "type": "navigate",
+            "target": "SCO-001-07",
+            "buttonText": "继续学习"
+          }
+        }
+      ]
+    }
+  },
+
+  "neoDialogues": {
+    "lectureIntro": {
+      "description": "Neo在学习者首次进入授课模式时自我介绍",
+      "turns": [
+        {
+          "speaker": "Neo",
+          "type": "self_intro",
+          "text": "你好，我是Neo——你的课程讲师。在接下来的学习中，我会带你一步步理解每个知识点。有任何疑问随时问我，我们开始吧！",
+          "delay": 500
+        }
+      ]
+    },
+    "pptNarration": {
+      "description": "Neo对MANAGER1 Segment 1.1（职场巨婴与保姆经理的困境）的授课讲解",
+      "targetSco": "SCO-001-02",
+      "turns": [
+        {
+          "speaker": "Neo",
+          "type": "scene_setting",
+          "text": "我想先问你一个问题——你有没有觉得，自己每天在公司累死累活，下属却像「职场巨婴」一样，推一下动一下？",
+          "delay": 800,
+          "emotion": "provocative"
+        },
+        {
+          "speaker": "Neo",
+          "type": "core_teaching",
+          "text": "如果你有这种感觉，那问题很可能不出在下属身上——而是出在管理方式上。有一个隐喻很贴切：你现在可能是一个「握着方向盘的司机」，什么都自己来，累到不行，同时也剥夺了别人学习驾驶的机会。",
+          "delay": 1500,
+          "emotion": "insightful"
+        },
+        {
+          "speaker": "Neo",
+          "type": "key_point",
+          "text": "真正高效的管理者，应该做一个「GPS」——给方向、给指引，但把方向盘交到下属手中。这就是我们这门课要帮你完成的转变：从「指责」到「赋能」。接下来我们先看看，这个转变具体意味着什么。",
+          "delay": 1200,
+          "emotion": "encouraging"
+        }
+      ]
+    },
+    "quizGuidance": {
+      "description": "Neo在Quiz环节的引导话术",
+      "beforeQuiz": {
+        "speaker": "Neo",
+        "type": "quiz_intro",
+        "text": "学了这些，来测测你的直觉反应。别紧张，这不是考试，而是帮你看清自己目前的管理本能。认真感受一下再选。",
+        "delay": 600
+      },
+      "afterCorrect": {
+        "speaker": "Neo",
+        "type": "feedback_positive",
+        "text": "很好！你已经能识别出「聚焦未来」和「聚焦过去」的区别了。说明前面的内容你理解得很到位。我们继续。",
+        "delay": 800
+      },
+      "afterIncorrect": {
+        "speaker": "Neo",
+        "type": "feedback_corrective",
+        "text": "别灰心，这道题确实有迷惑性。关键在于——虽然提到了「目标」这个词，但问题的核心是在盘点当前的障碍和资源，属于Reality（现状评估）环节。记住：问「在哪里」的是R，问「怎么去」的才是O。",
+        "delay": 1200
+      }
+    },
+    "videoGuidance": {
+      "description": "Neo在视频前后的引导话术",
+      "beforeVideo": {
+        "speaker": "Neo",
+        "type": "video_intro",
+        "text": "接下来是一个案例视频——王经理面对下属会议组织混乱时的两种处理方式。仔细对比他的语气和提问方式，注意看员工的反应有什么不同。",
+        "delay": 800
+      },
+      "afterVideo": {
+        "speaker": "Neo",
+        "type": "video_debrief",
+        "text": "看到了吗？同样是面对同一个问题，王经理只是把「你怎么搞的」换成了「你注意到什么事实」，整个对话的走向就完全不同了。下属从机械点头变成了主动想办法。这就是「提问」的力量——而GROW模型就是帮你把这种提问系统化的工具。",
+        "delay": 1500
+      }
+    }
+  },
+
+  "practiceDialogues": {
+    "sceneIntro": {
+      "title": "GROW辅导对练：会议效率问题",
+      "briefing": "你是销售一部经理。你的下属张伟最近负责的周会出勤率持续下降，从85%跌到了60%。张伟主动找到你，表示想改善这个状况，但不知道该怎么做。请运用GROW模型进行辅导对话。",
+      "character": {
+        "name": "张伟",
+        "role": "销售一部主管",
+        "personality": "主动型员工，有责任心但缺乏方法",
+        "emotionState": "焦虑但积极"
+      },
+      "evaluationCriteria": [
+        "是否按GROW顺序推进对话",
+        "Goal阶段是否引导出SMART目标",
+        "Reality阶段是否用事实而非主观判断",
+        "Options阶段是否持续追问「还有吗」",
+        "Will阶段是否锁定具体第一步和时间节点"
+      ]
+    },
+    "actorDialogue": {
+      "description": "AI扮演张伟的5轮对话",
+      "turns": [
+        {
+          "round": 1,
+          "phase": "开场",
+          "actor": {
+            "speaker": "张伟",
+            "text": "经理，我发现最近周会出勤率一直在掉，从85%跌到60%了。我觉得这样下去不行，但我不太确定问题出在哪里，想跟你聊聊。",
+            "emotion": "焦虑",
+            "bodyLanguage": "身体前倾，眉头紧锁"
+          },
+          "expectedPhase": "Goal",
+          "coachingHint": "此时应引导张伟明确目标——他希望达到什么出勤率？在什么时间范围内？"
+        },
+        {
+          "round": 2,
+          "phase": "目标设定后",
+          "actor": {
+            "speaker": "张伟",
+            "text": "嗯……我希望能在一个月内把出勤率恢复到90%以上吧。毕竟销售信息同步全靠这个周会。",
+            "emotion": "思考中",
+            "bodyLanguage": "眼神上移回忆，手指轻敲桌面"
+          },
+          "expectedPhase": "Reality",
+          "coachingHint": "目标已初步明确。接下来引导他评估现状——他已经尝试过什么？缺席的人都是谁？原因是什么？"
+        },
+        {
+          "round": 3,
+          "phase": "现状盘点后",
+          "actor": {
+            "speaker": "张伟",
+            "text": "我查了一下，主要是外勤人员。他们反映是时间冲突，周一上午他们要跑客户。还有几个人说会议内容跟他们关系不大。其实我之前也试过发邮件提醒，但效果不太好。",
+            "emotion": "冷静分析",
+            "bodyLanguage": "打开笔记本翻看数据"
+          },
+          "expectedPhase": "Options",
+          "coachingHint": "现状已梳理清晰。进入Options阶段——持续追问「针对这些原因，你觉得可以做什么？还有吗？」"
+        },
+        {
+          "round": 4,
+          "phase": "方案发散后",
+          "actor": {
+            "speaker": "张伟",
+            "text": "我想到几个办法：第一，把周会时间从周一上午改到周一下午，避开外勤高峰；第二，设置一个分主题的议程，让每个人都有相关内容；第三……嗯，我想不到了。",
+            "emotion": "初步兴奋后犹豫",
+            "bodyLanguage": "说到第三点时停顿，看向管理者"
+          },
+          "expectedPhase": "Options（追问）",
+          "coachingHint": "继续追问「还有吗？」——如果他确实想不到了，可以询问许可后补充建议"
+        },
+        {
+          "round": 5,
+          "phase": "方案确定后",
+          "actor": {
+            "speaker": "张伟",
+            "text": "对！还可以做一个5分钟的简报摘要发给实在来不了的人，这样至少信息不断档。那我就先从改时间这件事开始做，明天就发通知征集大家对新时间的意见。",
+            "emotion": "积极自信",
+            "bodyLanguage": "身体挺直，开始在笔记本上记录"
+          },
+          "expectedPhase": "Will",
+          "coachingHint": "很好！确认他的第一步行动和时间节点，并量化把握度——「你有几分把握？」"
+        }
+      ]
+    },
+    "neoCoaching": {
+      "description": "Neo在对练过程中的教练介入",
+      "interventions": [
+        {
+          "trigger": "learner_skipped_goal",
+          "timing": "学习者跳过Goal直接问现状时",
+          "speaker": "Neo",
+          "type": "gentle_redirect",
+          "text": "暂停一下——你现在直接跳到了盘点现状。但张伟还没说清他想达到什么目标。没有清晰的目标，后面的分析和方案都会失焦。试试先问他：「你希望达到什么样的效果？」",
+          "display": "toast"
+        },
+        {
+          "trigger": "learner_gave_direct_answer",
+          "timing": "学习者直接给出建议而非提问时",
+          "speaker": "Neo",
+          "type": "corrective_coaching",
+          "text": "注意——你刚才直接给了张伟一个方案。回忆一下GROW模型的原则：你是GPS，不是司机。试试把建议转化为提问：「你觉得如果……会怎样？」",
+          "display": "toast"
+        }
+      ]
+    },
+    "summary": {
+      "overallScore": 78,
+      "duration": "12分38秒",
+      "totalTurns": 14,
+      "phaseScores": {
+        "goal": { "score": 85, "comment": "目标锚定清晰，引导出了SMART标准的目标表述" },
+        "reality": { "score": 80, "comment": "现状盘点较完整，但未追问「你已经尝试了什么」" },
+        "options": { "score": 72, "comment": "追问了2次「还有吗」，但有一次直接给出建议而非提问" },
+        "will": { "score": 75, "comment": "锁定了第一步行动，但未量化把握度" }
+      },
+      "highlights": [
+        "Goal阶段引导出量化目标「一个月内恢复到90%」——很规范",
+        "Reality阶段用了「摄像机视角」追问事实——体现了学习成果"
+      ],
+      "improvements": [
+        "Options阶段第3轮直接说了「你可以试试改时间」——应该先问他的想法",
+        "Will阶段缺少「你有几分把握完成？」的决心评估——下次记得加上"
+      ],
+      "nextStep": "建议复习「Options：路径生成与头脑风暴」和「Will：行动锁定」两个知识块后，再尝试一次对练"
+    }
+  },
+
+  "oraDialogues": {
+    "greeting": {
+      "description": "管理端Ora首次问候，带项目状态摘要",
+      "turns": [
+        {
+          "speaker": "Ora",
+          "type": "greeting",
+          "text": "您好，张晓峰老师。我是Ora，项目管理助手。以下是「A公司基层管理者发展项目」的实时状态：",
+          "delay": 500
+        },
+        {
+          "speaker": "Ora",
+          "type": "status_card",
+          "text": "项目进度 28% | 活跃学员 25/32 | 人均周学习 3.2天\n\n当前关注点：\n- 3名学员超过5天未登录，建议发送催学提醒\n- 第一课「从指责到赋能」完成率85%，Quiz平均分82分\n- 第二课「催化主动型员工」推进中，62%学员已完成",
+          "delay": 1200
+        },
+        {
+          "speaker": "Ora",
+          "type": "proactive_suggestion",
+          "text": "需要我为未登录学员生成催学消息吗？或者您想查看其他数据？",
+          "delay": 800,
+          "quickReplies": ["生成催学消息", "查看学员详情", "生成周报"]
+        }
+      ]
+    },
+    "dataQuery": {
+      "description": "管理员向Ora查询数据的示例对话",
+      "query": "哪些学员学习进度落后？",
+      "response": {
+        "speaker": "Ora",
+        "type": "data_response",
+        "text": "当前有4名学员进度显著落后于团队平均（28%）：",
+        "delay": 600,
+        "data": [
+          { "name": "赵敏华", "department": "客服部", "progress": 18, "lastLogin": "4天前", "risk": "学习频率下降" },
+          { "name": "孙丽娟", "department": "财务部", "progress": 12, "lastLogin": "7天前", "risk": "疑似脱落" },
+          { "name": "黄建国", "department": "行政部", "progress": 15, "lastLogin": "5天前", "risk": "学习频率下降" },
+          { "name": "吴晓东", "department": "仓储部", "progress": 10, "lastLogin": "6天前", "risk": "疑似脱落" }
+        ],
+        "followUp": "建议对7天以上未登录的孙丽娟和吴晓东发送个性化催学消息，并由直属上级进行一次沟通。需要我起草消息内容吗？"
+      }
+    },
+    "reportDraft": {
+      "description": "Ora生成的团队学习报告片段",
+      "reportTitle": "「A公司基层管理者发展项目」第5周团队学习周报",
+      "generatedDate": "2026-04-22",
+      "sections": [
+        {
+          "title": "本周概览",
+          "content": "本周（4/12-4/18）项目整体进度从24%推进至28%，活跃学员25人（占比78%）。第一课「从指责到赋能：GROW模型」接近收尾，85%学员已完成全部14个SCO；第二课「催化主动型员工」为当前主力推进课程，62%学员进入学习。"
+        },
+        {
+          "title": "亮点与风险",
+          "content": "【亮点】陈志远（销售一部）连续5周保持4.2天/周学习频率，对练评分82分位列前20%，可作为标杆学员分享经验。\n\n【风险】4名学员学习频率显著下降（赵敏华、孙丽娟、黄建国、吴晓东），其中2人超过7天未登录，建议启动催学流程并安排直属上级沟通。"
+        },
+        {
+          "title": "下周建议",
+          "content": "1. 对脱落风险学员发送催学消息（已准备模板）\n2. 第一课对练「GROW辅导对练」即将开放，建议提前发送通知引导已完成三节授课的学员进入\n3. 建议安排陈志远做一次5分钟学习心得分享，提振团队学习氛围"
+        }
+      ]
+    }
+  },
+
+  "messages": {
+    "description": "S17消息模块的示例消息",
+    "items": [
+      {
+        "id": "MSG-001",
+        "type": "manual",
+        "title": "项目启动欢迎信",
+        "content": "各位管理者，欢迎加入「基层管理者发展项目」！在接下来的16周里，你将通过AI个性化学习掌握辅导型管理、横向协作、向上沟通和团队激励四大核心能力。请尽快登录睿学平台，完成首次学习。加油！——项目组",
+        "sender": "张晓峰",
+        "senderRole": "项目管理员",
+        "recipients": "全体学员（32人）",
+        "sentAt": "2026-03-15T09:00:00",
+        "sentAtRelative": "2026-03-15",
+        "status": "sent",
+        "readRate": 94,
+        "channel": "站内信+企业微信"
+      },
+      {
+        "id": "MSG-002",
+        "type": "auto",
+        "title": "自动催学提醒：5天未登录",
+        "content": "Hi {{learnerName}}，你已经{{daysSinceLogin}}天没有登录睿学了。你的下一个学习内容是「{{nextActivity}}」，预计只需要15分钟就能推进一步。今天抽空学一下？👉 点击继续学习",
+        "sender": "系统自动",
+        "senderRole": "催学规则",
+        "recipients": "赵敏华、黄建国",
+        "sentAt": "2026-04-20T10:00:00",
+        "sentAtRelative": "2天前",
+        "status": "sent",
+        "readRate": 50,
+        "channel": "企业微信",
+        "triggerRule": "连续5天未登录自动触发"
+      },
+      {
+        "id": "MSG-003",
+        "type": "manual",
+        "title": "第一课优秀学员表彰",
+        "content": "恭喜以下学员在第一课「从指责到赋能：GROW模型」中表现出色：\n\n🏆 陈志远（销售一部）——Quiz满分，课后复盘评分A\n🏆 林小燕（产品部）——SMART目标设定合规率95%\n🏆 周明杰（运营部）——情绪管理评分优秀\n\n继续保持！后面的课程同样精彩。",
+        "sender": "张晓峰",
+        "senderRole": "项目管理员",
+        "recipients": "全体学员（32人）",
+        "sentAt": "2026-04-10T14:30:00",
+        "sentAtRelative": "2026-04-10",
+        "status": "sent",
+        "readRate": 88,
+        "channel": "站内信"
+      }
+    ]
+  },
+
+  "configData": {
+    "projectInfo": {
+      "name": "A公司基层管理者发展项目",
+      "company": "A公司",
+      "startDate": "2026-03-15",
+      "endDate": "2026-06-30",
+      "timezone": "Asia/Shanghai",
+      "language": "zh-CN"
+    },
+    "learnerImport": {
+      "totalImported": 32,
+      "importDate": "2026-03-10",
+      "importSource": "Excel批量导入",
+      "departments": [
+        { "name": "销售一部", "count": 6 },
+        { "name": "销售二部", "count": 5 },
+        { "name": "产品部", "count": 4 },
+        { "name": "技术部", "count": 5 },
+        { "name": "客服部", "count": 4 },
+        { "name": "运营部", "count": 3 },
+        { "name": "财务部", "count": 2 },
+        { "name": "行政部", "count": 2 },
+        { "name": "仓储部", "count": 1 }
+      ],
+      "fieldMapping": {
+        "name": "姓名",
+        "email": "企业邮箱",
+        "department": "所属部门",
+        "title": "职位",
+        "phone": "手机号"
+      }
+    },
+    "roles": [
+      {
+        "id": "ROLE-ADMIN",
+        "name": "项目管理员",
+        "permissions": ["查看数据", "发送消息", "管理学员", "配置规则", "生成报告", "调整课程"],
+        "members": ["张晓峰", "李雨萌"]
+      },
+      {
+        "id": "ROLE-OBSERVER",
+        "name": "观察员",
+        "permissions": ["查看数据", "生成报告"],
+        "members": ["王总监"]
+      }
+    ],
+    "reminderRules": [
+      {
+        "id": "RULE-001",
+        "name": "连续未登录催学",
+        "enabled": true,
+        "trigger": "连续N天未登录",
+        "thresholdDays": 5,
+        "channel": "企业微信",
+        "frequency": "每5天触发一次",
+        "messageTemplate": "Hi {{learnerName}}，你已经{{daysSinceLogin}}天没有登录睿学了。你的下一个学习内容是「{{nextActivity}}」，预计只需要15分钟就能推进一步。今天抽空学一下？",
+        "escalation": "连续10天未登录，自动通知项目管理员"
+      },
+      {
+        "id": "RULE-002",
+        "name": "学习频率下降提醒",
+        "enabled": true,
+        "trigger": "周学习天数低于2天",
+        "thresholdDays": 2,
+        "channel": "站内信",
+        "frequency": "每周一上午9:00检查",
+        "messageTemplate": "{{learnerName}}，上周你的学习天数为{{weeklyDays}}天，低于建议的3天/周。这周试试抽出更多时间？每天15分钟就够了。",
+        "escalation": "连续2周低于2天，标记为at_risk"
+      },
+      {
+        "id": "RULE-003",
+        "name": "课程完成鼓励",
+        "enabled": true,
+        "trigger": "完成一个Activity",
+        "channel": "站内信",
+        "frequency": "事件触发",
+        "messageTemplate": "恭喜你完成了「{{activityName}}」！你的表现很棒。接下来的「{{nextActivity}}」已解锁，继续加油！"
+      }
+    ],
+    "customization": {
+      "brandColor": "#4A6CF7",
+      "brandName": "睿学",
+      "logoUrl": "assets/logo_ruixue.png",
+      "welcomeMessage": "欢迎来到A公司管理者学习平台",
+      "leoPersonality": "温暖亲切、善于鼓励、关注情绪状态",
+      "neoPersonality": "专业自信、善用隐喻、启发式教学",
+      "oraPersonality": "数据驱动、高效简洁、主动预警",
+      "studyRecommendation": {
+        "daysPerWeek": 3,
+        "minutesPerSession": 15,
+        "bestTimeSlots": ["午休 12:00-13:00", "通勤 08:00-09:00", "晚间 20:00-21:00"]
+      }
+    }
+  }
+}

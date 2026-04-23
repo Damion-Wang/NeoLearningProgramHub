@@ -1,0 +1,991 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>睿学 · 授课区</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { theme: { extend: {
+  colors: {
+    ink: { 100:'#F1F3F8', 200:'#E6E8EE', 300:'#C4C8D4', 400:'#8B92A5', 500:'#6A7085', 600:'#4A5061', 700:'#353A48' },
+    cyan: { 300:'#67E8F9', 400:'#22D3EE', 500:'#06B6D4' },
+    violet: { 300:'#C4B5FD', 400:'#A78BFA', 500:'#8B5CF6' },
+    amber: { 300:'#FCD34D', 400:'#F4A855', 500:'#F59E0B' },
+  },
+  fontFamily: { sans:['Inter','PingFang SC','sans-serif'], mono:['JetBrains Mono','monospace'] },
+  boxShadow: { 'glow-cyan':'0 0 24px rgba(34,211,238,0.35)', 'glow-violet':'0 0 24px rgba(167,139,250,0.30)', 'glow-amber':'0 0 20px rgba(244,168,85,0.30)' },
+  animation: { breathe:'breathe 4s ease-in-out infinite', aurora:'aurora 18s ease-in-out infinite', caret:'caret 1s steps(2) infinite' },
+  keyframes: {
+    breathe:{'0%,100%':{opacity:'0.85'},'50%':{opacity:'1',filter:'brightness(1.25)'}},
+    aurora:{'0%,100%':{transform:'translate3d(0,0,0) scale(1)'},'50%':{transform:'translate3d(30px,-20px,0) scale(1.08)'}},
+    caret:{'0%,100%':{opacity:'0'},'50%':{opacity:'1'}},
+  },
+}}}
+</script>
+<style>
+html,body{height:100%;margin:0;background:#0A0B10;color:#E6E8EE;font-family:Inter,'PingFang SC',sans-serif;letter-spacing:-0.01em}
+.aurora-bg{position:relative;isolation:isolate}
+.aurora-bg::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(60% 45% at 12% 12%,rgba(34,211,238,0.18),transparent 60%),
+             radial-gradient(55% 50% at 92% 88%,rgba(167,139,250,0.22),transparent 60%),
+             radial-gradient(40% 30% at 80% 15%,rgba(244,168,85,0.10),transparent 60%),
+             linear-gradient(180deg,#0A0B10,#07080C);
+  animation:aurora 18s ease-in-out infinite;}
+.glass{background:rgba(255,255,255,0.03);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.06)}
+.glass-strong{background:rgba(24,27,37,0.94);backdrop-filter:blur(28px);border:1px solid rgba(255,255,255,0.1)}
+.card{background:rgba(255,255,255,0.03);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.06);border-radius:1rem}
+.hairline{border-color:rgba(255,255,255,0.06)}
+.scrollbar-thin::-webkit-scrollbar{width:6px;height:6px}
+.scrollbar-thin::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:999px}
+.kbd{display:inline-flex;align-items:center;justify-content:center;border-radius:6px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);padding:0 6px;height:20px;font-size:10px;font-family:'JetBrains Mono',monospace;color:#8B92A5}
+.chip{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:500}
+.caret::after{content:'\u258C';margin-left:2px;color:rgba(167,139,250,0.85);animation:caret 1s steps(2) infinite}
+.tabular-nums{font-variant-numeric:tabular-nums}
+.fade-in{animation:fadeIn 0.3s ease-out both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* --- Left overlay panel --- */
+#leftPanelBackdrop{
+  position:fixed;top:56px;left:0;right:0;bottom:0;z-index:35;background:rgba(0,0,0,0.45);opacity:0;pointer-events:none;transition:opacity 0.3s ease;
+}
+#leftPanelBackdrop.open{opacity:1;pointer-events:auto}
+#leftPanel{
+  position:fixed;top:56px;bottom:0;left:0;z-index:36;width:300px;
+  transform:translateX(-100%);transition:transform 0.3s cubic-bezier(.2,.8,.2,1);
+  backdrop-filter:blur(28px);border-right:1px solid rgba(255,255,255,0.06);
+  background:rgba(10,11,16,0.95);display:flex;flex-direction:column;
+}
+#leftPanel.open{transform:translateX(0)}
+#navToggleBtn{
+  position:absolute;top:12px;left:12px;z-index:34;
+}
+
+.nav-tab-btn > span:first-child{transition:color 0.2s}
+.nav-tab-btn:not(.active) > span:first-child{color:#8B92A5}
+.nav-tab-btn:not(.active) .nav-tab-indicator{opacity:0}
+.nav-tab-btn.active > span:first-child{color:#F1F3F8}
+.nav-tab-btn.active .nav-tab-indicator{opacity:1}
+.nav-tab-content{display:flex}
+.nav-tab-content.hidden{display:none}
+.sco-item{cursor:pointer;transition:background 0.15s,border-color 0.15s}
+.sco-item:hover{background:rgba(255,255,255,0.03)}
+.sco-item.active{background:linear-gradient(90deg,rgba(167,139,250,0.14),transparent);border-left:2px solid #A78BFA}
+.sco-item.locked{opacity:0.55;cursor:not-allowed}
+/* SCO thumbnail slide-panel styles */
+.sco-thumb{position:relative;overflow:hidden;border-radius:0.5rem}
+.sco-thumb .sco-caption{position:absolute;bottom:0;left:0;right:0;padding:6px 8px;background:linear-gradient(transparent,rgba(0,0,0,0.8));opacity:0;transition:opacity 0.2s}
+.sco-thumb:hover .sco-caption{opacity:1}
+.view-panel{display:none}
+.view-panel.active{display:flex;flex:1 1 auto;min-height:0;flex-direction:column}
+/* immersive PPT/Video/Quiz/Feedback cards should fit viewport without inner scroll */
+.view-panel .card{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+/* PPT image auto-fit */
+#pptImage{max-height:100%;max-width:100%;height:auto;width:auto;object-fit:contain;flex:1 1 auto;min-height:0}
+.quiz-option{cursor:pointer;transition:all 0.2s}
+.quiz-option:hover:not(.selected){border-color:rgba(167,139,250,0.4);background:rgba(167,139,250,0.05)}
+.quiz-option.selected{border-color:rgba(167,139,250,0.6);background:rgba(167,139,250,0.1)}
+.quiz-option.correct{border-color:rgba(34,211,238,0.6);background:rgba(34,211,238,0.08)}
+.quiz-option.incorrect{border-color:rgba(239,68,68,0.5);background:rgba(239,68,68,0.06)}
+</style>
+</head>
+<body class="aurora-bg h-full">
+<div class="h-full flex flex-col">
+
+  <!-- TOPBAR -->
+  <header class="h-14 shrink-0 px-5 flex items-center justify-between z-30 border-b hairline backdrop-blur-xl" style="background:rgba(10,11,16,0.6)">
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2">
+        <div class="h-8 w-8 rounded-xl flex items-center justify-center shadow-glow-violet" style="background:linear-gradient(135deg,#22D3EE,#8B5CF6)"><i data-lucide="sparkles" class="h-4 w-4" style="color:#0A0B10;stroke-width:2.4"></i></div>
+        <div class="leading-tight">
+          <div class="text-[13px] font-medium text-ink-100">睿学</div>
+          <div class="text-[10px] text-ink-500 -mt-0.5 font-mono">AI TUTOR &middot; v0.4</div>
+        </div>
+      </div>
+      <span class="h-4 w-px bg-white/10"></span>
+      <span class="chip bg-white/[0.04] text-ink-300 border border-white/5">学员端</span>
+      <span class="text-[11px] text-ink-500 hidden xl:inline font-mono">基层管理者培养 &middot; Course 1 辅导型管理 &middot; Activity 3 重构被动型员工</span>
+    </div>
+    <div class="flex items-center gap-1">
+      <button class="relative rounded-lg p-2 hover:bg-white/[0.05]"><i data-lucide="bell" class="h-4 w-4 text-ink-300"></i></button>
+      <button class="flex items-center gap-2 rounded-lg p-0.5 pr-2 hover:bg-white/[0.05]">
+        <div class="h-7 w-7 rounded-lg flex items-center justify-center text-xs font-semibold shadow-glow-violet" style="background:linear-gradient(135deg,#22D3EE,#8B5CF6);color:#0A0B10">Z</div>
+        <span class="text-xs text-ink-300 hidden md:inline">张磊</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="flex-1 min-h-0 flex relative">
+
+    <!-- LEFT PANEL BACKDROP (click to close) -->
+    <div id="leftPanelBackdrop" onclick="closePanel()"></div>
+
+    <!-- LEFT: Overlay Nav Panel (default: hidden/collapsed) -->
+    <aside id="leftPanel">
+      <!-- Header -->
+      <div class="px-4 py-3 border-b hairline flex items-center justify-between">
+        <div>
+          <div class="text-[10px] text-ink-500 font-mono tracking-widest uppercase">Course 1</div>
+          <div class="mt-0.5 text-[12px] font-medium text-ink-100">辅导型管理</div>
+        </div>
+        <button onclick="closePanel()" class="h-7 w-7 rounded-md flex items-center justify-center hover:bg-white/[0.05] text-ink-400" title="关闭"><i data-lucide="x" class="h-3.5 w-3.5"></i></button>
+      </div>
+
+      <!-- Tab switcher -->
+      <div class="px-3 pt-3 border-b hairline relative">
+        <div class="flex items-center gap-4 text-sm">
+          <button onclick="setNavTab('outline')" class="nav-tab-btn active relative pb-2.5 font-medium transition" data-tab="outline">
+            <span>课程大纲</span>
+            <span class="nav-tab-indicator absolute left-0 right-0 bottom-0 h-0.5 rounded-full" style="background:linear-gradient(90deg,#22D3EE,#A78BFA)"></span>
+          </button>
+          <button onclick="setNavTab('slides')" class="nav-tab-btn relative pb-2.5 font-medium transition" data-tab="slides">
+            <span>课件内容</span>
+            <span class="nav-tab-indicator absolute left-0 right-0 bottom-0 h-0.5 rounded-full" style="background:linear-gradient(90deg,#22D3EE,#A78BFA)"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab 1: Activity list -->
+      <div class="nav-tab-content flex-1 min-h-0 flex flex-col" data-tab="outline">
+        <div class="px-4 pt-3 pb-2 flex items-center justify-between">
+          <div class="text-[11px] text-ink-300 font-mono tracking-widest uppercase">Activity &middot; 5 门</div>
+          <span class="text-[10px] text-ink-500 font-mono">2/5</span>
+        </div>
+        <div class="flex-1 overflow-y-auto scrollbar-thin px-2 pb-3 space-y-1 text-[12.5px]">
+          <!-- A1 completed (reviewable) -->
+          <div class="flex items-center gap-2 px-2.5 py-2 rounded-md hover:bg-white/[0.03] cursor-pointer" onclick="switchActivity('A1')" title="点击回看 A1 的课件">
+            <span class="h-5 w-5 rounded-sm flex items-center justify-center shadow-glow-cyan shrink-0" style="background:rgba(34,211,238,0.15);color:#67E8F9;border:1px solid rgba(34,211,238,0.4)"><i data-lucide="check" class="h-3 w-3" style="stroke-width:3"></i></span>
+            <span class="text-ink-300">A1 &middot; 从指责到赋能：GROW模型</span>
+            <span class="ml-auto text-[10px] text-emerald-300/70 font-mono">回看</span>
+          </div>
+          <!-- A2 completed (reviewable) -->
+          <div class="flex items-center gap-2 px-2.5 py-2 rounded-md hover:bg-white/[0.03] cursor-pointer" onclick="switchActivity('A2')" title="点击回看 A2 的课件">
+            <span class="h-5 w-5 rounded-sm flex items-center justify-center shadow-glow-cyan shrink-0" style="background:rgba(34,211,238,0.15);color:#67E8F9;border:1px solid rgba(34,211,238,0.4)"><i data-lucide="check" class="h-3 w-3" style="stroke-width:3"></i></span>
+            <span class="text-ink-300">A2 &middot; 催化主动型员工</span>
+            <span class="ml-auto text-[10px] text-emerald-300/70 font-mono">回看</span>
+          </div>
+          <!-- A3 current -->
+          <div class="flex items-center gap-2 px-2.5 py-2 rounded-md relative cursor-pointer" onclick="switchActivity('A3')" style="background:linear-gradient(90deg,rgba(167,139,250,0.14),transparent);border-left:2px solid #A78BFA">
+            <span class="h-5 w-5 rounded-sm flex items-center justify-center shadow-glow-violet shrink-0" style="background:linear-gradient(135deg,#A78BFA,#22D3EE);color:#0A0B10"><i data-lucide="play" class="h-3 w-3" style="stroke-width:2.4" fill="currentColor"></i></span>
+            <span class="text-ink-100 font-medium">A3 &middot; 重构被动型员工</span>
+            <span class="ml-auto text-[10px] text-violet-300 font-mono">进行中</span>
+          </div>
+          <!-- A4 locked -->
+          <div class="flex items-center gap-2 px-2.5 py-2 rounded-md opacity-60 cursor-not-allowed" title="未解锁">
+            <span class="h-5 w-5 rounded-sm flex items-center justify-center shrink-0 bg-white/[0.02] text-ink-600 border border-white/5"><i data-lucide="lock" class="h-3 w-3"></i></span>
+            <span class="text-ink-500">A4 &middot; GROW辅导对练</span>
+          </div>
+          <!-- A5 locked -->
+          <div class="flex items-center gap-2 px-2.5 py-2 rounded-md opacity-60 cursor-not-allowed" title="未解锁">
+            <span class="h-5 w-5 rounded-sm flex items-center justify-center shrink-0 bg-white/[0.02] text-ink-600 border border-white/5"><i data-lucide="lock" class="h-3 w-3"></i></span>
+            <span class="text-ink-500">A5 &middot; 辅导型管理报告</span>
+          </div>
+        </div>
+        <!-- Activity Progress -->
+        <div class="px-4 py-3 border-t hairline">
+          <div class="flex items-center justify-between text-[10px] text-ink-500 font-mono mb-1.5">
+            <span>Course 1 整体</span><span class="text-ink-200">2 / 5 &middot; 40%</span>
+          </div>
+          <div class="h-[3px] rounded-full bg-white/5 overflow-hidden">
+            <div class="h-full rounded-full shadow-glow-violet" style="width:40%;background:linear-gradient(90deg,#22D3EE,#A78BFA)"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: SCO list -->
+      <div class="nav-tab-content hidden flex-1 min-h-0 flex flex-col" data-tab="slides">
+        <!-- Current Activity context -->
+        <div class="px-4 pt-3 pb-2 flex items-center gap-2">
+          <div class="h-5 w-5 rounded-sm flex items-center justify-center shadow-glow-violet shrink-0" style="background:linear-gradient(135deg,#A78BFA,#22D3EE);color:#0A0B10"><i data-lucide="play" class="h-2.5 w-2.5" style="stroke-width:2.4" fill="currentColor"></i></div>
+          <div class="min-w-0 flex-1">
+            <div class="text-[10px] text-violet-300/70 font-mono tracking-wider uppercase">当前 Activity</div>
+            <div class="text-[12px] text-ink-100 font-medium truncate">A3 &middot; 重构被动型员工</div>
+          </div>
+          <span class="text-[10px] text-ink-500 font-mono shrink-0">5/12</span>
+        </div>
+        <div class="flex-1 overflow-y-auto scrollbar-thin px-2 pb-3 flex flex-col gap-1.5 text-[12.5px]">
+          <!-- SCO 1 - FEEDBACK_COLLECT - completed -->
+          <div class="sco-item rounded-lg" data-sco="1" data-type="feedback" onclick="switchSCO(this)">
+            <div class="sco-thumb w-full aspect-video rounded-lg flex items-center justify-center border border-white/[0.06]" style="background:rgba(15,17,24,0.95)">
+              <!-- Status badge top-left -->
+              <span class="absolute top-1.5 left-1.5 z-10 h-5 w-5 rounded-sm flex items-center justify-center shadow-glow-cyan" style="background:rgba(34,211,238,0.15);color:#67E8F9;border:1px solid rgba(34,211,238,0.4)"><i data-lucide="check" class="h-3 w-3" style="stroke-width:3"></i></span>
+              <!-- SCO number top-right -->
+              <span class="absolute top-1.5 right-1.5 z-10 text-[9px] font-mono text-ink-500 bg-black/40 rounded px-1">01</span>
+              <!-- Type icon centered -->
+              <i data-lucide="message-circle" class="h-8 w-8 text-ink-500"></i>
+              <div class="absolute bottom-6 text-[10px] text-ink-500 font-mono">FEEDBACK</div>
+              <!-- Hover caption -->
+              <div class="sco-caption z-10">
+                <div class="text-[11px] text-ink-100 truncate">课前场景采集</div>
+              </div>
+            </div>
+          </div>
+          <!-- SCO 2 - PPT - completed -->
+          <div class="sco-item rounded-lg" data-sco="2" data-type="ppt" data-img="../assets/ppt/MANAGER3_segment_2.1.jpg" onclick="switchSCO(this)">
+            <div class="sco-thumb w-full aspect-video rounded-lg border border-white/[0.06]">
+              <span class="absolute top-1.5 left-1.5 z-10 h-5 w-5 rounded-sm flex items-center justify-center shadow-glow-cyan" style="background:rgba(34,211,238,0.15);color:#67E8F9;border:1px solid rgba(34,211,238,0.4)"><i data-lucide="check" class="h-3 w-3" style="stroke-width:3"></i></span>
+              <span class="absolute top-1.5 right-1.5 z-10 text-[9px] font-mono text-ink-500 bg-black/40 rounded px-1">02</span>
+              <img src="../assets/ppt/MANAGER3_segment_2.1.jpg" class="w-full h-full object-cover rounded-lg" alt="SCO 2" />
+              <div class="sco-caption z-10">
+                <div class="text-[11px] text-ink-100 truncate">沉默炸药的危害</div>
+              </div>
+            </div>
+          </div>
+          <!-- SCO 3 - PPT - completed -->
+          <div class="sco-item rounded-lg" data-sco="3" data-type="ppt" data-img="../assets/ppt/MANAGER3_segment_3.1.jpg" onclick="switchSCO(this)">
+            <div class="sco-thumb w-full aspect-video rounded-lg border border-white/[0.06]">
+              <span class="absolute top-1.5 left-1.5 z-10 h-5 w-5 rounded-sm flex items-center justify-center shadow-glow-cyan" style="background:rgba(34,211,238,0.15);color:#67E8F9;border:1px solid rgba(34,211,238,0.4)"><i data-lucide="check" class="h-3 w-3" style="stroke-width:3"></i></span>
+              <span class="absolute top-1.5 right-1.5 z-10 text-[9px] font-mono text-ink-500 bg-black/40 rounded px-1">03</span>
+              <img src="../assets/ppt/MANAGER3_segment_3.1.jpg" class="w-full h-full object-cover rounded-lg" alt="SCO 3" />
+              <div class="sco-caption z-10">
+                <div class="text-[11px] text-ink-100 truncate">被动型员工诊断信号</div>
+              </div>
+            </div>
+          </div>
+          <!-- SCO 4 - PPT - completed -->
+          <div class="sco-item rounded-lg" data-sco="4" data-type="ppt" data-img="../assets/ppt/MANAGER3_segment_4.2.jpg" onclick="switchSCO(this)">
+            <div class="sco-thumb w-full aspect-video rounded-lg border border-white/[0.06]">
+              <span class="absolute top-1.5 left-1.5 z-10 h-5 w-5 rounded-sm flex items-center justify-center shadow-glow-cyan" style="background:rgba(34,211,238,0.15);color:#67E8F9;border:1px solid rgba(34,211,238,0.4)"><i data-lucide="check" class="h-3 w-3" style="stroke-width:3"></i></span>
+              <span class="absolute top-1.5 right-1.5 z-10 text-[9px] font-mono text-ink-500 bg-black/40 rounded px-1">04</span>
+              <img src="../assets/ppt/MANAGER3_segment_4.2.jpg" class="w-full h-full object-cover rounded-lg" alt="SCO 4" />
+              <div class="sco-caption z-10">
+                <div class="text-[11px] text-ink-100 truncate">模式切换：授权&rarr;唤醒</div>
+              </div>
+            </div>
+          </div>
+          <!-- SCO 5 - QUIZ - completed -->
+          <div class="sco-item rounded-lg" data-sco="5" data-type="quiz" onclick="switchSCO(this)">
+            <div class="sco-thumb w-full aspect-video rounded-lg flex items-center justify-center border border-white/[0.06]" style="background:rgba(15,17,24,0.95)">
+              <span class="absolute top-1.5 left-1.5 z-10 h-5 w-5 rounded-sm flex items-center justify-center shadow-glow-cyan" style="background:rgba(34,211,238,0.15);color:#67E8F9;border:1px solid rgba(34,211,238,0.4)"><i data-lucide="check" class="h-3 w-3" style="stroke-width:3"></i></span>
+              <span class="absolute top-1.5 right-1.5 z-10 text-[9px] font-mono text-ink-500 bg-black/40 rounded px-1">05</span>
+              <i data-lucide="help-circle" class="h-8 w-8 text-ink-500"></i>
+              <div class="absolute bottom-6 text-[10px] text-ink-500 font-mono">QUIZ</div>
+              <div class="sco-caption z-10">
+                <div class="text-[11px] text-ink-100 truncate">隐藏防御信号识别</div>
+              </div>
+            </div>
+          </div>
+          <!-- SCO 6 - PPT - CURRENT -->
+          <div class="sco-item active rounded-lg" data-sco="6" data-type="ppt" data-img="../assets/ppt/MANAGER3_segment_4.1.jpg" onclick="switchSCO(this)">
+            <div class="sco-thumb w-full aspect-video rounded-lg border-2 border-violet-400/50 shadow-glow-violet">
+              <span class="absolute top-1.5 left-1.5 z-10 h-5 w-5 rounded-sm flex items-center justify-center shadow-glow-violet" style="background:linear-gradient(135deg,#A78BFA,#22D3EE);color:#0A0B10"><i data-lucide="play" class="h-3 w-3" style="stroke-width:2.4" fill="currentColor"></i></span>
+              <span class="absolute top-1.5 right-1.5 z-10 text-[9px] font-mono text-violet-300 bg-black/40 rounded px-1">06</span>
+              <img src="../assets/ppt/MANAGER3_segment_4.1.jpg" class="w-full h-full object-cover rounded-lg" alt="SCO 6" />
+              <!-- Always-visible caption for current item -->
+              <div class="absolute bottom-0 left-0 right-0 z-10 px-2 py-1.5" style="background:linear-gradient(transparent,rgba(0,0,0,0.8))">
+                <div class="text-[11px] text-ink-100 font-medium truncate">心理安全地基 &middot; 吊桥隐喻</div>
+                <div class="text-[9px] text-violet-300/80 font-mono">Neo 授课中</div>
+              </div>
+            </div>
+          </div>
+          <!-- SCO 7 - VIDEO - locked -->
+          <div class="sco-item locked rounded-lg" data-sco="7" data-type="video">
+            <div class="sco-thumb w-full aspect-video rounded-lg flex items-center justify-center border border-white/[0.06]" style="background:rgba(15,17,24,0.95)">
+              <span class="absolute top-1.5 left-1.5 z-10 h-5 w-5 rounded-sm flex items-center justify-center bg-white/[0.02] text-ink-600 border border-white/5"><i data-lucide="lock" class="h-3 w-3"></i></span>
+              <span class="absolute top-1.5 right-1.5 z-10 text-[9px] font-mono text-ink-600 bg-black/40 rounded px-1">07</span>
+              <i data-lucide="play-circle" class="h-8 w-8 text-ink-600"></i>
+              <div class="absolute bottom-6 text-[10px] text-ink-600 font-mono">VIDEO</div>
+              <div class="sco-caption z-10">
+                <div class="text-[11px] text-ink-400 truncate">赵工的防线崩塌</div>
+              </div>
+            </div>
+          </div>
+          <!-- SCO 8 - PPT - locked -->
+          <div class="sco-item locked rounded-lg" data-sco="8" data-type="ppt" data-img="../assets/ppt/MANAGER3_segment_5.1.jpg">
+            <div class="sco-thumb w-full aspect-video rounded-lg border border-white/[0.06]">
+              <span class="absolute top-1.5 left-1.5 z-10 h-5 w-5 rounded-sm flex items-center justify-center bg-white/[0.02] text-ink-600 border border-white/5"><i data-lucide="lock" class="h-3 w-3"></i></span>
+              <span class="absolute top-1.5 right-1.5 z-10 text-[9px] font-mono text-ink-600 bg-black/40 rounded px-1">08</span>
+              <img src="../assets/ppt/MANAGER3_segment_5.1.jpg" class="w-full h-full object-cover rounded-lg opacity-40" alt="SCO 8" />
+              <div class="sco-caption z-10">
+                <div class="text-[11px] text-ink-400 truncate">认知现实校准</div>
+              </div>
+            </div>
+          </div>
+          <!-- SCO 9 - VIDEO - locked -->
+          <div class="sco-item locked rounded-lg" data-sco="9" data-type="video">
+            <div class="sco-thumb w-full aspect-video rounded-lg flex items-center justify-center border border-white/[0.06]" style="background:rgba(15,17,24,0.95)">
+              <span class="absolute top-1.5 left-1.5 z-10 h-5 w-5 rounded-sm flex items-center justify-center bg-white/[0.02] text-ink-600 border border-white/5"><i data-lucide="lock" class="h-3 w-3"></i></span>
+              <span class="absolute top-1.5 right-1.5 z-10 text-[9px] font-mono text-ink-600 bg-black/40 rounded px-1">09</span>
+              <i data-lucide="play-circle" class="h-8 w-8 text-ink-600"></i>
+              <div class="absolute bottom-6 text-[10px] text-ink-600 font-mono">VIDEO</div>
+              <div class="sco-caption z-10">
+                <div class="text-[11px] text-ink-400 truncate">价值锚定认知校准</div>
+              </div>
+            </div>
+          </div>
+          <!-- SCO 10 - QUIZ - locked -->
+          <div class="sco-item locked rounded-lg" data-sco="10" data-type="quiz">
+            <div class="sco-thumb w-full aspect-video rounded-lg flex items-center justify-center border border-white/[0.06]" style="background:rgba(15,17,24,0.95)">
+              <span class="absolute top-1.5 left-1.5 z-10 h-5 w-5 rounded-sm flex items-center justify-center bg-white/[0.02] text-ink-600 border border-white/5"><i data-lucide="lock" class="h-3 w-3"></i></span>
+              <span class="absolute top-1.5 right-1.5 z-10 text-[9px] font-mono text-ink-600 bg-black/40 rounded px-1">10</span>
+              <i data-lucide="help-circle" class="h-8 w-8 text-ink-600"></i>
+              <div class="absolute bottom-6 text-[10px] text-ink-600 font-mono">QUIZ</div>
+              <div class="sco-caption z-10">
+                <div class="text-[11px] text-ink-400 truncate">行动承诺锁定</div>
+              </div>
+            </div>
+          </div>
+          <!-- SCO 11 - PPT - locked -->
+          <div class="sco-item locked rounded-lg" data-sco="11" data-type="ppt" data-img="../assets/ppt/MANAGER3_segment_8.1.jpg">
+            <div class="sco-thumb w-full aspect-video rounded-lg border border-white/[0.06]">
+              <span class="absolute top-1.5 left-1.5 z-10 h-5 w-5 rounded-sm flex items-center justify-center bg-white/[0.02] text-ink-600 border border-white/5"><i data-lucide="lock" class="h-3 w-3"></i></span>
+              <span class="absolute top-1.5 right-1.5 z-10 text-[9px] font-mono text-ink-600 bg-black/40 rounded px-1">11</span>
+              <img src="../assets/ppt/MANAGER3_segment_8.1.jpg" class="w-full h-full object-cover rounded-lg opacity-40" alt="SCO 11" />
+              <div class="sco-caption z-10">
+                <div class="text-[11px] text-ink-400 truncate">被动型员工辅导全景</div>
+              </div>
+            </div>
+          </div>
+          <!-- SCO 12 - FEEDBACK_REVIEW - locked -->
+          <div class="sco-item locked rounded-lg" data-sco="12" data-type="feedback_review">
+            <div class="sco-thumb w-full aspect-video rounded-lg flex items-center justify-center border border-white/[0.06]" style="background:rgba(15,17,24,0.95)">
+              <span class="absolute top-1.5 left-1.5 z-10 h-5 w-5 rounded-sm flex items-center justify-center bg-white/[0.02] text-ink-600 border border-white/5"><i data-lucide="lock" class="h-3 w-3"></i></span>
+              <span class="absolute top-1.5 right-1.5 z-10 text-[9px] font-mono text-ink-600 bg-black/40 rounded px-1">12</span>
+              <i data-lucide="rotate-ccw" class="h-8 w-8 text-ink-600"></i>
+              <div class="absolute bottom-6 text-[10px] text-ink-600 font-mono">FEEDBACK</div>
+              <div class="sco-caption z-10">
+                <div class="text-[11px] text-ink-400 truncate">课后场景复盘</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- SCO Progress -->
+        <div class="px-4 py-3 border-t hairline">
+          <div class="flex items-center justify-between text-[10px] text-ink-500 font-mono mb-1.5">
+            <span>SCO 进度</span><span class="text-ink-200">5 / 12 &middot; 42%</span>
+          </div>
+          <div class="h-[3px] rounded-full bg-white/5 overflow-hidden">
+            <div class="h-full rounded-full shadow-glow-violet" style="width:42%;background:linear-gradient(90deg,#22D3EE,#A78BFA)"></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MIDDLE: MAIN CONTENT -->
+    <main class="flex-1 min-w-0 min-h-0 overflow-hidden relative flex flex-col">
+      <!-- Sub-bar: toggle + breadcrumb (left) / status (right) -->
+      <div class="shrink-0 h-11 px-6 border-b hairline backdrop-blur-xl flex items-center justify-between z-20" style="background:rgba(10,11,16,0.7)">
+        <div class="flex items-center gap-3">
+          <!-- Nav toggle button -->
+          <button id="navToggleBtnInline" onclick="openPanel()" class="h-8 w-8 rounded-lg flex items-center justify-center hover:bg-white/[0.05] text-ink-400 border border-white/[0.06] transition" title="课程大纲">
+            <i data-lucide="panel-left-open" class="h-4 w-4"></i>
+          </button>
+          <!-- Breadcrumb -->
+          <nav class="flex items-center gap-1.5 text-[12px] text-ink-300" aria-label="面包屑">
+            <a href="03-hall-daily.html" class="hover:text-cyan-300 transition">大厅</a>
+            <span class="text-ink-600">&rsaquo;</span>
+            <span>辅导型管理</span>
+            <span class="text-ink-600">&rsaquo;</span>
+            <span>A3 重构被动型员工</span>
+          </nav>
+        </div>
+        <div class="flex items-center gap-3">
+          <span id="centerHeaderInfo" class="text-[12px] text-ink-400 font-mono">SCO 6 / 12 &middot; PPT</span>
+          <!-- Preview action: Activity Complete modal (prototype trigger) -->
+          <button onclick="openActivityCompleteModal()" class="inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-[10px] font-mono text-ink-400 hover:text-ink-200 hover:bg-white/[0.04] border border-white/[0.06] transition" title="预览 Activity 完成弹窗">
+            <i data-lucide="check-circle" class="h-3 w-3"></i>完成 Activity
+          </button>
+        </div>
+      </div>
+
+      <div class="flex-1 min-h-0 w-full mx-auto px-6 py-4 flex flex-col overflow-hidden">
+
+        <!-- VIEW 1: PPT (immersive, no title block) -->
+        <div id="view-ppt" class="view-panel active">
+          <div class="card p-3 relative overflow-hidden">
+            <div class="absolute -top-24 -right-24 h-72 w-72 rounded-full blur-3xl pointer-events-none" style="background:rgba(34,211,238,0.08)"></div>
+            <div class="absolute -bottom-24 -left-24 h-56 w-56 rounded-full blur-3xl pointer-events-none" style="background:rgba(167,139,250,0.08)"></div>
+            <div class="relative flex-1 min-h-0 flex items-center justify-center overflow-hidden">
+              <img id="pptImage" src="../assets/ppt/MANAGER3_segment_4.1.jpg" alt="心理安全地基 · 吊桥隐喻" class="rounded-lg" style="max-height:100%;max-width:100%;object-fit:contain" />
+            </div>
+            <div class="relative shrink-0 mt-3 pt-3 border-t hairline flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <button class="h-8 w-8 rounded-lg flex items-center justify-center hover:bg-white/[0.05] text-ink-400"><i data-lucide="chevron-left" class="h-3.5 w-3.5"></i></button>
+                <div class="flex gap-1">
+                  <span class="h-1 w-4 rounded-full bg-cyan-400/40"></span>
+                  <span class="h-1 w-4 rounded-full bg-cyan-400/40"></span>
+                  <span class="h-1 w-4 rounded-full bg-cyan-400/40"></span>
+                  <span class="h-1 w-4 rounded-full bg-cyan-400/40"></span>
+                  <span class="h-1 w-4 rounded-full bg-cyan-400/40"></span>
+                  <span class="h-1 w-4 rounded-full shadow-glow-violet" style="background:#A78BFA"></span>
+                  <span class="h-1 w-4 rounded-full bg-white/5"></span>
+                  <span class="h-1 w-4 rounded-full bg-white/5"></span>
+                  <span class="h-1 w-4 rounded-full bg-white/5"></span>
+                  <span class="h-1 w-4 rounded-full bg-white/5"></span>
+                  <span class="h-1 w-4 rounded-full bg-white/5"></span>
+                  <span class="h-1 w-4 rounded-full bg-white/5"></span>
+                </div>
+                <button class="h-8 w-8 rounded-lg flex items-center justify-center hover:bg-white/[0.05] text-ink-400"><i data-lucide="chevron-right" class="h-3.5 w-3.5"></i></button>
+              </div>
+              <div class="flex items-center gap-3 text-[11px] text-ink-500 font-mono">
+                <span>SCO 06 &middot; PPT</span>
+                <span class="inline-flex items-center gap-1"><span class="h-1.5 w-1.5 rounded-full animate-breathe shadow-glow-violet" style="background:#A78BFA"></span>Neo 讲解中</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW 2: VIDEO -->
+        <div id="view-video" class="view-panel">
+          <div class="card relative overflow-hidden">
+            <div class="absolute -top-24 -right-24 h-72 w-72 rounded-full blur-3xl pointer-events-none" style="background:rgba(34,211,238,0.08)"></div>
+            <!-- Video player area -->
+            <div class="flex-1 min-h-0 relative flex items-center justify-center" style="background:linear-gradient(135deg,rgba(10,11,16,0.95),rgba(20,22,30,0.95))">
+              <!-- Play button overlay -->
+              <button id="videoPlayBtn" class="relative z-10 h-20 w-20 rounded-full flex items-center justify-center transition hover:scale-105" style="background:rgba(167,139,250,0.2);border:2px solid rgba(167,139,250,0.5)">
+                <i data-lucide="play" class="h-8 w-8 text-violet-300 ml-1" fill="currentColor"></i>
+              </button>
+              <!-- Video title overlay -->
+              <div class="absolute top-4 left-5 z-10">
+                <div class="text-[10px] text-ink-500 font-mono">VIDEO &middot; SCO 07</div>
+                <div class="text-sm text-ink-200 mt-0.5">赵工的防线崩塌</div>
+              </div>
+              <!-- Duration badge -->
+              <div class="absolute top-4 right-5 z-10">
+                <span class="chip text-[10px] border" style="background:rgba(255,255,255,0.04);color:#8B92A5;border-color:rgba(255,255,255,0.08)">8:32</span>
+              </div>
+            </div>
+            <!-- Controls bar -->
+            <div class="shrink-0 px-5 py-3 border-t hairline flex items-center gap-4">
+              <button class="h-8 w-8 rounded-lg flex items-center justify-center hover:bg-white/[0.05] text-ink-300"><i data-lucide="play" class="h-4 w-4"></i></button>
+              <div class="flex-1 flex items-center gap-3">
+                <span class="text-[11px] text-ink-500 font-mono tabular-nums w-10">0:00</span>
+                <div class="flex-1 h-1 rounded-full bg-white/5 relative cursor-pointer">
+                  <div class="absolute inset-y-0 left-0 w-0 rounded-full" style="background:linear-gradient(90deg,#22D3EE,#A78BFA)"></div>
+                  <div class="absolute top-1/2 left-0 -translate-y-1/2 h-3 w-3 rounded-full border-2 border-violet-400" style="background:#0A0B10"></div>
+                </div>
+                <span class="text-[11px] text-ink-500 font-mono tabular-nums w-10">8:32</span>
+              </div>
+              <button class="h-8 w-8 rounded-lg flex items-center justify-center hover:bg-white/[0.05] text-ink-400"><i data-lucide="volume-2" class="h-4 w-4"></i></button>
+              <button class="h-8 w-8 rounded-lg flex items-center justify-center hover:bg-white/[0.05] text-ink-400"><i data-lucide="maximize" class="h-4 w-4"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW 3: QUIZ -->
+        <div id="view-quiz" class="view-panel">
+          <div class="card p-8 relative overflow-hidden">
+            <div class="absolute -top-24 -right-24 h-72 w-72 rounded-full blur-3xl pointer-events-none" style="background:rgba(34,211,238,0.08)"></div>
+            <div class="absolute -bottom-24 -left-24 h-56 w-56 rounded-full blur-3xl pointer-events-none" style="background:rgba(167,139,250,0.08)"></div>
+            <div class="relative flex-1 min-h-0 overflow-y-auto scrollbar-thin pr-1">
+              <!-- Question -->
+              <div class="mb-6">
+                <div class="flex items-center gap-2 mb-3">
+                  <span class="chip border uppercase text-amber-300 border-amber-400/30 bg-amber-400/5 font-mono tracking-wider text-[10px]">QUIZ</span>
+                  <span class="text-[10px] text-ink-500 font-mono">Q1 / 3</span>
+                </div>
+                <h2 class="text-lg text-ink-100 font-medium leading-relaxed">以下哪个表现最可能是员工的心理防御信号？</h2>
+              </div>
+              <!-- Options -->
+              <div class="space-y-3" id="quizOptions">
+                <label class="quiz-option flex items-start gap-3 p-4 rounded-xl border border-white/[0.08] cursor-pointer" style="background:rgba(255,255,255,0.02)" data-option="A" onclick="selectOption(this)">
+                  <div class="h-6 w-6 rounded-full border-2 border-white/15 flex items-center justify-center shrink-0 mt-0.5 transition" id="radio-A">
+                    <div class="h-2.5 w-2.5 rounded-full transition" style="background:transparent"></div>
+                  </div>
+                  <div>
+                    <span class="text-[11px] text-ink-500 font-mono">A</span>
+                    <div class="text-sm text-ink-200 mt-0.5">"最近项目进展顺利，没什么问题"</div>
+                  </div>
+                </label>
+                <label class="quiz-option flex items-start gap-3 p-4 rounded-xl border border-white/[0.08] cursor-pointer" style="background:rgba(255,255,255,0.02)" data-option="B" onclick="selectOption(this)">
+                  <div class="h-6 w-6 rounded-full border-2 border-white/15 flex items-center justify-center shrink-0 mt-0.5 transition" id="radio-B">
+                    <div class="h-2.5 w-2.5 rounded-full transition" style="background:transparent"></div>
+                  </div>
+                  <div>
+                    <span class="text-[11px] text-ink-500 font-mono">B</span>
+                    <div class="text-sm text-ink-200 mt-0.5">"这个方案我觉得还可以优化"</div>
+                  </div>
+                </label>
+                <label class="quiz-option flex items-start gap-3 p-4 rounded-xl border border-white/[0.08] cursor-pointer" style="background:rgba(255,255,255,0.02)" data-option="C" onclick="selectOption(this)">
+                  <div class="h-6 w-6 rounded-full border-2 border-white/15 flex items-center justify-center shrink-0 mt-0.5 transition" id="radio-C">
+                    <div class="h-2.5 w-2.5 rounded-full transition" style="background:transparent"></div>
+                  </div>
+                  <div>
+                    <span class="text-[11px] text-ink-500 font-mono">C</span>
+                    <div class="text-sm text-ink-200 mt-0.5">"领导说怎么做就怎么做吧"</div>
+                  </div>
+                </label>
+                <label class="quiz-option flex items-start gap-3 p-4 rounded-xl border border-white/[0.08] cursor-pointer" style="background:rgba(255,255,255,0.02)" data-option="D" onclick="selectOption(this)">
+                  <div class="h-6 w-6 rounded-full border-2 border-white/15 flex items-center justify-center shrink-0 mt-0.5 transition" id="radio-D">
+                    <div class="h-2.5 w-2.5 rounded-full transition" style="background:transparent"></div>
+                  </div>
+                  <div>
+                    <span class="text-[11px] text-ink-500 font-mono">D</span>
+                    <div class="text-sm text-ink-200 mt-0.5">"我试试看，但不保证效果"</div>
+                  </div>
+                </label>
+              </div>
+              <!-- Submit -->
+              <div class="mt-6 flex items-center gap-3">
+                <button id="quizSubmitBtn" onclick="submitQuiz()" class="inline-flex items-center gap-1.5 rounded-lg px-5 py-2.5 text-[13px] font-medium transition opacity-50 cursor-not-allowed" style="background:linear-gradient(135deg,#22D3EE,#A78BFA);color:#0A0B10" disabled>
+                  <i data-lucide="check-circle" class="h-4 w-4"></i>提交答案
+                </button>
+                <span id="quizHint" class="text-[11px] text-ink-500">请选择一个选项</span>
+              </div>
+              <!-- Feedback (hidden) -->
+              <div id="quizFeedback" class="hidden mt-6 p-4 rounded-xl border fade-in" style="background:rgba(34,211,238,0.04);border-color:rgba(34,211,238,0.3)">
+                <div class="flex items-center gap-2 mb-2">
+                  <i data-lucide="check-circle-2" class="h-5 w-5 text-cyan-400"></i>
+                  <span class="text-sm font-medium text-cyan-300">回答正确</span>
+                </div>
+                <p class="text-sm text-ink-300 leading-relaxed">"领导说怎么做就怎么做吧"是典型的顺从型防御信号。员工用表面的完全服从来回避真实的沟通，放弃自主思考，这往往意味着他已经关闭了内心的"吊桥"。这种信号比直接对抗更危险，因为它会被误读为"配合"。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW 4: FEEDBACK -->
+        <div id="view-feedback" class="view-panel">
+          <div class="card p-8 relative overflow-hidden">
+            <div class="absolute -top-24 -right-24 h-72 w-72 rounded-full blur-3xl pointer-events-none" style="background:rgba(34,211,238,0.08)"></div>
+            <div class="absolute -bottom-24 -left-24 h-56 w-56 rounded-full blur-3xl pointer-events-none" style="background:rgba(167,139,250,0.08)"></div>
+            <div class="relative flex-1 min-h-0 overflow-y-auto scrollbar-thin pr-1">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="chip border uppercase text-cyan-300 border-cyan-400/30 bg-cyan-400/5 font-mono tracking-wider text-[10px]">FEEDBACK_COLLECT</span>
+                <span class="text-[10px] text-ink-500 font-mono">&middot; 课前场景采集</span>
+              </div>
+              <div class="p-6 rounded-xl border border-white/[0.08]" style="background:rgba(255,255,255,0.02)">
+                <div class="flex items-start gap-3 mb-5">
+                  <div class="h-8 w-8 rounded-lg flex items-center justify-center shrink-0" style="background:rgba(167,139,250,0.1);color:#C4B5FD;border:1px solid rgba(167,139,250,0.2)"><i data-lucide="message-circle" class="h-4 w-4"></i></div>
+                  <div>
+                    <div class="text-sm text-ink-100 font-medium">场景描述</div>
+                    <div class="text-[11px] text-ink-500 mt-0.5">请尽可能具体地描述</div>
+                  </div>
+                </div>
+                <p class="text-sm text-ink-200 leading-relaxed mb-5">你在管理工作中，有没有遇到过表面配合但实际消极应对的下属？请描述一个具体的场景。</p>
+                <textarea placeholder="描述你遇到的具体场景..." class="w-full h-32 rounded-xl border border-white/[0.06] px-4 py-3 text-sm text-ink-100 placeholder:text-ink-500 outline-none focus:border-violet-400/40 resize-none scrollbar-thin" style="background:rgba(255,255,255,0.02)"></textarea>
+                <div class="mt-4 flex items-center justify-between">
+                  <div class="flex items-center gap-1.5 text-[11px] text-ink-500">
+                    <i data-lucide="lightbulb" class="h-3.5 w-3.5 text-amber-300/70"></i>
+                    <span>你的回答将在课程结束后用于个人化复盘</span>
+                  </div>
+                  <button class="inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-[12px] font-medium transition shadow-glow-cyan" style="background:linear-gradient(135deg,#22D3EE,#A78BFA);color:#0A0B10"><i data-lucide="send" class="h-3.5 w-3.5"></i>提交</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW 5: (deprecated inline complete panel kept as empty placeholder for switchSCO hooks) -->
+        <div id="view-complete" class="view-panel">
+          <!-- Content moved to modal #activityCompleteModal below -->
+        </div>
+
+      </div>
+    </main>
+
+    <!-- RIGHT: NEO CHAT -->
+    <aside class="w-[360px] lg:w-[380px] xl:w-[420px] shrink-0 border-l hairline backdrop-blur-md flex flex-col min-h-0" style="background:rgba(10,11,16,0.4)">
+      <!-- Neo brand hero -->
+      <div class="neo-brand-hero shrink-0 h-[160px] xl:h-[220px] border-b hairline flex items-center justify-center relative overflow-hidden">
+        <div class="absolute inset-0" style="background: radial-gradient(ellipse at center, rgba(139,92,246,0.15), transparent 70%);"></div>
+        <img src="../assets/neo-male.svg" alt="Neo" class="neo-brand-avatar h-28 w-28 xl:h-40 xl:w-40 object-contain relative z-10" />
+        <div class="absolute bottom-3 left-0 right-0 text-center">
+          <div class="text-[13px] font-medium text-ink-100">Neo</div>
+          <div class="text-[10px] text-ink-500 font-mono">AI Tutor</div>
+        </div>
+      </div>
+
+      <div class="shrink-0 px-5 pt-3 pb-3 border-b hairline">
+        <div class="flex items-center gap-3">
+          <img src="../assets/neo-male.svg" alt="Neo" class="neo-avatar h-10 w-10 rounded-xl object-cover" />
+          <div class="flex-1 min-w-0">
+            <span class="text-sm font-medium text-ink-100">Neo</span>
+          </div>
+          <button class="h-8 w-8 rounded-lg flex items-center justify-center hover:bg-white/[0.05] text-cyan-300" title="暂停"><i data-lucide="pause" class="h-3.5 w-3.5"></i></button>
+        </div>
+      </div>
+
+      <div class="flex-1 min-h-0 overflow-y-auto scrollbar-thin px-5 py-5 space-y-5">
+        <!-- Neo intro -->
+        <div class="flex gap-2.5">
+          <img src="../assets/neo-male.svg" alt="Neo" class="neo-avatar h-7 w-7 rounded-lg object-cover shrink-0" />
+          <div class="max-w-[86%] space-y-1.5 min-w-0">
+            <div class="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed border border-white/[0.08] text-ink-100 whitespace-pre-wrap" style="background:rgba(255,255,255,0.04);border-top-left-radius:0.375rem">心理防御就像城堡的吊桥，只能从内部放下。接下来我们看看如何建立心理安全感，让员工主动"放下吊桥"。</div>
+            <div class="text-[10px] text-ink-500 font-mono">14:12</div>
+          </div>
+        </div>
+
+        <!-- Neo teaching -->
+        <div class="flex gap-2.5">
+          <img src="../assets/neo-male.svg" alt="Neo" class="neo-avatar h-7 w-7 rounded-lg object-cover shrink-0" />
+          <div class="max-w-[86%] space-y-1.5 min-w-0">
+            <div class="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed border border-white/[0.08] text-ink-100 whitespace-pre-wrap" style="background:rgba(255,255,255,0.04);border-top-left-radius:0.375rem">看左边这张图——城堡代表员工的心理防线。注意那个吊桥：它由员工自己控制，外力推不开。这就是为什么说教和命令往往无效。</div>
+            <div class="text-[10px] text-ink-500 font-mono">14:13</div>
+          </div>
+        </div>
+
+        <!-- User message -->
+        <div class="flex justify-end gap-2">
+          <div class="max-w-[82%]">
+            <div class="rounded-2xl px-3.5 py-2 text-sm leading-relaxed text-ink-100" style="background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.25);border-top-right-radius:0.375rem">那具体怎么让对方感到安全？</div>
+            <div class="mt-1 text-[10px] text-ink-500 text-right font-mono">14:14</div>
+          </div>
+          <div class="h-7 w-7 rounded-lg flex items-center justify-center shrink-0 text-[11px] font-medium border border-white/10" style="background:rgba(255,255,255,0.06);color:#E6E8EE">Z</div>
+        </div>
+
+        <!-- Neo response -->
+        <div class="flex gap-2.5">
+          <img src="../assets/neo-male.svg" alt="Neo" class="neo-avatar h-7 w-7 rounded-lg object-cover shrink-0" />
+          <div class="max-w-[86%] space-y-1.5 min-w-0">
+            <div class="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed border border-white/[0.08] text-ink-100 caret" style="background:rgba(255,255,255,0.04);border-top-left-radius:0.375rem">有三个关键动作：自我归因、意图透明、价值认可。自我归因就是管理者先承认自己的困惑——比如说"我之前可能没注意到你的感受"。意图透明是明确告诉对方"我不是来批评的，是想一起找办法"。价值认可则是先肯定对方已经做到的</div>
+            <div class="inline-flex items-center gap-1 text-[10px] text-ink-500 font-mono"><i data-lucide="corner-down-left" class="h-2.5 w-2.5"></i>回到 SCO 06 继续</div>
+            <div class="text-[10px] text-ink-500 font-mono">14:15</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat input -->
+      <div class="shrink-0 p-3 border-t hairline">
+        <div class="rounded-2xl overflow-hidden border border-white/10 focus-within:border-cyan-400/40 transition" style="background:rgba(255,255,255,0.02)">
+          <textarea placeholder="输入消息..." class="w-full bg-transparent px-4 py-3 text-sm text-ink-100 placeholder:text-ink-500 outline-none resize-none h-[68px] scrollbar-thin"></textarea>
+          <div class="flex items-center justify-between px-3 py-2 border-t hairline">
+            <div class="flex items-center gap-2">
+              <button class="h-7 w-7 rounded-md flex items-center justify-center hover:bg-white/[0.05] text-ink-400"><i data-lucide="mic" class="h-3.5 w-3.5"></i></button>
+              <span class="text-[10px] text-ink-500 font-mono">Enter 发送</span>
+            </div>
+            <button class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] font-medium transition shadow-glow-cyan" style="background:linear-gradient(135deg,#22D3EE,#A78BFA);color:#0A0B10"><i data-lucide="send" class="h-3 w-3"></i>发送</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- ACTIVITY COMPLETE MODAL -->
+<div id="activityCompleteModal" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4" style="background:rgba(0,0,0,0.6);backdrop-filter:blur(8px)">
+  <div class="relative w-full max-w-md rounded-2xl overflow-hidden fade-in" style="background:rgba(17,19,27,0.98);border:1px solid rgba(255,255,255,0.1);box-shadow:0 24px 64px rgba(0,0,0,0.5),0 0 48px rgba(34,211,238,0.15)">
+    <!-- decorative glow -->
+    <div class="absolute -top-16 -right-16 h-48 w-48 rounded-full blur-3xl pointer-events-none" style="background:rgba(34,211,238,0.18)"></div>
+    <div class="absolute -bottom-16 -left-16 h-48 w-48 rounded-full blur-3xl pointer-events-none" style="background:rgba(167,139,250,0.15)"></div>
+    <!-- close btn -->
+    <button onclick="closeActivityCompleteModal()" class="absolute top-3 right-3 z-10 h-7 w-7 rounded-md flex items-center justify-center hover:bg-white/[0.06] text-ink-400" title="关闭">
+      <i data-lucide="x" class="h-3.5 w-3.5"></i>
+    </button>
+
+    <div class="relative px-8 py-8 text-center">
+      <!-- Completion icon -->
+      <div class="mx-auto h-16 w-16 rounded-2xl flex items-center justify-center mb-5 shadow-glow-cyan" style="background:linear-gradient(135deg,rgba(34,211,238,0.22),rgba(167,139,250,0.18));border:1px solid rgba(34,211,238,0.4)">
+        <i data-lucide="check-circle-2" class="h-8 w-8 text-cyan-400"></i>
+      </div>
+      <!-- Checkmark + title -->
+      <div class="flex items-center justify-center gap-2 mb-1.5">
+        <span class="text-emerald-300 text-lg">&#x2705;</span>
+        <h1 class="text-xl font-medium text-ink-100 tracking-tight">Activity 完成！</h1>
+      </div>
+      <p class="text-sm text-ink-400 mb-7">你已完成「重构被动型员工」</p>
+
+      <!-- Action buttons (side by side) -->
+      <div class="flex items-center gap-3">
+        <a href="05-practice.html" class="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-3 text-[13px] font-medium transition shadow-glow-violet hover:scale-[1.02]" style="background:linear-gradient(135deg,#22D3EE,#A78BFA);color:#0A0B10">
+          <i data-lucide="swords" class="h-4 w-4"></i>开始下一个对练
+        </a>
+        <a href="03-hall-daily.html" class="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-3 text-[13px] font-medium border transition hover:bg-white/[0.04]" style="background:rgba(255,255,255,0.02);border-color:rgba(255,255,255,0.1);color:#C4C8D4">
+          <i data-lucide="arrow-left" class="h-4 w-4"></i>回到辅导
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FLOATING NOTE BALL + WINDOW -->
+<button id="noteBall" title="随手记" class="fixed z-40 h-14 w-14 rounded-full transition flex items-center justify-center border shadow-glow-violet hover:scale-105 select-none" style="bottom:140px;right:24px;cursor:grab;background:linear-gradient(135deg,#22D3EE,#8B5CF6);color:#0A0B10;border-color:rgba(167,139,250,0.5);box-shadow:0 0 32px rgba(139,92,246,0.5),inset 0 1px 0 rgba(255,255,255,0.2);touch-action:none">
+  <i data-lucide="notebook-pen" class="h-5 w-5" style="stroke-width:2.4" draggable="false"></i>
+  <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full text-[10px] leading-[18px] font-semibold text-center pointer-events-none" style="background:#FCD34D;color:#0A0B10">3</span>
+</button>
+<div id="noteWin" class="hidden fixed z-40 w-[380px] glass-strong rounded-2xl overflow-hidden fade-in" style="bottom:220px;right:24px">
+  <div class="px-4 py-3 border-b hairline flex items-center justify-between">
+    <div class="flex items-center gap-2"><i data-lucide="notebook-pen" class="h-3.5 w-3.5 text-violet-300"></i><span class="text-xs font-medium text-ink-100">随手记</span><span class="chip text-[9px]" style="background:rgba(139,92,246,0.1);color:#C4B5FD;border:1px solid rgba(139,92,246,0.2)">悬浮窗</span></div>
+    <div class="flex items-center gap-1">
+      <button class="h-6 w-6 rounded-md flex items-center justify-center hover:bg-white/[0.05] text-ink-400" title="最小化"><i data-lucide="minus" class="h-3 w-3"></i></button>
+      <button onclick="toggleNote()" class="h-6 w-6 rounded-md flex items-center justify-center hover:bg-white/[0.05] text-ink-400" title="关闭"><i data-lucide="x" class="h-3 w-3"></i></button>
+    </div>
+  </div>
+  <div class="p-3">
+    <input id="noteTitle" type="text" placeholder="标题（可选）" class="w-full mb-2 rounded-lg border border-white/[0.06] px-3 py-1.5 text-xs text-ink-100 placeholder:text-ink-500 outline-none focus:border-violet-400/40" style="background:rgba(255,255,255,0.02)" />
+    <textarea id="noteContent" placeholder="想到什么随手记一下..." class="w-full h-24 rounded-xl border border-white/[0.06] px-3 py-2 text-xs text-ink-100 placeholder:text-ink-500 outline-none focus:border-violet-400/40 resize-none scrollbar-thin" style="background:rgba(255,255,255,0.02)">心理安全地基这个比喻很好——城堡吊桥。要记住三个动作：自我归因、意图透明、价值认可。</textarea>
+    <div class="mt-2 flex items-center justify-between">
+      <div class="flex items-center gap-1">
+        <button class="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] text-ink-400 hover:text-ink-100 hover:bg-white/[0.04]"><i data-lucide="image" class="h-3 w-3"></i>截图</button>
+        <button class="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] text-ink-400 hover:text-ink-100 hover:bg-white/[0.04]"><i data-lucide="clipboard-paste" class="h-3 w-3"></i>粘贴</button>
+      </div>
+      <button onclick="saveNote()" class="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-[11px] font-medium transition shadow-glow-violet" style="background:linear-gradient(135deg,#22D3EE,#8B5CF6);color:#0A0B10"><i data-lucide="save" class="h-3 w-3"></i>保存</button>
+    </div>
+    <div class="mt-2 pt-2 border-t hairline text-[10px] text-ink-500 font-mono flex items-center justify-between">
+      <span>当前位置：授课 &middot; SCO 06</span>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+  lucide.createIcons();
+
+  // --- Restore Neo avatar preference (set in 03-hall-daily.html settings) ---
+  (function() {
+    const saved = localStorage.getItem('neoAvatar');
+    if (saved === 'female') {
+      document.querySelectorAll('.neo-avatar, .neo-brand-avatar').forEach(img => img.src = '../assets/neo-female.svg');
+    }
+  })();
+
+  // --- Panel overlay open/close ---
+  function openPanel(){
+    document.getElementById('leftPanel').classList.add('open');
+    document.getElementById('leftPanelBackdrop').classList.add('open');
+    lucide.createIcons();
+  }
+  function closePanel(){
+    document.getElementById('leftPanel').classList.remove('open');
+    document.getElementById('leftPanelBackdrop').classList.remove('open');
+  }
+
+  // --- Nav tabs ---
+  function setNavTab(name){
+    document.querySelectorAll('.nav-tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelector('.nav-tab-btn[data-tab="'+name+'"]').classList.add('active');
+    document.querySelectorAll('.nav-tab-content').forEach(c=>c.classList.add('hidden'));
+    document.querySelector('.nav-tab-content[data-tab="'+name+'"]').classList.remove('hidden');
+    lucide.createIcons();
+  }
+
+  // --- Activity switch (context swap in SCO tab) ---
+  // Clicking a completed/current Activity jumps to the SCO tab and updates the activity header.
+  // Locked activities are non-interactive (handled via opacity-60 + cursor-not-allowed).
+  function switchActivity(actId){
+    const meta = {
+      'A1': { title:'A1 &middot; 从指责到赋能：GROW模型', state:'已完成 &middot; 回看中', icon:'check', scoCount:'10/10' },
+      'A2': { title:'A2 &middot; 催化主动型员工', state:'已完成 &middot; 回看中', icon:'check', scoCount:'11/11' },
+      'A3': { title:'A3 &middot; 重构被动型员工', state:'当前 Activity', icon:'play', scoCount:'5/12' },
+    }[actId];
+    if(!meta) return;
+    // Switch to slides tab to reveal SCO list
+    setNavTab('slides');
+    // Update SCO tab header labels to reflect chosen activity
+    const tab = document.querySelector('.nav-tab-content[data-tab="slides"]');
+    if(tab){
+      const label = tab.querySelector('.text-\\[10px\\].text-violet-300\\/70');
+      const titleEl = tab.querySelector('.text-\\[12px\\].text-ink-100.font-medium');
+      const scoLabel = tab.querySelector('.text-\\[10px\\].text-ink-500.font-mono.shrink-0');
+      if(label) label.textContent = (actId==='A3' ? '当前 Activity' : '回看 Activity');
+      if(titleEl) titleEl.innerHTML = meta.title;
+      if(scoLabel) scoLabel.textContent = meta.scoCount;
+    }
+  }
+
+  // --- Note floating ball ---
+  function toggleNote(){
+    const n=document.getElementById('noteWin');
+    n.classList.toggle('hidden');
+    if(!n.classList.contains('hidden')){ n.classList.add('fade-in'); lucide.createIcons(); repositionNoteWin(); }
+  }
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ const n=document.getElementById('noteWin'); if(!n.classList.contains('hidden')) n.classList.add('hidden'); closeActivityCompleteModal(); closePanel(); }});
+
+  // --- View switching ---
+  let selectedOption = null;
+
+  function showView(viewId){
+    // Intercept activity completion: show modal overlay instead of swapping view
+    if(viewId === 'view-complete'){
+      openActivityCompleteModal();
+      return;
+    }
+    document.querySelectorAll('.view-panel').forEach(v=>v.classList.remove('active'));
+    const el = document.getElementById(viewId);
+    if(el){ el.classList.add('active'); el.classList.add('fade-in'); }
+    lucide.createIcons();
+  }
+
+  // --- Activity complete modal ---
+  function openActivityCompleteModal(){
+    const m = document.getElementById('activityCompleteModal');
+    if(!m) return;
+    m.classList.remove('hidden');
+    lucide.createIcons();
+  }
+  function closeActivityCompleteModal(){
+    const m = document.getElementById('activityCompleteModal');
+    if(!m) return;
+    m.classList.add('hidden');
+  }
+
+  function switchSCO(el){
+    if(el.classList.contains('locked')) return;
+    // Update active state in list
+    document.querySelectorAll('.sco-item').forEach(s=>s.classList.remove('active'));
+    el.classList.add('active');
+
+    const type = el.dataset.type;
+    const scoNum = el.dataset.sco;
+    const headerInfo = document.getElementById('centerHeaderInfo');
+
+    if(type === 'ppt'){
+      const img = el.dataset.img;
+      if(img) document.getElementById('pptImage').src = img;
+      headerInfo.textContent = 'SCO ' + scoNum + ' / 12 \u00b7 PPT';
+      showView('view-ppt');
+    } else if(type === 'video'){
+      headerInfo.textContent = 'SCO ' + scoNum + ' / 12 \u00b7 VIDEO';
+      showView('view-video');
+    } else if(type === 'quiz'){
+      headerInfo.textContent = 'SCO ' + scoNum + ' / 12 \u00b7 QUIZ';
+      showView('view-quiz');
+    } else if(type === 'feedback' || type === 'feedback_review'){
+      headerInfo.textContent = 'SCO ' + scoNum + ' / 12 \u00b7 FEEDBACK';
+      showView('view-feedback');
+    }
+
+    // Auto-close panel after selection on smaller screens
+    closePanel();
+  }
+
+  // --- Quiz logic ---
+  function selectOption(el){
+    if(document.getElementById('quizFeedback').classList.contains('hidden') === false) return;
+    document.querySelectorAll('.quiz-option').forEach(o=>{
+      o.classList.remove('selected');
+      o.querySelector('[id^="radio-"] > div').style.background = 'transparent';
+      o.querySelector('[id^="radio-"]').style.borderColor = 'rgba(255,255,255,0.15)';
+    });
+    el.classList.add('selected');
+    const radio = el.querySelector('[id^="radio-"]');
+    radio.style.borderColor = '#A78BFA';
+    radio.querySelector('div').style.background = '#A78BFA';
+    selectedOption = el.dataset.option;
+    const btn = document.getElementById('quizSubmitBtn');
+    btn.disabled = false;
+    btn.classList.remove('opacity-50','cursor-not-allowed');
+    btn.classList.add('shadow-glow-cyan','hover:scale-[1.02]');
+    document.getElementById('quizHint').textContent = '';
+  }
+
+  function submitQuiz(){
+    if(!selectedOption) return;
+    const correctAnswer = 'C';
+    const isCorrect = selectedOption === correctAnswer;
+    const feedback = document.getElementById('quizFeedback');
+
+    document.querySelectorAll('.quiz-option').forEach(o=>{
+      o.style.pointerEvents = 'none';
+      if(o.dataset.option === correctAnswer){
+        o.classList.add('correct');
+        o.classList.remove('selected');
+        const r = o.querySelector('[id^="radio-"]');
+        r.style.borderColor = '#22D3EE';
+        r.querySelector('div').style.background = '#22D3EE';
+      } else if(o.classList.contains('selected') && !isCorrect){
+        o.classList.add('incorrect');
+        o.classList.remove('selected');
+        const r = o.querySelector('[id^="radio-"]');
+        r.style.borderColor = 'rgba(239,68,68,0.5)';
+        r.querySelector('div').style.background = '#EF4444';
+      }
+    });
+
+    if(isCorrect){
+      feedback.style.background = 'rgba(34,211,238,0.04)';
+      feedback.style.borderColor = 'rgba(34,211,238,0.3)';
+      feedback.innerHTML = '<div class="flex items-center gap-2 mb-2"><i data-lucide="check-circle-2" class="h-5 w-5 text-cyan-400"></i><span class="text-sm font-medium text-cyan-300">回答正确</span></div><p class="text-sm text-ink-300 leading-relaxed">"领导说怎么做就怎么做吧"是典型的顺从型防御信号。员工用表面的完全服从来回避真实的沟通，放弃自主思考，这往往意味着他已经关闭了内心的"吊桥"。这种信号比直接对抗更危险，因为它会被误读为"配合"。</p>';
+    } else {
+      feedback.style.background = 'rgba(239,68,68,0.04)';
+      feedback.style.borderColor = 'rgba(239,68,68,0.3)';
+      feedback.innerHTML = '<div class="flex items-center gap-2 mb-2"><i data-lucide="x-circle" class="h-5 w-5 text-red-400"></i><span class="text-sm font-medium text-red-300">回答不正确</span></div><p class="text-sm text-ink-300 leading-relaxed">正确答案是 C。"领导说怎么做就怎么做吧"是典型的顺从型防御信号。员工用表面的完全服从来回避真实的沟通，放弃自主思考，这往往意味着他已经关闭了内心的"吊桥"。这种信号比直接对抗更危险，因为它会被误读为"配合"。</p>';
+    }
+
+    feedback.classList.remove('hidden');
+    feedback.classList.add('fade-in');
+    document.getElementById('quizSubmitBtn').disabled = true;
+    document.getElementById('quizSubmitBtn').classList.add('opacity-50','cursor-not-allowed');
+    lucide.createIcons();
+  }
+
+  // --- Note ball drag ---
+  (function(){
+    const ball = document.getElementById('noteBall');
+    const noteWin = document.getElementById('noteWin');
+    const LONG_PRESS = 260;
+    let pressTimer = null, dragging = false, didDrag = false;
+    let start = { mx:0, my:0, bx:0, by:0 };
+
+    function ballRect(){ return ball.getBoundingClientRect(); }
+
+    function startDrag(mx, my){
+      dragging = true; didDrag = false;
+      const r = ballRect();
+      start = { mx, my, bx: r.left, by: r.top };
+      ball.style.cursor = 'grabbing'; ball.style.transition = 'none';
+      ball.style.transform = 'scale(1.08)';
+      ball.style.boxShadow = '0 0 48px rgba(244,168,85,0.7), inset 0 1px 0 rgba(255,255,255,0.25)';
+    }
+
+    function moveDrag(mx, my){
+      if (!dragging) return;
+      const dx = mx - start.mx, dy = my - start.my;
+      if (Math.abs(dx) > 2 || Math.abs(dy) > 2) didDrag = true;
+      const w = ball.offsetWidth, h = ball.offsetHeight;
+      const nx = Math.max(8, Math.min(start.bx + dx, window.innerWidth - w - 8));
+      const ny = Math.max(64, Math.min(start.by + dy, window.innerHeight - h - 8));
+      ball.style.left = nx + 'px'; ball.style.top = ny + 'px';
+      ball.style.right = 'auto'; ball.style.bottom = 'auto';
+      if (!noteWin.classList.contains('hidden')) repositionNoteWin();
+    }
+
+    function endDrag(){
+      if (dragging){
+        dragging = false;
+        ball.style.cursor = 'grab'; ball.style.transition = '';
+        ball.style.transform = ''; ball.style.boxShadow = '0 0 32px rgba(244,168,85,0.5), inset 0 1px 0 rgba(255,255,255,0.2)';
+      }
+    }
+
+    ball.addEventListener('mousedown', (e) => { e.preventDefault(); const mx = e.clientX, my = e.clientY; pressTimer = setTimeout(() => startDrag(mx, my), LONG_PRESS); });
+    document.addEventListener('mousemove', (e) => moveDrag(e.clientX, e.clientY));
+    document.addEventListener('mouseup', () => { clearTimeout(pressTimer); endDrag(); });
+    ball.addEventListener('click', (e) => { if (didDrag){ e.preventDefault(); e.stopPropagation(); didDrag = false; return; } toggleNote(); });
+
+    ball.addEventListener('touchstart', (e) => { if (!e.touches[0]) return; const mx = e.touches[0].clientX, my = e.touches[0].clientY; pressTimer = setTimeout(() => startDrag(mx, my), LONG_PRESS); }, {passive:true});
+    document.addEventListener('touchmove', (e) => { if (dragging && e.touches[0]){ e.preventDefault(); moveDrag(e.touches[0].clientX, e.touches[0].clientY); } }, {passive:false});
+    document.addEventListener('touchend', () => { clearTimeout(pressTimer); endDrag(); });
+
+    window.repositionNoteWin = function(){
+      const r = ballRect();
+      const winW = 380, winH = 260, margin = 12;
+      let left = r.left - winW - margin;
+      if (left < 8) left = r.right + margin;
+      if (left + winW > window.innerWidth - 8) left = window.innerWidth - winW - 8;
+      let top = r.top - winH + r.height;
+      if (top < 64) top = r.bottom + margin;
+      if (top + winH > window.innerHeight - 8) top = window.innerHeight - winH - 8;
+      noteWin.style.left = left + 'px'; noteWin.style.top = top + 'px';
+      noteWin.style.right = 'auto'; noteWin.style.bottom = 'auto';
+    };
+  })();
+
+  // --- Unified saveNote() for floating note ball ---
+  function saveNote() {
+    const titleEl = document.getElementById('noteTitle');
+    const contentEl = document.getElementById('noteContent');
+    const title = (titleEl && titleEl.value.trim()) || '未命名笔记';
+    const content = contentEl ? contentEl.value.trim() : '';
+    if (!content) { alert('笔记内容不能为空'); return; }
+    const pageSources = {
+      '03-hall-daily.html': '大厅',
+      '04-lecture.html': 'A3 · 授课',
+      '05-practice.html': 'A4 · 对练',
+      '06-report-learner.html': 'A5 · 报告',
+      '11-inquiry-p3.html': 'A0 · 调研'
+    };
+    const pageName = window.location.pathname.split('/').pop();
+    const source = pageSources[pageName] || '场域';
+    if (titleEl) titleEl.value = '';
+    if (contentEl) contentEl.value = '';
+    const noteWin = document.getElementById('note') || document.getElementById('noteWin');
+    if (noteWin) noteWin.classList.add('hidden');
+    alert('已保存到笔记库');
+  }
+</script>
+</body>
+</html>
