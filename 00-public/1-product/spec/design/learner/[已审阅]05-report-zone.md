@@ -1,10 +1,6 @@
 > **审阅状态：已审阅** | 审阅人：DM | 日期：2026-04-21
 
-<<<<<<< HEAD:00-public/1-product/spec/design/learner/[已审阅]05-report-zone.md
 # 报告场域模块（Report Zone）
-=======
-# 报告场域模块（Report Classroom）
->>>>>>> 02e07ba216824de6d236522527d86dd2eecbb3f7:00-public/1-product/spec/design/learner/[已审阅]05-report-classroom.md
 
 ## 模块定位
 
@@ -231,4 +227,4 @@ demo 演化为：**Markdown 长文档样式**（更像真实报告）：
 
 ## 本期不做的功能
 
-- 从 Leo 随时进入查看报告——本期仅 Course 结束后固定生成
+- 从大厅 Neo 对话随时进入查看报告——本期仅 Course 结束后固定生成

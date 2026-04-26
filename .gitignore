@@ -4,3 +4,11 @@
 .playwright-mcp/
 /*.png
 DM_Temp/prototype/ref/neo-female-options/
+
+# HBR Coaching Real Leaders 音频素材（本地工作目录，~3.37GB 不入仓库）
+# 保留：清单 JSON / Markdown / 下载脚本 / RSS feed.xml
+# 不入：实际 mp3 文件
+00-public/4-decisions/底层建设期-2026-04-26/5-数据集与样本/audio/
+00-public/4-decisions/底层建设期-2026-04-26/5-数据集与样本/HBR-audio/audio/
+*.mp3
+00-public/4-decisions/底层建设期-2026-04-26/5-数据集与样本/HBR-audio/download.log

@@ -6,20 +6,34 @@
 
 | 目录 | 说明 | 当前状态 |
 |------|------|---------|
-| [1-product/](1-product/) | 产品设计（需求规格、功能树、功能流程、UX规格、原型） | 核心文档 requirements-v0.3.3.md 已完成 |
+| [1-product/](1-product/) | 产品设计（需求规格、功能树、功能流程、UX规格、原型） | spec v0.4.0 已审阅完成 |
 | [2-business/](2-business/) | 商业分析（市场调研、战略、财务、验证） | 已基于 v0.3.3 更新 |
-| [3-tech/](3-tech/) | 技术分析与设计（现有技术栈分析、新架构设计） | 分析完成，设计待开始 |
-| [4-decisions/](4-decisions/) | ADR 设计决策记录（6项已决定） | 持续新增 |
+| [3-tech/](3-tech/) | 技术分析与设计（现有技术栈分析、coaching-skills 项目分析） | 分析完成 |
+| [4-decisions/](4-decisions/) | ADR 决策记录 + 主题决策包 | 6 ADR + 1 底层建设期决策包（2026-04-26） |
 | [5-process/](5-process/) | 过程记录（设计日志、辩论记录、Backlog） | 持续更新 |
-| [6-content/](6-content/) | 课程内容参考（原始知识文档、AOM样例） | 有效 |
+| [6-content/](6-content/) | 课程内容参考（FLM 17 份管理学脚本、GROW 12 份教练素材、AOM 样例） | 有效 |
 
 ## 核心文件
 
-- **需求规格**：[1-product/spec/requirements-v0.3.3.md](1-product/spec/requirements-v0.3.3.md) -- 所有设计工作的源头文档
-- **功能树/流程/UX规格**正在 DM_Temp 中审阅，审阅通过后会移回 1-product/ 对应子目录
+- **需求规格**：[1-product/spec/design/requirements-v0.4.0.md](1-product/spec/design/requirements-v0.4.0.md) — 当前 spec 总纲（v0.4.0，2026-04-22 审阅完成）
+- **功能树**：[1-product/feature-tree/](1-product/feature-tree/) — 10 份功能树（v0.4.0 对齐版）
+- **底层建设决策**：[4-decisions/底层建设期-2026-04-26/](4-decisions/底层建设期-2026-04-26/) — 50 题 PM 决策 + 三大底层原则 + Neo Soul final + 数据集与样本
 
-## 设计阶段总览
+## 当前阶段
 
 ```
-spec（已完成）→ feature-tree（已完成）→ feature-flows（已完成）→ ui-ux（已完成）→ prototypes（待开始）→ 开发
+spec v0.4.0（已完成 2026-04-22）→ 原型 v1.1（已完成 2026-04-23）→ 底层建设期 know-how 库（已完成 2026-04-26）→ 平台 / Agent 构建（待启动）
 ```
+
+## 重要约定
+
+- spec 改动方式：直接编辑 [已审阅] 文件；新设计追加"反向补充：XXX"章节，不删原内容
+- ADR 编号格式：001-简短标题.md
+- 主题决策包：跨多议题决策集合，按 `主题-YYYY-MM-DD/` 命名（见 4-decisions/）
+
+## 历史变更
+
+- **2026-04-26**：底层建设期决策包建立（50 题 PM 决策 + 12 份 know-how 文档）
+- **2026-04-23**：原型 v1.1 交付 + spec 反向补充 18 条
+- **2026-04-22**：spec v0.4.0 全部审阅完成
+- **2026-04-13**：项目结构升级到 6 大区

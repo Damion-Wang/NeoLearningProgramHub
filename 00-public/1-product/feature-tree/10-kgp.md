@@ -113,11 +113,11 @@ K. 能力维度与 rubric 管理
    K2 rubric 模板（L1-L5 等级定义）
    K3 维度跨 Course 对齐（相同维度 ID 保证跨 Course 可聚合）
 
-L. ★Neo Persona 定义（跨 4 场域共享）[补漏]
+L. ★Neo Persona 定义（跨 5 场域共享：大厅 + 授课 + 对练 + 调研 + 报告）[补漏]
    L1 Neo 统一人格（tone / style / 语气 / 风格基线）
-   L2 Neo 知识边界（Activity 内 + 已完成 Activity + 学员画像，不含未解锁内容）
-   L3 Neo 场域差异化行为（Lecture 结构化演绎 / Practice 答疑辅导 / Inquiry 访谈采集 / Report 解读引导）
-   L4 Neo 与 Leo 的边界（Neo 不提 Leo，知识范围限 Activity）
+   L2 Neo 知识边界（按场域差异化：大厅可访问 Program 全量；其他场域限 Activity 内 + 已完成 Activity + 学员画像，不含未解锁内容）
+   L3 Neo 场域差异化行为（Hall 大厅 Coach 辅导 / Lecture 结构化演绎 / Practice 答疑辅导 / Inquiry 访谈采集 / Report 解读引导）
+   L4 单一角色（2026-04-26 起取消 Leo，Neo 在不同场域展现不同技能/意愿；Neo 不再使用 Leo 命名）
    L5 Persona 版本管理（人格更新流程 + 灰度发布）
    L6 未来人格包生产（V2+，不同主题不同 Neo 人格）
 
@@ -125,7 +125,7 @@ M. 未来扩展（占位）
    M1 PPT 自动生成（V2+）
    M2 动态内容生成（V2+）
    M3 外部 KGP 协同生产
-   M4 Leo 人格包生产（V2+，不同主题不同 Leo 人格）
+   M4 Neo 人格包生产（V2+，不同主题不同 Neo 人格，含大厅 Coach 模式与场域 Tutor 模式两类技能配置）
 ```
 
 ---

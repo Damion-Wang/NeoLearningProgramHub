@@ -1,10 +1,6 @@
 > **审阅状态：已审阅** | 审阅人：DM | 日期：2026-04-21
 
-<<<<<<< HEAD:00-public/1-product/spec/design/learner/[已审阅]04-inquiry-zone.md
 # 调研场域模块（Inquiry Zone）
-=======
-# 调研场域模块（Inquiry Classroom）
->>>>>>> 02e07ba216824de6d236522527d86dd2eecbb3f7:00-public/1-product/spec/design/learner/[已审阅]04-inquiry-classroom.md
 
 ## 模块定位
 
@@ -205,7 +201,7 @@ Neo 更新左栏总结并确认：
 ### 量表结果处理
 
 - 量表题目、选项、计分逻辑全部由调研剧本定义
-- 结果写入统一 Database，供报告和 Leo 引用
+- 结果写入统一 Database，供报告和 Neo 引用
 
 ---
 
@@ -296,5 +292,5 @@ Neo 更新左栏总结并确认：
 ## 本期不做的功能
 
 - BEI 编造识别——设计哲学决定不做
-- 调研结果自动影响学习路径——本期供报告和 Leo 引用，不自动调整路径（属于 L3 自适应）
+- 调研结果自动影响学习路径——本期供报告和 Neo 引用，不自动调整路径（属于 L3 自适应）
 - 萃取、考试等扩展调研类型——未来迭代
