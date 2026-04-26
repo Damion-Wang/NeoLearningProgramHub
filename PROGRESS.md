@@ -51,6 +51,38 @@
   - `completion-gate` — 完成门控：测试+文档+commit+决策 4 件套反问
   - `git-push-guard` — 推送守门员：cleanup+progress+readme 三联检查
 
+## Phase 12 · 0424 会议反向补充与底层建设期（2026-04-23 ~ 04-26）
+
+- [x] **2026-04-23** 0424 会议（13 小时）原始资料归档 + 1503 行会议记录分析
+- [x] **2026-04-25** 0424 spec 差异 31 条逐条决策完成（6 红线 / 14 补充 / 11 新议题）
+- [x] **2026-04-26** Round-1 调研策略辩论 + 三大底层原则确立：
+  - P1 第一性原理（Neo = 1v1 线下老师 + 7 动作）
+  - P2 懂你 · 记忆系统底层原则
+  - P3 像人 · Soul/Persona 底层原则
+- [x] **2026-04-26** Leo 完全取消（spec 全文清理 22 文件 198 处 + 9 处 git conflict 解决 + 重命名 01-hall-leo→01-hall）
+- [x] **2026-04-26** 底层建设期调研完成 · 12 份产出 ~80K 字：
+  - B1 内化（4 份 gap 扫描 coaching-skills/GROW/FLM/spec + 综合 gap）
+  - B2 外部（5 份 r1-r5 教育/数据集/真人/记忆/Persona）
+  - HBR 91 集元数据 + 下载脚本（mp3 ~3.37GB 本地素材，不入仓库）
+  - HR 访谈本期取消 → 改研发后天使客户试用调优
+- [x] **2026-04-26** 50 题 PM 决策互动完成（Meta 3 + P1×10 + P2×10 + P3×10 + 数据集×5 + 业务×10 + 其他）
+- [x] **2026-04-26** 研发 know-how 参考资料库建立：
+  - `00-public/4-decisions/底层建设期-2026-04-26/` 8 个子目录
+  - 0-最终决策总览 / 1-原则与框架 / 2-Neo-Persona / 3-记忆系统 / 4-教学方法论 / 5-数据集与样本 / 6-原始调研 / 7-早期文档（标注「已被替代」）
+  - Neo Soul final（aaronjmars/soul.md 5 文件结构 + Teacher Credibility 顶级 + 不当舔狗 + 按场域差异化）
+  - Memory 设计原则（5 层渐进画像 + Khanmigo 双重架构 + 不靠 RAG）
+  - 7 动作理论家庭（Knowles/Kolb/Action Learning/ICF/Hattie/Dweck/Khanmigo）
+- [x] **2026-04-26** CLAUDE.md 升级到 11 条核心约束（加 P2 / P3 / PM 协作风格 4 项锁定）
+- [x] **2026-04-26** 多个 README 同步更新（根/00-public/4-decisions/spec/learner/feature-tree/02-temp）
+
+## Phase 13 · 平台 / Agent 构建（待启动）
+
+进入研发对接阶段：
+- 研发拿到底层建设期 know-how 库后启动平台 / Agent 构建
+- DM 主导 PRD + 用户故事 + 关键对话场景生产
+- 研发后天使客户试用调优
+- 不预设时间，研发能力决定节奏
+
 ## Notes · 核心商业要点
 
 - 双引擎架构：NeoLearning（高客单价项目）+ Neo Course（规模化平台）
