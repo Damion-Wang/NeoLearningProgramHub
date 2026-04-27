@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI 老师 · 学员端（静态快照）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        base: { 900:'#07080C', 800:'#0A0B10', 700:'#0E1016', 600:'#12141C', 500:'#181B25', 400:'#1F232F', 300:'#2A2F3E' },
+        ink:  { 100:'#F1F3F8', 200:'#E6E8EE', 300:'#C4C8D4', 400:'#8B92A5', 500:'#6A7085', 600:'#4A5061', 700:'#353A48' },
+        cyan: { 300:'#67E8F9', 400:'#22D3EE', 500:'#06B6D4', 600:'#0891B2' },
+        violet: { 300:'#C4B5FD', 400:'#A78BFA', 500:'#8B5CF6', 600:'#7C3AED' },
+        amber: { 300:'#FCD34D', 400:'#F4A855', 500:'#F59E0B' },
+      },
+      fontFamily: {
+        sans: ['Inter','-apple-system','PingFang SC','HarmonyOS Sans SC','Microsoft YaHei','sans-serif'],
+        mono: ['JetBrains Mono','ui-monospace','Consolas','monospace'],
+      },
+      boxShadow: {
+        'glow-cyan':   '0 0 24px rgba(34,211,238,0.35)',
+        'glow-violet': '0 0 24px rgba(167,139,250,0.30)',
+        'glow-amber':  '0 0 20px rgba(244,168,85,0.30)',
+      },
+      animation: {
+        breathe: 'breathe 4s ease-in-out infinite',
+        aurora:  'aurora 18s ease-in-out infinite',
+        caret:   'caret 1s steps(2) infinite',
+      },
+      keyframes: {
+        breathe: { '0%,100%': { opacity:'0.85', filter:'brightness(1)' }, '50%': { opacity:'1', filter:'brightness(1.25)' } },
+        aurora:  { '0%,100%': { transform:'translate3d(0,0,0) scale(1)' }, '50%': { transform:'translate3d(30px,-20px,0) scale(1.08)' } },
+        caret:   { '0%,100%': { opacity:'0' }, '50%': { opacity:'1' } },
+      },
+    },
+  },
+}
+</script>
+<style>
+html,body { height:100%; margin:0; background:#0A0B10; color:#E6E8EE; font-family:Inter,-apple-system,'PingFang SC',sans-serif; -webkit-font-smoothing:antialiased; letter-spacing:-0.01em; }
+::selection { background: rgba(167,139,250,0.35); color:#fff; }
+
+.aurora-bg { position:relative; isolation:isolate; }
+.aurora-bg::before, .aurora-bg::after { content:''; position:fixed; inset:0; z-index:-1; pointer-events:none; }
+.aurora-bg::before {
+  background:
+    radial-gradient(60% 45% at 12% 12%, rgba(34,211,238,0.18) 0%, transparent 60%),
+    radial-gradient(55% 50% at 92% 88%, rgba(167,139,250,0.22) 0%, transparent 60%),
+    radial-gradient(40% 30% at 80% 15%, rgba(244,168,85,0.10) 0%, transparent 60%),
+    linear-gradient(180deg, #0A0B10 0%, #07080C 100%);
+  animation: aurora 18s ease-in-out infinite;
+}
+.aurora-bg::after {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.25 0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.6'/></svg>");
+  opacity:0.04; mix-blend-mode:overlay;
+}
+
+.glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border:1px solid rgba(255,255,255,0.06); box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.04); }
+.glass-strong { background: rgba(24,27,37,0.94); backdrop-filter: blur(28px); border:1px solid rgba(255,255,255,0.1);
+  box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.06), 0 24px 60px -20px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,0,0,0.3); }
+.card { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border:1px solid rgba(255,255,255,0.06); border-radius: 1rem; box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.04); }
+.hairline { border-color: rgba(255,255,255,0.06); }
+
+.scrollbar-thin::-webkit-scrollbar { width:6px; height:6px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius:999px; }
+.scrollbar-thin::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
+
+.kbd { display:inline-flex; align-items:center; justify-content:center; border-radius:6px; border:1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04); padding: 0 6px; height:20px; font-size:10px; font-family:'JetBrains Mono',monospace; color:#8B92A5; }
+.chip { display:inline-flex; align-items:center; gap:4px; border-radius:999px; padding: 2px 8px; font-size:11px; font-weight:500; letter-spacing:-0.01em; }
+.caret::after { content:'▌'; margin-left:2px; color: rgba(167,139,250,0.85); animation: caret 1s steps(2) infinite; }
+[data-lucide] { width:1em; height:1em; }
+
+.fade-in { animation: fadeIn 0.3s ease-out both; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+/* tabular numbers */
+.tabular-nums { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body class="aurora-bg h-full">
+<div class="h-full flex flex-col">
+
+  <!-- ================= TOPBAR ================= -->
+  <header class="h-14 shrink-0 px-5 flex items-center justify-between z-30 border-b hairline backdrop-blur-xl" style="background: rgba(10,11,16,0.6)">
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2">
+        <div class="relative h-8 w-8 rounded-xl flex items-center justify-center shadow-glow-violet" style="background: linear-gradient(135deg,#22D3EE,#8B5CF6)">
+          <i data-lucide="sparkles" class="h-4 w-4 text-base-800" style="color:#0A0B10;stroke-width:2.4"></i>
+        </div>
+        <div class="leading-tight">
+          <div class="text-[13px] font-medium text-ink-100">AI 老师</div>
+          <div class="text-[10px] text-ink-500 -mt-0.5 font-mono">AI TUTOR · v0.4</div>
+        </div>
+      </div>
+      <span class="h-4 w-px bg-white/10"></span>
+      <span class="chip bg-white/[0.04] text-ink-300 border border-white/5">学员端</span>
+      <span class="text-[11px] text-ink-500 hidden xl:inline font-mono">基层管理者培养项目 · W3/26</span>
+    </div>
+
+    <div class="flex items-center gap-1">
+      <button onclick="toggle('cmdk')" class="group flex items-center gap-2 rounded-lg px-3 h-9 border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/[0.12] transition">
+        <i data-lucide="command" class="h-3.5 w-3.5 text-ink-400 group-hover:text-cyan-300 transition"></i>
+        <span class="text-xs text-ink-400 group-hover:text-ink-200 transition hidden lg:inline">问教练 · 找工具 · 跳课程</span>
+        <span class="flex items-center gap-0.5 ml-3">
+          <span class="kbd">⌘</span><span class="kbd">K</span>
+        </span>
+      </button>
+      <div class="mx-1 h-5 w-px bg-white/10"></div>
+
+      <!-- bell -->
+      <div class="relative">
+        <button onclick="toggle('bell')" aria-label="消息提醒" class="relative rounded-lg p-2 hover:bg-white/[0.05] transition">
+          <i data-lucide="bell" class="h-4 w-4 text-ink-300"></i>
+          <span class="absolute top-1 right-1 min-w-[14px] h-[14px] px-1 rounded-full text-[9px] leading-[14px] text-base-800 text-center font-semibold shadow-glow-amber" style="background:#F4A855;color:#0A0B10">2</span>
+        </button>
+        <div id="bell" class="hidden absolute right-0 mt-2 w-[380px] glass-strong rounded-2xl overflow-hidden z-50 fade-in">
+          <div class="flex items-center justify-between px-4 py-3 border-b hairline">
+            <span class="text-sm font-medium text-ink-100">消息提醒</span>
+            <button class="text-[11px] text-ink-400 hover:text-cyan-300 inline-flex items-center gap-1"><i data-lucide="check-check" class="h-3 w-3"></i> 全部已读</button>
+          </div>
+          <div class="max-h-[380px] overflow-y-auto scrollbar-thin">
+            <div class="px-4 py-3 border-b hairline hover:bg-white/[0.02] cursor-pointer">
+              <div class="flex items-start gap-2">
+                <span class="chip shrink-0 mt-0.5" style="background:rgba(167,139,250,0.1);color:#C4B5FD;border:1px solid rgba(167,139,250,0.2)">运营</span>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2"><span class="text-xs font-medium text-ink-100 truncate">本周五前完成 Course 2 可获线下集训优先选座权</span><span class="h-1.5 w-1.5 rounded-full shadow-glow-amber" style="background:#F4A855"></span></div>
+                  <div class="mt-0.5 text-[11px] text-ink-400">运营通知：本周五 18:00 前完成 Course 2 全部学习任务的同学，可获得线下集训优先选座权。</div>
+                  <div class="mt-1 text-[10px] text-ink-500 font-mono">昨天 09:12</div>
+                </div>
+              </div>
+            </div>
+            <div class="px-4 py-3 border-b hairline hover:bg-white/[0.02] cursor-pointer">
+              <div class="flex items-start gap-2">
+                <span class="chip shrink-0 mt-0.5" style="background:rgba(244,168,85,0.1);color:#FCD34D;border:1px solid rgba(244,168,85,0.2)">系统</span>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2"><span class="text-xs font-medium text-ink-100 truncate">你已连续 2 天未学习</span><span class="h-1.5 w-1.5 rounded-full shadow-glow-amber" style="background:#F4A855"></span></div>
+                  <div class="mt-0.5 text-[11px] text-ink-400">根据学习规律，建议尽快回到学习节奏。今日推荐任务：PIN 法跨部门协商对练。</div>
+                  <div class="mt-1 text-[10px] text-ink-500 font-mono">今天 08:30</div>
+                </div>
+              </div>
+            </div>
+            <div class="px-4 py-3 border-b hairline hover:bg-white/[0.02] cursor-pointer">
+              <div class="flex items-start gap-2">
+                <span class="chip shrink-0 mt-0.5" style="background:rgba(34,211,238,0.1);color:#67E8F9;border:1px solid rgba(34,211,238,0.2)">平台</span>
+                <div class="flex-1 min-w-0">
+                  <span class="text-xs font-medium text-ink-100">AI 教练已更新——沟通风格调整</span>
+                  <div class="mt-0.5 text-[11px] text-ink-400">你的辅导教练已升级为直接朴实的老同事风格，少说心灵鸡汤，多问具体事实。</div>
+                  <div class="mt-1 text-[10px] text-ink-500 font-mono">4/12</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- avatar -->
+      <div class="relative">
+        <button onclick="toggle('user')" class="flex items-center gap-2 rounded-lg p-0.5 pr-2 hover:bg-white/[0.05] transition">
+          <div class="h-7 w-7 rounded-lg flex items-center justify-center text-xs font-semibold shadow-glow-violet" style="background:linear-gradient(135deg,#22D3EE,#8B5CF6);color:#0A0B10">Z</div>
+          <span class="text-xs text-ink-300 hidden md:inline">张磊</span>
+        </button>
+        <div id="user" class="hidden absolute right-0 mt-2 w-56 glass-strong rounded-xl p-1.5 z-50 fade-in">
+          <div class="px-3 py-2 border-b hairline">
+            <div class="text-xs font-medium text-ink-100">张磊</div>
+            <div class="text-[10px] text-ink-400 mt-0.5">区域销售主管</div>
+          </div>
+          <div class="flex items-center gap-2 px-2.5 py-1.5 text-xs text-ink-300 rounded-md hover:bg-white/[0.05] cursor-pointer"><i data-lucide="user" class="h-3.5 w-3.5"></i>账号管理</div>
+          <div class="flex items-center gap-2 px-2.5 py-1.5 text-xs text-ink-300 rounded-md hover:bg-white/[0.05] cursor-pointer"><i data-lucide="settings" class="h-3.5 w-3.5"></i>个人设置</div>
+          <div class="flex items-center gap-2 px-2.5 py-1.5 text-xs text-ink-300 rounded-md hover:bg-white/[0.05] cursor-pointer"><i data-lucide="help-circle" class="h-3.5 w-3.5"></i>帮助</div>
+          <div class="flex items-center justify-between px-2.5 py-1.5 text-xs text-ink-300 rounded-md hover:bg-white/[0.05] cursor-pointer">
+            <span class="inline-flex items-center gap-2"><i data-lucide="repeat" class="h-3.5 w-3.5"></i>端口切换</span>
+            <i data-lucide="chevron-right" class="h-3 w-3 text-ink-500"></i>
+          </div>
+          <div class="my-1 border-t hairline"></div>
+          <div class="flex items-center gap-2 px-2.5 py-1.5 text-xs rounded-md hover:bg-white/[0.05] cursor-pointer text-rose-400"><i data-lucide="log-out" class="h-3.5 w-3.5"></i>退出登录</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= THREE COLUMN ================= -->
+  <div class="flex-1 min-h-0 flex">
+
+    <!-- LEFT NAV -->
+    <aside class="w-14 shrink-0 border-r hairline backdrop-blur-md flex flex-col items-center py-4" style="background:rgba(10,11,16,0.4)">
+      <div class="flex flex-col gap-1.5">
+        <button class="group relative h-10 w-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-cyan-400/20 to-violet-500/20 text-cyan-300 ring-1 ring-cyan-400/20 shadow-glow-cyan">
+          <i data-lucide="home" class="h-4 w-4"></i>
+          <span class="pointer-events-none absolute left-full ml-2 whitespace-nowrap rounded-md border hairline backdrop-blur px-2 py-1 text-[11px] text-ink-200 opacity-0 group-hover:opacity-100 transition z-50" style="background:rgba(14,16,22,0.9)">大厅</span>
+        </button>
+        <button class="group relative h-10 w-10 rounded-xl flex items-center justify-center text-ink-400 hover:text-ink-100 hover:bg-white/[0.04] transition">
+          <i data-lucide="compass" class="h-4 w-4"></i>
+          <span class="pointer-events-none absolute left-full ml-2 whitespace-nowrap rounded-md border hairline backdrop-blur px-2 py-1 text-[11px] text-ink-200 opacity-0 group-hover:opacity-100 transition z-50" style="background:rgba(14,16,22,0.9)">学习旅程</span>
+        </button>
+        <button class="group relative h-10 w-10 rounded-xl flex items-center justify-center text-ink-400 hover:text-ink-100 hover:bg-white/[0.04] transition">
+          <i data-lucide="book-open" class="h-4 w-4"></i>
+          <span class="pointer-events-none absolute left-full ml-2 whitespace-nowrap rounded-md border hairline backdrop-blur px-2 py-1 text-[11px] text-ink-200 opacity-0 group-hover:opacity-100 transition z-50" style="background:rgba(14,16,22,0.9)">课程目录</span>
+        </button>
+        <button class="group relative h-10 w-10 rounded-xl flex items-center justify-center text-ink-400 hover:text-ink-100 hover:bg-white/[0.04] transition">
+          <i data-lucide="wrench" class="h-4 w-4"></i>
+          <span class="pointer-events-none absolute left-full ml-2 whitespace-nowrap rounded-md border hairline backdrop-blur px-2 py-1 text-[11px] text-ink-200 opacity-0 group-hover:opacity-100 transition z-50" style="background:rgba(14,16,22,0.9)">工具库</span>
+        </button>
+        <button class="group relative h-10 w-10 rounded-xl flex items-center justify-center text-ink-400 hover:text-ink-100 hover:bg-white/[0.04] transition">
+          <i data-lucide="file-text" class="h-4 w-4"></i>
+          <span class="pointer-events-none absolute left-full ml-2 whitespace-nowrap rounded-md border hairline backdrop-blur px-2 py-1 text-[11px] text-ink-200 opacity-0 group-hover:opacity-100 transition z-50" style="background:rgba(14,16,22,0.9)">我的报告</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="flex-1 min-w-0 overflow-y-auto scrollbar-thin">
+      <div class="max-w-4xl mx-auto px-8 py-8 space-y-6">
+        <header class="pb-2">
+          <div class="text-[10px] text-ink-500 font-mono tracking-[0.2em] uppercase">HALL · 大厅</div>
+          <h1 class="mt-2 text-3xl font-medium text-ink-100 tracking-tight">下午好，张磊<span class="text-ink-500">.</span></h1>
+          <p class="text-sm text-ink-400 mt-2">今天是你在「基层管理者培养项目」的第 <span class="text-cyan-300 font-mono tabular-nums">21</span> 天——<span class="text-ink-300">继续往前一小步。</span></p>
+        </header>
+
+        <!-- ProgressOverview -->
+        <div class="card p-6 relative overflow-hidden">
+          <div class="absolute -top-24 -right-24 h-64 w-64 rounded-full blur-3xl pointer-events-none" style="background:rgba(34,211,238,0.1)"></div>
+          <div class="absolute -bottom-24 -left-24 h-48 w-48 rounded-full blur-3xl pointer-events-none" style="background:rgba(167,139,250,0.1)"></div>
+          <div class="relative flex items-start justify-between">
+            <div>
+              <div class="text-[10px] text-cyan-300 font-mono tracking-[0.2em] uppercase">Current · 当前阶段</div>
+              <div class="mt-2 text-2xl font-medium text-ink-100 tracking-tight">Course 2 · 横向协作</div>
+              <div class="text-xs text-ink-400 mt-1">PIN 法与跨部门沟通</div>
+            </div>
+            <span class="chip border border-cyan-400/30 bg-cyan-400/5 text-cyan-300"><span class="h-1.5 w-1.5 rounded-full animate-breathe shadow-glow-cyan" style="background:#22D3EE"></span>进行中</span>
+          </div>
+          <div class="relative mt-6">
+            <div class="h-[3px] rounded-full bg-white/5 overflow-hidden">
+              <div class="h-full rounded-full shadow-glow-cyan" style="width:25%;background:linear-gradient(90deg,#22D3EE,#A78BFA)"></div>
+            </div>
+            <div class="mt-2 flex items-center justify-between text-[11px] text-ink-500 font-mono">
+              <span>1 / 8 COURSES</span>
+              <span class="text-ink-200">25%</span>
+            </div>
+          </div>
+          <div class="relative mt-6 grid grid-cols-3 gap-3">
+            <div class="rounded-xl border p-3" style="background:rgba(34,211,238,0.05);border-color:rgba(34,211,238,0.15)">
+              <div class="flex items-center gap-2 text-cyan-300"><i data-lucide="clock" class="h-3.5 w-3.5"></i><div class="text-[10px] font-mono uppercase opacity-80 tracking-wider">累计学习</div></div>
+              <div class="mt-1.5 text-sm text-ink-100 font-mono tabular-nums">5h 27m</div>
+            </div>
+            <div class="rounded-xl border p-3" style="background:rgba(167,139,250,0.05);border-color:rgba(167,139,250,0.15)">
+              <div class="flex items-center gap-2 text-violet-300"><i data-lucide="trending-up" class="h-3.5 w-3.5"></i><div class="text-[10px] font-mono uppercase opacity-80 tracking-wider">周期进度</div></div>
+              <div class="mt-1.5 text-sm text-ink-100 font-mono tabular-nums">W 3 / 26</div>
+            </div>
+            <div class="rounded-xl border p-3" style="background:rgba(244,168,85,0.05);border-color:rgba(244,168,85,0.15)">
+              <div class="flex items-center gap-2 text-amber-300"><i data-lucide="flame" class="h-3.5 w-3.5"></i><div class="text-[10px] font-mono uppercase opacity-80 tracking-wider">最近学习</div></div>
+              <div class="mt-1.5 text-sm text-ink-100 font-mono tabular-nums">04-20</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CourseMap -->
+        <div class="card p-6 relative">
+          <div class="absolute top-0 left-1/2 -translate-x-1/2 h-px w-2/3" style="background:linear-gradient(90deg,transparent,rgba(34,211,238,0.3),transparent)"></div>
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <div class="text-[10px] text-violet-300 font-mono tracking-[0.2em] uppercase">Learning Path · 学习旅程</div>
+              <div class="mt-1 text-sm text-ink-200">8 门课程 · 悬停查看 Activity</div>
+            </div>
+            <div class="flex items-center gap-3 text-[10px] text-ink-500 font-mono">
+              <span class="inline-flex items-center gap-1.5"><span class="h-1.5 w-1.5 rounded-full shadow-glow-cyan" style="background:#22D3EE"></span>已完成</span>
+              <span class="inline-flex items-center gap-1.5"><span class="h-1.5 w-1.5 rounded-full shadow-glow-violet" style="background:#A78BFA"></span>进行中</span>
+              <span class="inline-flex items-center gap-1.5"><span class="h-1.5 w-1.5 rounded-full bg-white/10"></span>未解锁</span>
+            </div>
+          </div>
+          <div id="courseGrid" class="relative grid grid-cols-4 gap-y-10 gap-x-4 py-2"></div>
+        </div>
+
+        <!-- Heatmap -->
+        <div class="card p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <div class="text-[10px] text-cyan-300 font-mono tracking-[0.2em] uppercase">Rhythm · 学习节律</div>
+              <div class="mt-1 text-sm text-ink-200">近 12 周 · 悬停查看明细</div>
+            </div>
+            <div class="flex items-center gap-4 text-[11px] text-ink-500 font-mono">
+              <span>活跃 <span class="text-ink-100" id="activeDays">--</span> 天</span>
+              <span>合计 <span class="text-ink-100" id="totalMin">--</span></span>
+            </div>
+          </div>
+          <div class="flex gap-4">
+            <div class="flex flex-col justify-between py-0.5 text-[9px] text-ink-600 font-mono">
+              <div class="h-3 leading-3">Mon</div><div class="h-3 leading-3">Tue</div><div class="h-3 leading-3">Wed</div>
+              <div class="h-3 leading-3">Thu</div><div class="h-3 leading-3">Fri</div><div class="h-3 leading-3">Sat</div><div class="h-3 leading-3">Sun</div>
+            </div>
+            <div id="heatmapGrid" class="flex gap-1 flex-1 overflow-x-auto scrollbar-thin"></div>
+            <div class="flex items-end gap-1 text-[9px] text-ink-600 font-mono">
+              <span>less</span>
+              <span class="h-3 w-3 rounded-[4px]" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05)"></span>
+              <span class="h-3 w-3 rounded-[4px]" style="background:rgba(34,211,238,0.1);border:1px solid rgba(34,211,238,0.1)"></span>
+              <span class="h-3 w-3 rounded-[4px]" style="background:rgba(34,211,238,0.25);border:1px solid rgba(34,211,238,0.2)"></span>
+              <span class="h-3 w-3 rounded-[4px] shadow-glow-cyan" style="background:rgba(34,211,238,0.5);border:1px solid rgba(34,211,238,0.3)"></span>
+              <span class="h-3 w-3 rounded-[4px] shadow-glow-cyan" style="background:rgba(34,211,238,0.8);border:1px solid rgba(34,211,238,0.5)"></span>
+              <span>more</span>
+            </div>
+          </div>
+          <div class="mt-5 rounded-xl border hairline px-4 py-3 min-h-[142px] relative" style="background:rgba(255,255,255,0.02)">
+            <div id="hmEmpty" class="absolute inset-0 flex items-center justify-center gap-2 text-[11px] text-ink-500 font-mono"><i data-lucide="mouse-pointer-2" class="h-3 w-3"></i>悬停方格查看该日学习明细</div>
+            <div id="hmDetail" class="absolute inset-0 px-4 py-3 hidden"></div>
+          </div>
+        </div>
+
+        <!-- Tools + Todo -->
+        <div class="grid grid-cols-2 gap-6">
+          <!-- Tools -->
+          <div class="card p-5">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <div class="text-[10px] text-amber-300 font-mono tracking-[0.2em] uppercase">Toolbelt · 工具库</div>
+                <div class="mt-1 text-[11px] text-ink-400">随课程解锁 · 点击预览或下载</div>
+              </div>
+              <div class="text-[10px] text-ink-500 font-mono">2/5</div>
+            </div>
+            <div class="grid grid-cols-1 gap-2.5">
+              <div class="rounded-xl p-3 relative border border-white/[0.08] bg-white/[0.02] hover:border-amber-400/30 hover:bg-amber-400/[0.03] cursor-pointer transition" onclick="openTool('角色转变四维对照表')">
+                <div class="flex items-start gap-3">
+                  <div class="h-9 w-9 rounded-lg flex items-center justify-center shrink-0" style="background:rgba(244,168,85,0.1);color:#FCD34D;border:1px solid rgba(244,168,85,0.2)"><i data-lucide="file-text" class="h-3.5 w-3.5"></i></div>
+                  <div class="min-w-0 flex-1">
+                    <div class="text-xs font-medium text-ink-100 truncate">角色转变四维对照表</div>
+                    <div class="mt-1 text-[11px] text-ink-400 line-clamp-2">识别从执行者到管理者的转型差距</div>
+                  </div>
+                </div>
+              </div>
+              <div class="rounded-xl p-3 relative border border-white/[0.08] bg-white/[0.02] hover:border-amber-400/30 hover:bg-amber-400/[0.03] cursor-pointer transition" onclick="openTool('PIN 法三步走对照表')">
+                <div class="flex items-start gap-3">
+                  <div class="h-9 w-9 rounded-lg flex items-center justify-center shrink-0" style="background:rgba(244,168,85,0.1);color:#FCD34D;border:1px solid rgba(244,168,85,0.2)"><i data-lucide="file-text" class="h-3.5 w-3.5"></i></div>
+                  <div class="min-w-0 flex-1">
+                    <div class="text-xs font-medium text-ink-100 truncate">PIN 法三步走对照表</div>
+                    <div class="mt-1 text-[11px] text-ink-400 line-clamp-2">Pressure / Interest / Need 三层识别与应对</div>
+                  </div>
+                </div>
+              </div>
+              <div class="rounded-xl p-3 relative border border-white/5 bg-white/[0.01]">
+                <div class="flex items-start gap-3">
+                  <div class="h-9 w-9 rounded-lg flex items-center justify-center shrink-0 bg-white/[0.02] text-ink-600 border border-white/5"><i data-lucide="lock" class="h-3.5 w-3.5"></i></div>
+                  <div class="min-w-0 flex-1">
+                    <div class="text-xs font-medium truncate text-ink-500">利益相关者地图</div>
+                    <div class="mt-1 text-[11px] line-clamp-2 text-ink-600">完成"利益相关者地图"讲解后解锁</div>
+                  </div>
+                </div>
+              </div>
+              <div class="rounded-xl p-3 relative border border-white/5 bg-white/[0.01]">
+                <div class="flex items-start gap-3">
+                  <div class="h-9 w-9 rounded-lg flex items-center justify-center shrink-0 bg-white/[0.02] text-ink-600 border border-white/5"><i data-lucide="lock" class="h-3.5 w-3.5"></i></div>
+                  <div class="min-w-0 flex-1">
+                    <div class="text-xs font-medium truncate text-ink-500">横向协作四象限应对指南</div>
+                    <div class="mt-1 text-[11px] line-clamp-2 text-ink-600">完成四象限方法讲解后解锁</div>
+                  </div>
+                </div>
+              </div>
+              <div class="rounded-xl p-3 relative border border-white/5 bg-white/[0.01]">
+                <div class="flex items-start gap-3">
+                  <div class="h-9 w-9 rounded-lg flex items-center justify-center shrink-0 bg-white/[0.02] text-ink-600 border border-white/5"><i data-lucide="lock" class="h-3.5 w-3.5"></i></div>
+                  <div class="min-w-0 flex-1">
+                    <div class="text-xs font-medium truncate text-ink-500">坏消息汇报法模板</div>
+                    <div class="mt-1 text-[11px] line-clamp-2 text-ink-600">进入"向上管理"模块后解锁</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Todo -->
+          <div class="card p-5">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <div class="text-[10px] text-violet-300 font-mono tracking-[0.2em] uppercase">Commitments · 待办承诺</div>
+                <div class="mt-1 text-[11px] text-ink-400">教练捕捉的行动 + 系统推荐任务</div>
+              </div>
+              <div class="text-[10px] text-ink-500 font-mono" id="todoCount">3/3</div>
+            </div>
+            <ul id="todoList" class="space-y-2"></ul>
+          </div>
+        </div>
+
+        <!-- NoteLibrary -->
+        <div class="card p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <div class="text-[10px] text-amber-300 font-mono tracking-[0.2em] uppercase">Insights · 经验洞察</div>
+              <div class="mt-1 text-[11px] text-ink-400">教练对话中自动捕捉</div>
+            </div>
+            <div class="text-[10px] text-ink-500 font-mono">2 条</div>
+          </div>
+          <ul class="space-y-3">
+            <li class="relative rounded-xl p-3.5 flex gap-3 overflow-hidden" style="background:rgba(244,168,85,0.03);border:1px solid rgba(244,168,85,0.15)">
+              <div class="absolute -top-8 -right-8 h-24 w-24 rounded-full blur-2xl pointer-events-none" style="background:rgba(244,168,85,0.1)"></div>
+              <div class="relative h-8 w-8 rounded-lg flex items-center justify-center shrink-0" style="background:rgba(244,168,85,0.1);color:#FCD34D;border:1px solid rgba(244,168,85,0.2)"><i data-lucide="notebook-pen" class="h-3.5 w-3.5"></i></div>
+              <div class="relative flex-1 min-w-0">
+                <div class="text-[12px] text-ink-100 leading-relaxed">洞察：表面的不配合可能是资源冲突——先探询对方的真实处境，再判断是态度问题还是资源问题。</div>
+                <div class="mt-1.5 text-[10px] text-ink-500 font-mono">辅导对话 4/17 · 2026-04-17</div>
+              </div>
+            </li>
+            <li class="relative rounded-xl p-3.5 flex gap-3 overflow-hidden" style="background:rgba(244,168,85,0.03);border:1px solid rgba(244,168,85,0.15)">
+              <div class="absolute -top-8 -right-8 h-24 w-24 rounded-full blur-2xl pointer-events-none" style="background:rgba(244,168,85,0.1)"></div>
+              <div class="relative h-8 w-8 rounded-lg flex items-center justify-center shrink-0" style="background:rgba(244,168,85,0.1);color:#FCD34D;border:1px solid rgba(244,168,85,0.2)"><i data-lucide="notebook-pen" class="h-3.5 w-3.5"></i></div>
+              <div class="relative flex-1 min-w-0">
+                <div class="text-[12px] text-ink-100 leading-relaxed">PIN 法的顺序可以灵活调整——跟技术团队先说 N（需求），再回到 PI。</div>
+                <div class="mt-1.5 text-[10px] text-ink-500 font-mono">辅导对话 4/15 · 2026-04-15</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <footer class="py-10 text-center text-[10px] text-ink-600 font-mono tracking-wider">· AI TUTOR · LEARNER PROTOTYPE · STATIC SNAPSHOT · v0.4.0 ·</footer>
+      </div>
+    </main>
+
+    <!-- RIGHT: COACH CHAT -->
+    <aside class="w-[440px] shrink-0 border-l hairline backdrop-blur-md flex flex-col" style="background:rgba(10,11,16,0.4)">
+      <div class="px-5 pt-4 pb-3 border-b hairline">
+        <div class="flex items-center gap-3">
+          <div class="relative">
+            <div class="h-10 w-10 rounded-xl flex items-center justify-center shadow-glow-violet" style="background:linear-gradient(135deg,#A78BFA,#22D3EE)"><i data-lucide="sparkles" class="h-4 w-4" style="color:#0A0B10;stroke-width:2.4"></i></div>
+            <span class="absolute inset-0 rounded-xl animate-breathe" style="background:rgba(167,139,250,0.2)"></span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-medium text-ink-100">小铭</span>
+              <span class="chip border bg-cyan-400/5 text-cyan-300 border-cyan-400/20"><span class="h-1.5 w-1.5 rounded-full animate-breathe shadow-glow-cyan" style="background:#22D3EE"></span>在线</span>
+            </div>
+            <div class="text-[11px] text-ink-500 mt-0.5 font-mono">AI COACH · 跨课程记忆 · 长期陪伴</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="chat" class="flex-1 overflow-y-auto scrollbar-thin px-5 py-5 space-y-5">
+        <!-- coach msg 1 -->
+        <div class="flex gap-2.5">
+          <div class="h-7 w-7 rounded-lg flex items-center justify-center shrink-0 shadow-glow-violet" style="background:linear-gradient(135deg,#A78BFA,#22D3EE);color:#0A0B10"><i data-lucide="sparkles" class="h-3.5 w-3.5" style="stroke-width:2.4"></i></div>
+          <div class="max-w-[84%] space-y-1.5 min-w-0">
+            <div class="flex items-center gap-1.5 flex-wrap text-[10px] font-mono tracking-wider">
+              <span class="chip border uppercase text-cyan-300 border-cyan-400/30 bg-cyan-400/5">MENTOR</span>
+              <span class="text-ink-500">· OPENING</span>
+            </div>
+            <div class="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed border border-white/[0.08] text-ink-100 whitespace-pre-wrap" style="background:rgba(255,255,255,0.04);border-top-left-radius:0.375rem">欢迎回来，张磊。你上次学完了 PIN 法的概念讲解部分，今天推荐继续完成 PIN 法的对练——练习怎么用 PIN 法和跨部门同事谈资源协调。预计 20 分钟。</div>
+            <!-- task card -->
+            <div class="group relative rounded-2xl p-3 flex items-center gap-3 cursor-pointer transition overflow-hidden" style="background:linear-gradient(135deg,rgba(167,139,250,0.1),rgba(34,211,238,0.05));border:1px solid rgba(167,139,250,0.2)">
+              <div class="absolute inset-0" style="background:radial-gradient(60% 80% at 0% 0%,rgba(167,139,250,0.15),transparent)"></div>
+              <div class="relative h-10 w-10 rounded-xl flex items-center justify-center shrink-0 shadow-glow-violet" style="background:linear-gradient(135deg,#A78BFA,#22D3EE);color:#0A0B10"><i data-lucide="swords" class="h-4 w-4" style="stroke-width:2.4"></i></div>
+              <div class="relative flex-1 min-w-0">
+                <div class="text-xs text-violet-300 font-mono tracking-wider uppercase">今日 · 对练</div>
+                <div class="text-sm font-medium text-ink-100 mt-0.5 truncate">PIN 法跨部门协商对练</div>
+                <div class="text-[10px] text-ink-400 mt-0.5 font-mono">约 20 分钟</div>
+              </div>
+              <button class="relative inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-[11px] font-medium shadow-glow-cyan group-hover:brightness-110 transition shrink-0" style="background:linear-gradient(135deg,#22D3EE,#A78BFA);color:#0A0B10"><i data-lucide="play" class="h-3 w-3" fill="currentColor"></i>进入</button>
+            </div>
+            <div class="text-[10px] text-ink-500 font-mono">14:00</div>
+          </div>
+        </div>
+        <!-- learner msg -->
+        <div class="flex justify-end gap-2">
+          <div class="max-w-[82%]">
+            <div class="rounded-2xl px-3.5 py-2 text-sm leading-relaxed text-ink-100 whitespace-pre-wrap" style="background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.25);border-top-right-radius:0.375rem">好，不过我最近跟市场部张总谈得不太顺——她一急我就紧张。</div>
+            <div class="mt-1 text-[10px] text-ink-500 text-right font-mono">14:01</div>
+          </div>
+          <div class="h-7 w-7 rounded-lg flex items-center justify-center shrink-0 text-[11px] font-medium border border-white/10" style="background:rgba(255,255,255,0.06);color:#E6E8EE">Z</div>
+        </div>
+        <!-- coach reply -->
+        <div class="flex gap-2.5">
+          <div class="h-7 w-7 rounded-lg flex items-center justify-center shrink-0 shadow-glow-violet" style="background:linear-gradient(135deg,#A78BFA,#22D3EE);color:#0A0B10"><i data-lucide="sparkles" class="h-3.5 w-3.5" style="stroke-width:2.4"></i></div>
+          <div class="max-w-[84%] space-y-1.5 min-w-0">
+            <div class="flex items-center gap-1.5 flex-wrap text-[10px] font-mono tracking-wider">
+              <span class="chip border uppercase text-cyan-300 border-cyan-400/30 bg-cyan-400/5">MENTOR</span>
+              <span class="chip bg-amber-400/5 text-amber-300 border border-amber-400/20">感知 · 受挫</span>
+              <span class="text-ink-500">· EXPLORING</span>
+            </div>
+            <div class="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed border border-white/[0.08] text-ink-100 whitespace-pre-wrap" style="background:rgba(255,255,255,0.04);border-top-left-radius:0.375rem">确实不好受——准备了方法，结果对方不接招。你当时怎么应对的？</div>
+            <div class="text-[10px] text-ink-500 font-mono">14:01</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-3 border-t hairline">
+        <div class="rounded-2xl overflow-hidden border border-white/10 focus-within:border-cyan-400/40 transition" style="background:rgba(255,255,255,0.02)">
+          <textarea id="chatInput" aria-label="向教练发送消息" placeholder="把工作里的问题甩给我…" class="w-full bg-transparent px-4 py-3 text-sm text-ink-100 placeholder:text-ink-500 outline-none resize-none h-[68px] scrollbar-thin"></textarea>
+          <div class="flex items-center justify-between px-3 py-2 border-t hairline">
+            <span class="text-[10px] text-ink-500 font-mono">Enter 发送 · Shift+Enter 换行</span>
+            <button onclick="sendMsg()" class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] font-medium transition shadow-glow-cyan hover:brightness-110" style="background:linear-gradient(135deg,#22D3EE,#A78BFA);color:#0A0B10"><i data-lucide="send" class="h-3 w-3"></i>发送</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- ================= FLOATING NOTE ================= -->
+<button onclick="toggle('note')" title="随手记" class="fixed bottom-6 right-6 z-40 h-12 w-12 rounded-2xl transition flex items-center justify-center border shadow-glow-amber" style="background:linear-gradient(135deg,#F4A855,#F59E0B);color:#0A0B10;border-color:rgba(252,211,77,0.5)">
+  <i data-lucide="notebook-pen" class="h-4 w-4" style="stroke-width:2.4"></i>
+</button>
+<div id="note" class="hidden fixed bottom-24 right-[468px] z-40 w-[340px] glass-strong rounded-2xl overflow-hidden fade-in">
+  <div class="px-4 py-3 border-b hairline flex items-center justify-between">
+    <div class="flex items-center gap-2"><i data-lucide="notebook-pen" class="h-3.5 w-3.5 text-amber-300"></i><span class="text-xs font-medium text-ink-100">随手记</span></div>
+    <span class="text-[10px] text-ink-500 font-mono">本地 · 不打扰学习</span>
+  </div>
+  <div class="p-3">
+    <textarea aria-label="随手笔记" placeholder="想到什么随手记一下…" class="w-full h-24 rounded-xl border border-white/[0.06] px-3 py-2 text-xs text-ink-100 placeholder:text-ink-500 outline-none focus:border-amber-400/40 resize-none scrollbar-thin" style="background:rgba(255,255,255,0.02)"></textarea>
+    <div class="mt-2 flex items-center justify-between">
+      <button class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] text-ink-300 hover:text-ink-100 hover:bg-white/[0.04] transition"><i data-lucide="image" class="h-3 w-3"></i>截图</button>
+      <button class="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-[11px] font-medium transition text-base-800 shadow-glow-amber hover:brightness-110" style="background:#F4A855;color:#0A0B10"><i data-lucide="save" class="h-3 w-3"></i>保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= CMDK ================= -->
+<div id="cmdk" class="hidden fixed inset-0 z-[100] flex items-start justify-center pt-[14vh] px-4" onclick="if(event.target===this)toggle('cmdk')">
+  <div class="absolute inset-0 backdrop-blur-md" style="background:rgba(7,8,12,0.7)"></div>
+  <div class="relative w-full max-w-[640px] glass-strong rounded-2xl overflow-hidden" style="box-shadow:0 30px 80px -20px rgba(0,0,0,0.6)">
+    <div class="flex items-center gap-3 px-4 py-3 border-b hairline">
+      <i data-lucide="sparkles" class="h-4 w-4 text-violet-300 shrink-0"></i>
+      <input id="cmdkInput" placeholder="说点什么，或直接问：" class="flex-1 bg-transparent outline-none text-sm text-ink-100 placeholder:text-ink-500" />
+      <span class="kbd"><i data-lucide="search" class="h-3 w-3"></i></span>
+      <span class="text-[10px] text-ink-500 font-mono">ESC</span>
+    </div>
+    <div id="cmdkList" class="max-h-[48vh] overflow-y-auto scrollbar-thin py-2"></div>
+    <div class="px-4 py-2 border-t hairline flex items-center justify-between text-[10px] text-ink-500 font-mono">
+      <div class="flex items-center gap-3">
+        <span class="flex items-center gap-1"><span class="kbd">↑↓</span>选择</span>
+        <span class="flex items-center gap-1"><span class="kbd">↵</span>执行</span>
+        <span class="flex items-center gap-1"><span class="kbd">ESC</span>关闭</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= TOOL MODAL ================= -->
+<div id="toolModal" class="hidden fixed inset-0 z-[90] backdrop-blur-md flex items-center justify-center p-4" style="background:rgba(7,8,12,0.7)" onclick="if(event.target===this)toggle('toolModal')">
+  <div class="glass-strong rounded-2xl w-[640px] max-w-full max-h-[80vh] overflow-hidden flex flex-col">
+    <div class="flex items-center justify-between px-5 py-3 border-b hairline">
+      <div>
+        <div id="toolTitle" class="text-sm font-medium text-ink-100">工具名称</div>
+        <div class="text-[11px] text-ink-400 mt-0.5">点击下方可下载 PDF</div>
+      </div>
+      <button onclick="toggle('toolModal')" class="p-1.5 rounded-md hover:bg-white/[0.05]"><i data-lucide="x" class="h-3.5 w-3.5 text-ink-400"></i></button>
+    </div>
+    <div class="flex-1 overflow-y-auto p-6 scrollbar-thin">
+      <div class="rounded-xl border hairline p-6 space-y-3 text-sm text-ink-200" style="background:rgba(255,255,255,0.02)">
+        <div class="text-base font-medium text-ink-100">工具预览（Mock）</div>
+        <p class="text-ink-400">这是工具的示例内容。真实产品中将渲染 PDF 预览。</p>
+        <ul class="space-y-1.5 text-ink-300 font-mono text-[12px]">
+          <li class="flex gap-2"><span class="text-amber-300">01</span> 步骤一：识别关键信号</li>
+          <li class="flex gap-2"><span class="text-amber-300">02</span> 步骤二：选择对应策略</li>
+          <li class="flex gap-2"><span class="text-amber-300">03</span> 步骤三：执行并反馈</li>
+        </ul>
+      </div>
+    </div>
+    <div class="px-5 py-3 border-t hairline flex justify-end gap-2">
+      <button onclick="toggle('toolModal')" class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs text-ink-300 hover:text-ink-100 hover:bg-white/[0.04] transition">关闭</button>
+      <button class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium shadow-glow-cyan" style="background:#22D3EE;color:#0A0B10"><i data-lucide="download" class="h-3.5 w-3.5"></i>下载 PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= LUCIDE + VANILLA JS ================= -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+// ------- Toggle helper -------
+function toggle(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.toggle('hidden');
+  if (!el.classList.contains('hidden')) el.classList.add('fade-in');
+  if (id === 'cmdk' && !el.classList.contains('hidden')) {
+    setTimeout(() => document.getElementById('cmdkInput').focus(), 30);
+  }
+}
+document.addEventListener('keydown', (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); toggle('cmdk'); }
+  if (e.key === 'Escape') {
+    ['cmdk','toolModal','bell','user','note'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && !el.classList.contains('hidden')) el.classList.add('hidden');
+    });
+  }
+});
+document.addEventListener('mousedown', (e) => {
+  ['bell','user'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el || el.classList.contains('hidden')) return;
+    const btn = el.previousElementSibling;
+    if (!el.contains(e.target) && (!btn || !btn.contains(e.target))) el.classList.add('hidden');
+  });
+});
+
+// ------- Courses (S 型 8 课) -------
+const courses = [
+  { id:1, title:'角色认知', subtitle:'从业务骨干到管理者', status:'done', progress:100 },
+  { id:2, title:'横向协作', subtitle:'PIN 法与跨部门沟通', status:'active', progress:55 },
+  { id:3, title:'向上管理', subtitle:'与上级共创目标', status:'locked', progress:0 },
+  { id:4, title:'向下辅导', subtitle:'激发与成就下属', status:'locked', progress:0 },
+  { id:5, title:'目标管理', subtitle:'OKR 与关键指标', status:'locked', progress:0 },
+  { id:6, title:'会议管理', subtitle:'高效主持与共识', status:'locked', progress:0 },
+  { id:7, title:'冲突处理', subtitle:'冲突的建设性转化', status:'locked', progress:0 },
+  { id:8, title:'团队建设', subtitle:'塔克曼四阶段', status:'locked', progress:0 },
+];
+function renderCourses() {
+  const grid = document.getElementById('courseGrid');
+  courses.forEach((c, idx) => {
+    const row = Math.floor(idx / 4), colInRow = idx % 4;
+    const dcol = row % 2 === 0 ? colInRow : 3 - colInRow;
+    const wrapper = document.createElement('div');
+    wrapper.style.gridColumn = dcol + 1;
+    wrapper.style.gridRow = row + 1;
+    wrapper.className = 'relative';
+    const done = c.status === 'done', active = c.status === 'active', locked = c.status === 'locked';
+    wrapper.innerHTML = `
+      <div class="flex flex-col items-center">
+        <div class="relative h-14 w-14 rounded-2xl flex items-center justify-center transition ${done?'shadow-glow-cyan':active?'shadow-glow-violet':''}"
+             style="${done?'background:rgba(34,211,238,0.1);color:#67E8F9;border:1px solid rgba(34,211,238,0.4)':active?'background:linear-gradient(135deg,rgba(167,139,250,0.2),rgba(34,211,238,0.2));color:#F1F3F8;border:1px solid rgba(167,139,250,0.4)':locked?'background:rgba(255,255,255,0.02);color:#4A5061;border:1px solid rgba(255,255,255,0.05)':'background:rgba(255,255,255,0.04);color:#C4C8D4;border:1px solid rgba(255,255,255,0.1)'}">
+          <span class="text-base font-medium font-mono">${done?'<i data-lucide="check" class="h-5 w-5"></i>':locked?'<i data-lucide="lock" class="h-4 w-4"></i>':String(c.id).padStart(2,'0')}</span>
+          ${active?`<span class="absolute inset-0 rounded-2xl animate-breathe" style="background:rgba(167,139,250,0.2)"></span>
+            <span class="absolute -bottom-1 -right-1 h-4 w-4 rounded-full flex items-center justify-center shadow-glow-cyan" style="background:linear-gradient(135deg,#22D3EE,#A78BFA)"><i data-lucide="play" class="h-2 w-2" style="color:#0A0B10" fill="currentColor"></i></span>`:''}
+        </div>
+        <div class="mt-2.5 text-xs text-ink-200 text-center font-medium">${c.title}</div>
+        <div class="text-[10px] text-ink-500 text-center mt-0.5">${c.subtitle}</div>
+      </div>
+      <div class="courseTip absolute left-1/2 -translate-x-1/2 w-72 z-30 glass-strong rounded-xl p-3.5 text-left hidden ${row===0?'top-full mt-3':'bottom-full mb-3'}">
+        <div class="flex items-center justify-between mb-2.5">
+          <div class="text-xs font-medium text-ink-100">Course ${c.id} · ${c.title}</div>
+          <span class="text-[10px] text-cyan-300 font-mono">${c.progress}%</span>
+        </div>
+        <ul class="space-y-1.5 text-[11px] text-ink-400">
+          <li>· 课程内容清单占位（静态快照）</li>
+          <li>· 动态交互请打开完整 React 版本</li>
+        </ul>
+      </div>
+    `;
+    wrapper.addEventListener('mouseenter', () => wrapper.querySelector('.courseTip').classList.remove('hidden'));
+    wrapper.addEventListener('mouseleave', () => wrapper.querySelector('.courseTip').classList.add('hidden'));
+    grid.appendChild(wrapper);
+  });
+}
+
+// ------- Heatmap -------
+function buildHeatmapData() {
+  const cells = [];
+  const today = new Date('2026-04-20');
+  for (let i = 12*7-1; i >= 0; i--) {
+    const d = new Date(today); d.setDate(d.getDate() - i);
+    const ds = d.toISOString().slice(0,10);
+    const seed = (i*131+17) % 11;
+    let v=0,t=0,dr=0,a=0,co=0;
+    if (seed<3) v=0;
+    else if (seed<6) { v=1; t=10; co=5; }
+    else if (seed<9) { v=2; t=20; co=8; }
+    else if (seed<10) { v=3; t=25; dr=12; co=8; }
+    else { v=4; t=30; dr=18; a=10; co=12; }
+    const day = d.getDay(); if (day===0||day===6) v = Math.max(0, v-1);
+    cells.push({ date:ds, v, t, dr, a, co });
+  }
+  return cells;
+}
+const levelStyles = [
+  'background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05)',
+  'background:rgba(34,211,238,0.1);border:1px solid rgba(34,211,238,0.1)',
+  'background:rgba(34,211,238,0.25);border:1px solid rgba(34,211,238,0.2)',
+  'background:rgba(34,211,238,0.5);border:1px solid rgba(34,211,238,0.3);box-shadow:0 0 24px rgba(34,211,238,0.35)',
+  'background:rgba(34,211,238,0.8);border:1px solid rgba(34,211,238,0.5);box-shadow:0 0 24px rgba(34,211,238,0.35)',
+];
+function renderHeatmap() {
+  const cells = buildHeatmapData();
+  const grid = document.getElementById('heatmapGrid');
+  const weekdayIdx = (ds) => { const d=new Date(ds).getDay(); return d===0?6:d-1; };
+  const weeks = [];
+  let cur = [];
+  if (cells.length) { const fw = weekdayIdx(cells[0].date); for (let k=0;k<fw;k++) cur.push(null); }
+  cells.forEach(c => { cur.push(c); if (cur.length===7) { weeks.push(cur); cur=[]; } });
+  if (cur.length) { while(cur.length<7) cur.push(null); weeks.push(cur); }
+
+  weeks.forEach(w => {
+    const col = document.createElement('div');
+    col.className = 'flex flex-col gap-1';
+    w.forEach(c => {
+      const el = document.createElement('div');
+      el.className = 'h-3 w-3 rounded-[4px]';
+      if (c) {
+        el.style.cssText = levelStyles[c.v] + ';cursor:pointer;transition:transform 0.12s';
+        el.addEventListener('mouseenter', () => { el.style.transform='scale(1.4)'; showHMDetail(c); });
+        el.addEventListener('mouseleave', () => { el.style.transform='scale(1)'; });
+      }
+      col.appendChild(el);
+    });
+    grid.appendChild(col);
+  });
+
+  let totalMin = 0, active = 0;
+  cells.forEach(c => { const sum = c.t+c.dr+c.a+c.co; totalMin += sum; if (c.v>0) active++; });
+  document.getElementById('activeDays').textContent = active;
+  document.getElementById('totalMin').textContent = `${Math.floor(totalMin/60)}h ${totalMin%60}m`;
+}
+function showHMDetail(c) {
+  document.getElementById('hmEmpty').classList.add('hidden');
+  const det = document.getElementById('hmDetail');
+  det.classList.remove('hidden');
+  const total = c.t+c.dr+c.a+c.co;
+  const bars = [
+    { l:'授课', v:c.t,  g:'linear-gradient(to top,#06B6D4,#22D3EE)' },
+    { l:'对练', v:c.dr, g:'linear-gradient(to top,#8B5CF6,#A78BFA)' },
+    { l:'测评', v:c.a,  g:'linear-gradient(to top,#F59E0B,#F4A855)' },
+    { l:'辅导', v:c.co, g:'linear-gradient(to top,#A78BFA,#67E8F9)' },
+  ];
+  const max = Math.max(...bars.map(b=>b.v), 5);
+  det.innerHTML = `
+    <div class="flex items-center justify-between text-[11px] text-ink-400 font-mono">
+      <span class="text-ink-100">${c.date}</span>
+      <span>${total===0?'未学习':'总计 '+total+' 分钟'}</span>
+    </div>
+    <div class="mt-3 grid grid-cols-4 gap-3">
+      ${bars.map(b=>`
+        <div>
+          <div class="h-14 flex items-end"><div class="w-full rounded-t transition-all duration-300" style="height:${(b.v/max)*100}%;background:${b.g};${b.v===0?'opacity:0.1':''}"></div></div>
+          <div class="mt-1 flex items-center justify-between text-[9px] text-ink-500 font-mono"><span>${b.l}</span><span class="text-ink-200 tabular-nums">${b.v}′</span></div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// ------- Todo -------
+const todos = [
+  { id:1, text:'下周与张总碰面时，试一次"3 秒暂停 + 我想确认一下"', src:'coach', date:'2026-04-17', done:false },
+  { id:2, text:'完成 Course 2「PIN 法跨部门协商对练」（教练推荐）', src:'coach', date:'2026-04-20', done:false },
+  { id:3, text:'本周五 18:00 前完成 Course 2 全部学习任务', src:'system', date:'2026-04-18', done:false },
+];
+function renderTodos() {
+  const ul = document.getElementById('todoList');
+  ul.innerHTML = todos.map(t => `
+    <li class="flex items-start gap-3 rounded-xl border px-3 py-2.5 transition ${t.done?'border-white/[0.04]':'border-white/[0.08] hover:border-violet-400/20'}" style="background:${t.done?'rgba(255,255,255,0.01)':'rgba(255,255,255,0.02)'}">
+      <button onclick="toggleTodo(${t.id})" class="h-4 w-4 mt-0.5 rounded-md border flex items-center justify-center shrink-0 transition ${t.done?'shadow-glow-cyan':''}" style="${t.done?'background:#22D3EE;border-color:#22D3EE;color:#0A0B10':'border-color:rgba(255,255,255,0.2);background:transparent'}">
+        ${t.done?'<i data-lucide="check" class="h-2.5 w-2.5" style="stroke-width:3"></i>':''}
+      </button>
+      <div class="flex-1 min-w-0">
+        <div class="text-[12px] leading-relaxed ${t.done?'text-ink-500 line-through':'text-ink-200'}">${t.text}</div>
+        <div class="mt-1 flex items-center gap-2 text-[10px] font-mono">
+          ${t.src==='coach'
+            ? '<span class="chip border" style="background:rgba(167,139,250,0.1);color:#C4B5FD;border-color:rgba(167,139,250,0.2)"><i data-lucide="sparkles" class="h-2.5 w-2.5"></i>教练</span>'
+            : '<span class="chip border" style="background:rgba(244,168,85,0.1);color:#FCD34D;border-color:rgba(244,168,85,0.2)"><i data-lucide="bell" class="h-2.5 w-2.5"></i>系统</span>'}
+          <span class="text-ink-500">${t.date}</span>
+        </div>
+      </div>
+    </li>
+  `).join('');
+  document.getElementById('todoCount').textContent = `${todos.filter(t=>!t.done).length}/${todos.length}`;
+  lucide.createIcons();
+}
+function toggleTodo(id) { todos.forEach(t=>{ if(t.id===id) t.done=!t.done; }); renderTodos(); }
+
+// ------- CMDK -------
+const cmdkActions = [
+  { icon:'message-square-plus', title:'向教练提问', sub:'把工作里的问题甩给 AI 教练', color:'violet' },
+  { icon:'arrow-right',         title:'继续下一步', sub:'跳到教练推荐的今日任务', color:'cyan' },
+  { icon:'compass',             title:'查看学习旅程', sub:'8 门课程 · 已走过的星图', color:'cyan' },
+  { icon:'swords',              title:'PIN 法跨部门协商对练', sub:'对练 · 约 20 分钟', color:'violet' },
+  { icon:'book-open',           title:'Course 1 · 角色认知', sub:'从业务骨干到管理者', color:'cyan' },
+  { icon:'book-open',           title:'Course 2 · 横向协作', sub:'PIN 法与跨部门沟通', color:'cyan' },
+  { icon:'wrench',              title:'角色转变四维对照表', sub:'识别从执行者到管理者的转型差距', color:'amber' },
+  { icon:'wrench',              title:'PIN 法三步走对照表', sub:'Pressure / Interest / Need 三层识别与应对', color:'amber' },
+];
+function colorStyle(c) {
+  if (c==='violet') return 'background:rgba(167,139,250,0.1);color:#C4B5FD;box-shadow:0 0 0 1px rgba(167,139,250,0.2) inset';
+  if (c==='amber')  return 'background:rgba(244,168,85,0.1);color:#FCD34D;box-shadow:0 0 0 1px rgba(244,168,85,0.2) inset';
+  return 'background:rgba(34,211,238,0.1);color:#67E8F9;box-shadow:0 0 0 1px rgba(34,211,238,0.2) inset';
+}
+function renderCmdk(q='') {
+  const list = document.getElementById('cmdkList');
+  const filtered = cmdkActions.filter(a => a.title.includes(q) || a.sub.includes(q));
+  list.innerHTML = filtered.length === 0
+    ? '<div class="py-8 text-center text-xs text-ink-500">没找到——直接按 Enter 把问题交给教练</div>'
+    : filtered.map((a,i) => `
+        <div class="flex items-center gap-3 px-4 py-2.5 cursor-pointer transition hover:bg-white/[0.05] ${i===0?'bg-white/[0.05]':''}">
+          <div class="h-8 w-8 rounded-lg flex items-center justify-center shrink-0" style="${colorStyle(a.color)}"><i data-lucide="${a.icon}" class="h-3.5 w-3.5"></i></div>
+          <div class="flex-1 min-w-0">
+            <div class="text-xs font-medium text-ink-100 truncate">${a.title}</div>
+            <div class="text-[11px] text-ink-500 truncate mt-0.5">${a.sub}</div>
+          </div>
+        </div>
+      `).join('');
+  lucide.createIcons();
+}
+document.addEventListener('input', (e) => {
+  if (e.target.id === 'cmdkInput') renderCmdk(e.target.value);
+});
+
+// ------- Chat send -------
+function sendMsg() {
+  const ta = document.getElementById('chatInput');
+  const text = ta.value.trim();
+  if (!text) return;
+  const chat = document.getElementById('chat');
+  const now = new Date();
+  const time = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  chat.insertAdjacentHTML('beforeend', `
+    <div class="flex justify-end gap-2 fade-in">
+      <div class="max-w-[82%]">
+        <div class="rounded-2xl px-3.5 py-2 text-sm leading-relaxed text-ink-100 whitespace-pre-wrap" style="background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.25);border-top-right-radius:0.375rem">${text}</div>
+        <div class="mt-1 text-[10px] text-ink-500 text-right font-mono">${time}</div>
+      </div>
+      <div class="h-7 w-7 rounded-lg flex items-center justify-center shrink-0 text-[11px] font-medium border border-white/10" style="background:rgba(255,255,255,0.06);color:#E6E8EE">Z</div>
+    </div>
+  `);
+  ta.value = '';
+  chat.scrollTop = chat.scrollHeight;
+  // Mock coach reply with streaming
+  setTimeout(() => {
+    const reply = text.length < 6 ? '你说的这个事——具体是什么情况？' : '我听到了几个关键词。你能把最让你困扰的那一点再展开说说吗？';
+    const id = 'reply-' + Date.now();
+    chat.insertAdjacentHTML('beforeend', `
+      <div class="flex gap-2.5 fade-in">
+        <div class="h-7 w-7 rounded-lg flex items-center justify-center shrink-0 shadow-glow-violet" style="background:linear-gradient(135deg,#A78BFA,#22D3EE);color:#0A0B10"><i data-lucide="sparkles" class="h-3.5 w-3.5" style="stroke-width:2.4"></i></div>
+        <div class="max-w-[84%] space-y-1.5 min-w-0">
+          <div class="flex items-center gap-1.5 flex-wrap text-[10px] font-mono tracking-wider">
+            <span class="chip border uppercase text-cyan-300 border-cyan-400/30 bg-cyan-400/5">MENTOR</span>
+            <span class="text-ink-500">· EXPLORING</span>
+          </div>
+          <div id="${id}" class="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed border border-white/[0.08] text-ink-100 whitespace-pre-wrap caret" style="background:rgba(255,255,255,0.04);border-top-left-radius:0.375rem"></div>
+          <div class="text-[10px] text-ink-500 font-mono">${time}</div>
+        </div>
+      </div>
+    `);
+    lucide.createIcons();
+    const box = document.getElementById(id);
+    let i = 0;
+    const timer = setInterval(() => {
+      i++; box.textContent = reply.slice(0, i);
+      chat.scrollTop = chat.scrollHeight;
+      if (i >= reply.length) { clearInterval(timer); box.classList.remove('caret'); }
+    }, 22);
+  }, 650);
+}
+document.addEventListener('keydown', (e) => {
+  if (e.target.id === 'chatInput' && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
+});
+
+// ------- Tool Modal -------
+function openTool(title) {
+  document.getElementById('toolTitle').textContent = title;
+  toggle('toolModal');
+}
+
+// ------- Init -------
+renderCourses();
+renderHeatmap();
+renderTodos();
+renderCmdk('');
+lucide.createIcons();
+</script>
+</body>
+</html>

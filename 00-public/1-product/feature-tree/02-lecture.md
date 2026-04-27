@@ -19,10 +19,8 @@ Neo（Tutor）按 AOM 脚本执行结构化教学——PPT / 视频 / Quiz / 闭
 A. Neo（Tutor）角色
    A1 Neo 身份（Tutor，可访问统一 Database 全部数据，关注点聚焦当前 Activity + 学员画像）
    A2 结构化教学（按 AOM 脚本演绎）
-   A3 即时教学反馈（5 种教学信号 ①缺概念 ②遗忘 ③误用 ④选错工具 ⑥错误心智模型；⑤⑦⑧ 由 Leo 处理，见 01.A4）
-   A4 InsightCaptureSkill 分层 [spec §4.4]
-       - 后台感知与记录（P0，用于报告生成 / Leo 记忆引用 / Ora 查询）
-       - 前台推送推荐卡片（P3，产出写入 Hall F4）
+   A3 即时教学反馈（5 种教学信号 ①缺概念 ②遗忘 ③误用 ④选错工具 ⑥错误心智模型；⑤⑦⑧ 由 Neo 在大厅处理，见 01.A4）
+   A4 InsightCaptureSkill 轻量版（高光瞬间推荐卡片，P3，产出写入 Hall F4）
 
 B. SCO 调度引擎
    B1 顺序推进（按 scoFlow）

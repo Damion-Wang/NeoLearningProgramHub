@@ -1,7 +1,8 @@
-# DM_Temp — 产品设计待审阅文件
+# DM_Temp — 持续在编工作区
 
-**负责人：** DM
-**状态：** 全部待审阅（2026-04-14 自动生成，未经创始人确认）
+**用途：** DM 在编的原型工作区。已完成的过程文档已归档到 `00-public/`，本目录仅保留 **持续被使用的原型构建产物和资源**。
+
+**最近一次整理：** 2026-04-26（归档了 debate/journal/contentRef/教室 ref 共 32 个文件）
 
 ---
 
@@ -9,91 +10,44 @@
 
 ```
 DM_Temp/
-├── 01-plan/                    ← 设计推演计划
-├── 02-module-arch/             ← 模块架构规划
-├── 03-feature-tree/            ← 功能树（Phase 1）
-│   ├── drafts/                 ← 初稿（6份）
-│   ├── debates/                ← debate审查结果（6份）
-│   └── revised/                ← debate修订版（6份）— 审阅重点
-├── 04-feature-flows/           ← 功能流程（Phase 2）
-│   ├── drafts/                 ← 初稿（6份）
-│   ├── debates/                ← debate审查结果（2份）
-│   └── revised/                ← debate修订版（6份）— 审阅重点
-├── 05-ux/                      ← UX交互规格（Phase 3）
-│   ├── drafts/                 ← 初稿（6份）
-│   ├── debates/                ← debate审查结果（2份）
-│   └── revised/                ← debate修订版（6份）— 审阅重点
-├── 06-summary/                 ← 产品设计总览
-└── 07-misc/                    ← 其他（登录总结、版本对比）
+└── prototype/
+    ├── build/      ← 11 个独立 HTML 原型（demo v1.1，已交付）
+    └── assets/     ← 设计资源（PPT 截图、Neo 头像、mock-data.json）
 ```
 
-## 审阅指南
+## prototype/build/（11 个 HTML，每个自包含）
 
-**如果时间有限，只看 revised/ 下的修订版**（18份）——这些已经过 debate 审查和修订。
-
-**审阅顺序建议：**
-1. `06-summary/product-design-v0.1.md` — 173行总览，索引全部内容
-2. `03-feature-tree/revised/` — 6份功能树（最上层的设计决策）
-3. `05-ux/revised/` — 6份UX规格（最接近开发的交付物）
-4. `04-feature-flows/revised/` — 6份功能流程（交互细节）
-
-**如果发现问题，可以：**
-- 直接在文件中红色标注（和之前审阅需求文档一样）
-- 或者告诉我，我来组织 debate 讨论
-
-## 文件索引
-
-### 01-plan（1份）
-- `design-deep-dive-plan.md` — 深度推演计划（4个Phase的完整规划）
-
-### 02-module-arch（1份）
-- `module-architecture.md` — 三层模块架构（应用层/平台层/基础设施）
-
-### 03-feature-tree（18份）
-
-**revised/（审阅重点）：**
-| 文件 | 模块 | debate修订项 |
-|------|------|------------|
-| `01-layout-auth.md` | 三栏布局+账户权限 | 16项 |
-| `02-coaching.md` | 辅导模块（大厅） | 17项 |
-| `03-teaching.md` | 授课模块 | 14项 |
-| `04-drill-assessment.md` | 对练+测评 | 12项 |
-| `05-report.md` | 个人报告 | 16项 |
-| `06-management.md` | HR+运营管理端 | 11项 |
-
-drafts/ = 初稿（6份），debates/ = debate记录（6份）
-
-### 04-feature-flows（14份）
-
-**revised/（审阅重点）：**
-| 文件 | 模块 |
+| 文件 | 场景 |
 |------|------|
-| `01-layout-auth-flows.md` | 三栏布局+账户权限流程 |
-| `02-coaching-flows.md` | 辅导模块流程 |
-| `03-teaching-flows.md` | 授课模块流程 |
-| `04-drill-assessment-flows.md` | 对练+测评流程 |
-| `05-report-flows.md` | 个人报告流程 |
-| `06-management-flows.md` | HR+运营管理端流程 |
+| `01-login.html` | 登录页 |
+| `02-hall-empty.html` | 学习大厅（空态） |
+| `03-hall-daily.html` | 学习大厅（日常态） |
+| `04-lecture.html` | 授课教室 |
+| `05-practice.html` | 对练教室 |
+| `06-report-learner.html` | 学员报告 |
+| `07-config.html` | 管理端 - 配置 |
+| `08-operation.html` | 管理端 - 运营 |
+| `09-report-mgmt.html` | 管理端 - 团队报告 |
+| `10-message.html` | 消息中心 |
+| `11-inquiry-p3.html` | 调研教室 P3 |
 
-drafts/ = 初稿（6份），debates/ = debate记录（2份）
+**原型独立性约束**：每页自包含（CSS/JS 内联，图片 base64），仅 CDN 外链允许（Tailwind/Lucide/Fonts）。
 
-### 05-ux（14份）
+## prototype/assets/
 
-**revised/（审阅重点）：**
-| 文件 | 页面/场景 |
-|------|---------|
-| `01-layout-framework.md` | 三栏通用框架+场景切换 |
-| `02-hall-page.md` | 大厅页面 |
-| `03-teaching-classroom.md` | 授课教室 |
-| `04-drill-assessment-classroom.md` | 对练+测评教室 |
-| `05-report-classroom.md` | 报告教室 |
-| `06-management-pages.md` | HR+运营管理端 |
+- `ppt/` — PPT 来源截图
+- `neo-male.{png,svg}` / `neo-female.{png,svg}` — Neo AI 头像（多版本）
+- `avatar-zhao.jpg` — 学员头像
+- `mock-data.json` — 原型 mock 数据
 
-drafts/ = 初稿（6份），debates/ = debate记录（2份）
+---
 
-### 06-summary（1份）
-- `product-design-v0.1.md` — 产品设计总览（173行，索引全部内容）
+## 已归档去向（2026-04-26）
 
-### 07-misc（2份）
-- `login-account-summary.md` — 登录与账户体系需求总结（GPB对接方案）
-- `v2-vs-v033-comparison.md` — v2.0 vs v0.3.3 对比分析
+| 原 DM_Temp 路径 | 归档目标 |
+|----------------|---------|
+| `prototype/debate/round-*` (5 文件) | `00-public/5-process/debates/prototype-rounds-2026-04/` |
+| `prototype/*.md` (8 文件：plan/review/spec-supplements) | `00-public/5-process/journal/2026-04-prototype-work/` |
+| `prototype/ref/contentRef/*.txt` (12 文件，MANAGER1-3 的 BP/SC/URL/VS) | `00-public/6-content/grow-coaching-source/` |
+| `prototype/ref/*.html` (5 个教室 HTML 参考) | `01-ref/prototype-references/` |
+| `prototype/ref/NEO头像.png` + `NEO女头像.png` | `01-ref/prototype-references/` |

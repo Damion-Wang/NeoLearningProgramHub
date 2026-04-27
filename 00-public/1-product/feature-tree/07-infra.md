@@ -18,7 +18,7 @@
 ```
 A. 登录与会话
    A1 登录（账号密码 / SSO）
-   A2 首次登录引导基础设施（跳 Leo 自我介绍，LUI 优先不 overlay）
+   A2 首次登录引导基础设施（跳 Neo 自我介绍，LUI 优先不 overlay）
    A3 会话保持（session 有效期 7 天 + 允许多设备同时登录）
    A4 退出登录（清除当前设备 session）
    A5 忘记密码（本期联系运营重置，不做自助）
@@ -80,8 +80,8 @@ G. 帮助 + 反馈
 
 H. 生成式引擎（语音 + 图像 + 数字人）
    【TTS 语音合成】
-   H1 TTS — Leo 语音输出（大厅）
-   H2 TTS — Neo 语音输出（授课 / 对练 / 调研 / 报告）
+   H1 TTS — Neo（大厅模式）语音输出（大厅 Coach 能力）
+   H2 TTS — Neo（场域模式）语音输出（授课 / 对练 / 调研 / 报告 Tutor 能力）
    H3 TTS — Actor 语音输出（对练，不同剧本不同音色）
    H4 TTS 语速参数接入 F1（全局 + 场域覆盖）
    H5 TTS 音色配置（Operation F5 平台个性化配置默认音色）
@@ -90,7 +90,7 @@ H. 生成式引擎（语音 + 图像 + 数字人）
        - 海外：ByteDance Plus（byteplus）/ Google TTS
        - 按语言 zh / en / ja 路由
    【STT 语音识别】
-   H6 ★STT — 学员语音输入转文字（Quiz 问答 / 对练对话 / 调研访谈 / Leo 对话）
+   H6 ★STT — 学员语音输入转文字（Quiz 问答 / 对练对话 / 调研访谈 / 大厅 Neo 对话）
    H7 STT 识别质量降级（识别失败时提示重录，不强制打字）
    H8 STT 引擎选型（本期待定：Web Speech API / 讯飞 / 自建；纳入 I 模型管理场景路由）
    【文生图】
@@ -105,7 +105,7 @@ H. 生成式引擎（语音 + 图像 + 数字人）
 I. 模型管理
    I1 ★LLM 统一网关 — 全部经**云学堂多模型网关** `ymcas-d.yxt.com/multi-model/v1`
    I2 模型切换 / 参数配置
-   I3 按场景路由（Leo / Neo / Actor / 导演 / Ora / 打标 / 报告生成）
+   I3 按场景路由（Neo 大厅模式 / Neo 场域模式（Lecture/Practice/Inquiry/Report）/ Actor / 导演 / 管理端 Agent / 打标 / 报告生成）
        - 配置位：`model.routing.aliases`
        - 不直接绑定具体模型 ID，用 alias 解耦
    I4 ★降级与故障保护
@@ -158,9 +158,9 @@ N. 统一 Database（记忆工程管道）[ADR-005]
    N4 跨模块数据 schema 治理
    N5 三级记忆管道（课堂采集 → 大厅引用 → 管理端汇聚）
    N6 ★推荐卡片流向管道 [补漏]
-       N6.1 产生方（Lecture A4 Neo 高光捕捉 / Leo B2 经验洞察捕捉）
+       N6.1 产生方（Lecture A4 Neo 场域高光捕捉 / Hall B2 Neo 大厅经验洞察捕捉）
        N6.2 持久化（写入统一 Database，schema 含 source / trigger / summary / evidence_ref）
-       N6.3 展示方（Hall F4 Neo 推荐卡片 / Hall F5 Leo 推荐卡片）
+       N6.3 展示方（Hall F4 Neo 场域推荐卡片 / Hall F5 Neo 大厅推荐卡片）
        N6.4 收藏动作（学员点击收藏 → 卡片状态变更 → Hall F6 笔记库可见）
        N6.5 流向约束（不直写前端，必经 DB 中转，确保学员在不同端 / 会话可见一致）
 
@@ -175,7 +175,7 @@ P. ★外部平台对接（集成清单）[补漏]
        - 用途：所有 LLM 调用（见 I）
        - 接入形式：HTTP + alias 路由 + 故障保护组
    P2 ProsonaAgent 数字人服务 — 海波团队
-       - 用途：Actor 形象、未来可扩展 Leo/Neo 可视化
+       - 用途：Actor 形象、未来可扩展 Neo 可视化（含大厅模式与场域模式）
        - 接入形式：`digital_human_server.py` 发音人接口（见 H11/H12）
    P3 TTS 供应商矩阵
        - 字节音色库（byte，国内）
@@ -200,7 +200,7 @@ P. ★外部平台对接（集成清单）[补漏]
 |-------|-----|
 | 所有模块 | A 登录 / C 权限 / K 布局 / L 联动协议 / N Database |
 | Hall / 所有场域 | H TTS / M 断点恢复 |
-| Hall+Leo, Lecture, Practice, Inquiry, Report 的 AI 角色 | I 模型路由 |
+| Hall, Lecture, Practice, Inquiry, Report 的 AI 角色（统一为 Neo，分大厅/场域两套技能） | I 模型路由 |
 | Operation | B4 批量账号创建 / C 角色授权 / D Topbar / E 消息系统 |
 | Report / Operation | L 图表联动协议跨端复用 |
 | Evaluation | N 统一 Database / J 用量底层数据 |

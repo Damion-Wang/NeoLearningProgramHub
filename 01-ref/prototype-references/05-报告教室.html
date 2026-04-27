@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI 老师 · 报告教室</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { theme: { extend: {
+  colors: {
+    ink: { 100:'#F1F3F8', 200:'#E6E8EE', 300:'#C4C8D4', 400:'#8B92A5', 500:'#6A7085', 600:'#4A5061', 700:'#353A48' },
+    cyan: { 300:'#67E8F9', 400:'#22D3EE', 500:'#06B6D4' },
+    violet: { 300:'#C4B5FD', 400:'#A78BFA', 500:'#8B5CF6' },
+    amber: { 300:'#FCD34D', 400:'#F4A855', 500:'#F59E0B' },
+    emerald: { 300:'#6EE7B7', 400:'#34D399', 500:'#10B981' },
+  },
+  fontFamily: { sans:['Inter','PingFang SC','sans-serif'], mono:['JetBrains Mono','monospace'] },
+  boxShadow: { 'glow-cyan':'0 0 24px rgba(34,211,238,0.35)', 'glow-violet':'0 0 24px rgba(167,139,250,0.30)', 'glow-amber':'0 0 20px rgba(244,168,85,0.30)', 'glow-emerald':'0 0 20px rgba(52,211,153,0.30)' },
+  animation: { breathe:'breathe 4s ease-in-out infinite', aurora:'aurora 18s ease-in-out infinite', caret:'caret 1s steps(2) infinite', reveal:'reveal 0.7s ease-out both' },
+  keyframes: {
+    breathe:{'0%,100%':{opacity:'0.85'},'50%':{opacity:'1',filter:'brightness(1.25)'}},
+    aurora:{'0%,100%':{transform:'translate3d(0,0,0) scale(1)'},'50%':{transform:'translate3d(30px,-20px,0) scale(1.08)'}},
+    caret:{'0%,100%':{opacity:'0'},'50%':{opacity:'1'}},
+    reveal:{from:{opacity:'0',transform:'translateY(12px)'},to:{opacity:'1',transform:'translateY(0)'}},
+  },
+}}}
+</script>
+<style>
+html,body{height:100%;margin:0;background:#0A0B10;color:#E6E8EE;font-family:Inter,'PingFang SC',sans-serif;letter-spacing:-0.01em}
+.aurora-bg{position:relative;isolation:isolate}
+.aurora-bg::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(55% 40% at 12% 12%,rgba(167,139,250,0.18),transparent 60%),
+             radial-gradient(55% 50% at 92% 88%,rgba(52,211,153,0.12),transparent 60%),
+             radial-gradient(40% 30% at 80% 15%,rgba(244,168,85,0.10),transparent 60%),
+             linear-gradient(180deg,#0A0B10,#07080C);
+  animation:aurora 18s ease-in-out infinite;}
+.glass{background:rgba(255,255,255,0.03);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.06)}
+.glass-strong{background:rgba(24,27,37,0.94);backdrop-filter:blur(28px);border:1px solid rgba(255,255,255,0.1)}
+.card{background:rgba(255,255,255,0.03);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.06);border-radius:1rem}
+.hairline{border-color:rgba(255,255,255,0.06)}
+.scrollbar-thin::-webkit-scrollbar{width:6px;height:6px}
+.scrollbar-thin::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:999px}
+.kbd{display:inline-flex;align-items:center;justify-content:center;border-radius:6px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);padding:0 6px;height:20px;font-size:10px;font-family:'JetBrains Mono',monospace;color:#8B92A5}
+.chip{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:500}
+.caret::after{content:'▌';margin-left:2px;color:rgba(167,139,250,0.85);animation:caret 1s steps(2) infinite}
+.tabular-nums{font-variant-numeric:tabular-nums}
+.fade-in{animation:fadeIn 0.3s ease-out both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+#leftPanel{transition:width 0.25s cubic-bezier(.2,.8,.2,1)}
+#leftPanel.collapsed{width:48px !important}
+#leftPanel.collapsed .panel-body{display:none}
+#leftPanel.collapsed .panel-collapsed-rail{display:flex !important}
+</style>
+</head>
+<body class="aurora-bg h-full">
+<div class="h-full flex flex-col">
+
+  <!-- TOPBAR -->
+  <header class="h-14 shrink-0 px-5 flex items-center justify-between z-30 border-b hairline backdrop-blur-xl" style="background:rgba(10,11,16,0.6)">
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2">
+        <div class="h-8 w-8 rounded-xl flex items-center justify-center shadow-glow-violet" style="background:linear-gradient(135deg,#22D3EE,#8B5CF6)"><i data-lucide="sparkles" class="h-4 w-4" style="color:#0A0B10;stroke-width:2.4"></i></div>
+        <div class="leading-tight">
+          <div class="text-[13px] font-medium text-ink-100">AI 老师</div>
+          <div class="text-[10px] text-ink-500 -mt-0.5 font-mono">AI TUTOR · v0.4</div>
+        </div>
+      </div>
+      <span class="h-4 w-px bg-white/10"></span>
+      <span class="chip bg-white/[0.04] text-ink-300 border border-white/5">学员端</span>
+      <span class="text-[11px] text-ink-500 hidden xl:inline font-mono">Course 2 · 横向协作 · 个人报告</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <button class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] font-medium shadow-glow-cyan" style="background:#22D3EE;color:#0A0B10"><i data-lucide="download" class="h-3 w-3"></i>导出 PDF</button>
+      <div class="h-5 w-px bg-white/10"></div>
+      <button class="relative rounded-lg p-2 hover:bg-white/[0.05]"><i data-lucide="bell" class="h-4 w-4 text-ink-300"></i></button>
+      <button class="flex items-center gap-2 rounded-lg p-0.5 pr-2 hover:bg-white/[0.05]">
+        <div class="h-7 w-7 rounded-lg flex items-center justify-center text-xs font-semibold shadow-glow-violet" style="background:linear-gradient(135deg,#22D3EE,#8B5CF6);color:#0A0B10">Z</div>
+        <span class="text-xs text-ink-300 hidden md:inline">张磊</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="flex-1 min-h-0 flex">
+
+    <!-- LEFT: Collapsible Activity -->
+    <aside id="leftPanel" class="w-[260px] shrink-0 border-r hairline backdrop-blur-md flex flex-col relative" style="background:rgba(10,11,16,0.5)">
+      <div class="panel-collapsed-rail hidden absolute inset-0 flex-col items-center py-3 gap-3">
+        <button onclick="togglePanel()" class="h-8 w-8 rounded-lg flex items-center justify-center hover:bg-white/[0.05] text-ink-400" title="展开"><i data-lucide="panel-left-open" class="h-4 w-4"></i></button>
+        <span class="h-4 w-px bg-white/10"></span>
+        <div class="text-[9px] font-mono tracking-widest uppercase text-ink-500" style="writing-mode:vertical-rl">ACTIVITY</div>
+      </div>
+
+      <div class="panel-body flex-1 min-h-0 flex flex-col">
+        <div class="px-4 py-3 border-b hairline flex items-center justify-between">
+          <div>
+            <div class="text-[10px] text-ink-500 font-mono tracking-widest uppercase">Course 2</div>
+            <div class="mt-0.5 text-[12px] font-medium text-ink-100">横向协作</div>
+          </div>
+          <button onclick="togglePanel()" class="h-7 w-7 rounded-md flex items-center justify-center hover:bg-white/[0.05] text-ink-400"><i data-lucide="panel-left-close" class="h-3.5 w-3.5"></i></button>
+        </div>
+
+        <div class="px-4 py-2.5 text-[11px] text-ink-300 font-mono tracking-widest uppercase flex items-center justify-between">
+          <span>Activity · 8 门</span>
+          <span class="text-[10px] text-ink-500">8/8</span>
+        </div>
+        <div class="flex-1 overflow-y-auto scrollbar-thin px-2 pb-3 space-y-1 text-[12px]">
+          <div class="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-white/[0.03] cursor-pointer"><span class="h-4 w-4 rounded-sm flex items-center justify-center shadow-glow-cyan shrink-0" style="background:rgba(34,211,238,0.15);color:#67E8F9;border:1px solid rgba(34,211,238,0.4)"><i data-lucide="check" class="h-2.5 w-2.5" style="stroke-width:3"></i></span><span class="text-ink-300">A0 · 课前调研</span></div>
+          <div class="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-white/[0.03] cursor-pointer"><span class="h-4 w-4 rounded-sm flex items-center justify-center shadow-glow-cyan shrink-0" style="background:rgba(34,211,238,0.15);color:#67E8F9;border:1px solid rgba(34,211,238,0.4)"><i data-lucide="check" class="h-2.5 w-2.5" style="stroke-width:3"></i></span><span class="text-ink-300">A1 · PIN 法三步走</span></div>
+          <div class="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-white/[0.03] cursor-pointer"><span class="h-4 w-4 rounded-sm flex items-center justify-center shadow-glow-cyan shrink-0" style="background:rgba(34,211,238,0.15);color:#67E8F9;border:1px solid rgba(34,211,238,0.4)"><i data-lucide="check" class="h-2.5 w-2.5" style="stroke-width:3"></i></span><span class="text-ink-300">A2 · 四象限应对</span></div>
+          <div class="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-white/[0.03] cursor-pointer"><span class="h-4 w-4 rounded-sm flex items-center justify-center shadow-glow-cyan shrink-0" style="background:rgba(34,211,238,0.15);color:#67E8F9;border:1px solid rgba(34,211,238,0.4)"><i data-lucide="check" class="h-2.5 w-2.5" style="stroke-width:3"></i></span><span class="text-ink-300">A3 · PIN 法对练</span></div>
+          <div class="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-white/[0.03] cursor-pointer"><span class="h-4 w-4 rounded-sm flex items-center justify-center shadow-glow-cyan shrink-0" style="background:rgba(34,211,238,0.15);color:#67E8F9;border:1px solid rgba(34,211,238,0.4)"><i data-lucide="check" class="h-2.5 w-2.5" style="stroke-width:3"></i></span><span class="text-ink-300">A4 · 沟通风格调研</span></div>
+          <div class="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-white/[0.03] cursor-pointer"><span class="h-4 w-4 rounded-sm flex items-center justify-center shadow-glow-cyan shrink-0" style="background:rgba(34,211,238,0.15);color:#67E8F9;border:1px solid rgba(34,211,238,0.4)"><i data-lucide="check" class="h-2.5 w-2.5" style="stroke-width:3"></i></span><span class="text-ink-300">A5 · 四象限对练</span></div>
+          <div class="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-white/[0.03] cursor-pointer"><span class="h-4 w-4 rounded-sm flex items-center justify-center shadow-glow-cyan shrink-0" style="background:rgba(34,211,238,0.15);color:#67E8F9;border:1px solid rgba(34,211,238,0.4)"><i data-lucide="check" class="h-2.5 w-2.5" style="stroke-width:3"></i></span><span class="text-ink-300">A6 · 综合应用</span></div>
+          <div class="flex items-center gap-2 px-2 py-1.5 rounded-md relative cursor-pointer" style="background:linear-gradient(90deg,rgba(167,139,250,0.12),transparent);border-left:2px solid #A78BFA">
+            <span class="h-4 w-4 rounded-sm flex items-center justify-center shadow-glow-violet shrink-0" style="background:linear-gradient(135deg,#A78BFA,#22D3EE);color:#0A0B10"><i data-lucide="file-text" class="h-2.5 w-2.5" style="stroke-width:2.4"></i></span>
+            <span class="text-ink-100 font-medium">A7 · 课程报告</span>
+            <span class="ml-auto text-[10px] text-violet-300 font-mono">查看中</span>
+          </div>
+        </div>
+        <!-- Course progress -->
+        <div class="px-4 py-3 border-t hairline">
+          <div class="flex items-center justify-between text-[10px] text-ink-500 font-mono mb-1.5">
+            <span>Course 2 整体</span><span class="text-ink-200">8 / 9 · 89%</span>
+          </div>
+          <div class="h-[3px] rounded-full bg-white/5 overflow-hidden">
+            <div class="h-full rounded-full shadow-glow-violet" style="width:89%;background:linear-gradient(90deg,#22D3EE,#A78BFA)"></div>
+          </div>
+        </div>
+
+        <div class="px-4 py-3 border-t hairline">
+          <div class="text-[10px] text-ink-500 font-mono tracking-widest uppercase mb-2">📊 本课数据源</div>
+          <div class="space-y-1 text-[11px] text-ink-400">
+            <div class="flex justify-between"><span>Quiz 答题</span><span class="text-ink-200 font-mono">22</span></div>
+            <div class="flex justify-between"><span>对练轮次</span><span class="text-ink-200 font-mono">24</span></div>
+            <div class="flex justify-between"><span>调研案例</span><span class="text-ink-200 font-mono">3</span></div>
+            <div class="flex justify-between"><span>辅导对话</span><span class="text-ink-200 font-mono">18</span></div>
+          </div>
+          <div class="mt-2 text-[10px] text-ink-500 font-mono">碎片权重: Quiz &gt; 对练 &gt; 调研 &gt; 辅导</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- LEFT: REPORT CONTENT -->
+    <main class="flex-1 min-w-0 overflow-y-auto scrollbar-thin">
+      <div class="sticky top-0 z-20 px-8 py-3 border-b hairline backdrop-blur-xl flex items-center gap-3" style="background:rgba(10,11,16,0.7)">
+        <div class="flex items-center gap-1 text-[10px] text-violet-300 font-mono tracking-widest uppercase"><i data-lucide="file-text" class="h-3 w-3"></i>Report</div>
+        <span class="h-3 w-px bg-white/10"></span>
+        <button class="chip border bg-cyan-400/5 text-cyan-300 border-cyan-400/20"><span class="h-1.5 w-1.5 rounded-full shadow-glow-cyan" style="background:#22D3EE"></span>① 回顾学了什么</button>
+        <button class="chip border shadow-glow-violet" style="background:rgba(167,139,250,0.1);color:#C4B5FD;border-color:rgba(167,139,250,0.3)"><span class="h-1.5 w-1.5 rounded-full animate-breathe" style="background:#A78BFA"></span>② 个人课堂表现</button>
+        <button class="chip border text-ink-500" style="background:rgba(255,255,255,0.02);border-color:rgba(255,255,255,0.08)"><span class="h-1.5 w-1.5 rounded-full bg-white/10"></span>③ 下一步计划</button>
+        <div class="flex-1"></div>
+        <span class="text-[10px] text-ink-500 font-mono">渐进呈现 · 2/3 已展开</span>
+      </div>
+
+      <div class="max-w-4xl mx-auto px-8 py-8 space-y-8">
+        <header class="pb-2 animate-reveal">
+          <div class="text-[10px] text-ink-500 font-mono tracking-[0.2em] uppercase">Course 2 · 横向协作 · 个人报告</div>
+          <h1 class="mt-2 text-3xl font-medium text-ink-100 tracking-tight">你走完了 PIN 法与跨部门协作<span class="text-ink-500">.</span></h1>
+          <p class="text-sm text-ink-400 mt-2 leading-relaxed">这不是"宣判"——是你和 Neo 的一次对话。每个结论都可以<span class="text-violet-300">追到原始证据</span>，如有不认同可以在右侧和 Neo 讨论。</p>
+        </header>
+
+        <!-- Part 1 -->
+        <section class="animate-reveal">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="h-7 w-7 rounded-lg flex items-center justify-center shadow-glow-cyan font-mono text-[12px]" style="background:rgba(34,211,238,0.12);color:#67E8F9;border:1px solid rgba(34,211,238,0.3)">1</div>
+            <div>
+              <div class="text-[10px] text-cyan-300 font-mono tracking-[0.2em] uppercase">Part 01 · 学了什么</div>
+              <div class="mt-0.5 text-lg text-ink-100 font-medium">回顾课程内容</div>
+            </div>
+          </div>
+          <div class="card p-5 relative overflow-hidden">
+            <div class="absolute -top-20 -right-20 h-56 w-56 rounded-full blur-3xl pointer-events-none" style="background:rgba(34,211,238,0.08)"></div>
+            <div class="relative grid grid-cols-2 gap-3">
+              <div class="rounded-xl p-3.5 border" style="background:rgba(34,211,238,0.04);border-color:rgba(34,211,238,0.15)">
+                <div class="flex items-center gap-2 text-cyan-300"><i data-lucide="target" class="h-3.5 w-3.5"></i><div class="text-[10px] font-mono uppercase tracking-wider">核心方法</div></div>
+                <div class="mt-2 text-[13px] text-ink-100">PIN 法三步走</div>
+                <div class="mt-1 text-[11px] text-ink-400">Pressure → Interest → Need</div>
+              </div>
+              <div class="rounded-xl p-3.5 border" style="background:rgba(167,139,250,0.04);border-color:rgba(167,139,250,0.15)">
+                <div class="flex items-center gap-2 text-violet-300"><i data-lucide="grid-2x2" class="h-3.5 w-3.5"></i><div class="text-[10px] font-mono uppercase tracking-wider">关键模型</div></div>
+                <div class="mt-2 text-[13px] text-ink-100">横向协作四象限</div>
+                <div class="mt-1 text-[11px] text-ink-400">资源争夺 / 冷漠回避 / 利益冲突 / 目标共振</div>
+              </div>
+              <div class="rounded-xl p-3.5 border" style="background:rgba(244,168,85,0.04);border-color:rgba(244,168,85,0.15)">
+                <div class="flex items-center gap-2 text-amber-300"><i data-lucide="wrench" class="h-3.5 w-3.5"></i><div class="text-[10px] font-mono uppercase tracking-wider">配套工具</div></div>
+                <div class="mt-2 text-[13px] text-ink-100">PIN 法对照表 · 四象限指南</div>
+                <div class="mt-1 text-[11px] text-ink-400">已在工具库解锁 · 可下载 PDF</div>
+              </div>
+              <div class="rounded-xl p-3.5 border" style="background:rgba(52,211,153,0.04);border-color:rgba(52,211,153,0.15)">
+                <div class="flex items-center gap-2 text-emerald-300"><i data-lucide="book-marked" class="h-3.5 w-3.5"></i><div class="text-[10px] font-mono uppercase tracking-wider">延伸阅读</div></div>
+                <div class="mt-2 text-[13px] text-ink-100">冰山模型 · 利益相关者地图</div>
+                <div class="mt-1 text-[11px] text-ink-400">Course 3 会用到</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Part 2 -->
+        <section class="animate-reveal" style="animation-delay:0.15s">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="h-7 w-7 rounded-lg flex items-center justify-center shadow-glow-violet font-mono text-[12px]" style="background:rgba(167,139,250,0.15);color:#C4B5FD;border:1px solid rgba(167,139,250,0.4)">2</div>
+            <div>
+              <div class="text-[10px] text-violet-300 font-mono tracking-[0.2em] uppercase">Part 02 · 你表现得怎么样</div>
+              <div class="mt-0.5 text-lg text-ink-100 font-medium">个人课堂表现</div>
+            </div>
+            <div class="flex-1"></div>
+            <span class="chip border text-violet-300 border-violet-400/30 bg-violet-400/5 shadow-glow-violet"><span class="h-1.5 w-1.5 rounded-full animate-breathe" style="background:#A78BFA"></span>渐入中</span>
+          </div>
+
+          <!-- Growth curve -->
+          <div class="card p-5 mb-4 relative overflow-hidden">
+            <div class="absolute -top-20 -left-20 h-60 w-60 rounded-full blur-3xl pointer-events-none" style="background:rgba(167,139,250,0.1)"></div>
+            <div class="relative flex items-center justify-between mb-4">
+              <div>
+                <div class="text-[10px] text-violet-300 font-mono tracking-widest uppercase">Growth Curve · 沟通效能</div>
+                <div class="text-[11px] text-ink-400 mt-0.5">点击任一数据点 · 右栏 Neo 自动解读</div>
+              </div>
+              <div class="flex items-center gap-3 text-[10px] text-ink-500 font-mono">
+                <span class="inline-flex items-center gap-1"><span class="h-1.5 w-1.5 rounded-full shadow-glow-cyan" style="background:#22D3EE"></span>你</span>
+                <span class="inline-flex items-center gap-1"><span class="h-1.5 w-1.5 rounded-full" style="background:rgba(255,255,255,0.25)"></span>项目中位</span>
+              </div>
+            </div>
+            <div class="relative h-56">
+              <svg viewBox="0 0 600 220" class="w-full h-full" preserveAspectRatio="none">
+                <line x1="0" y1="40" x2="600" y2="40" stroke="rgba(255,255,255,0.05)" />
+                <line x1="0" y1="90" x2="600" y2="90" stroke="rgba(255,255,255,0.05)" />
+                <line x1="0" y1="140" x2="600" y2="140" stroke="rgba(255,255,255,0.05)" />
+                <line x1="0" y1="190" x2="600" y2="190" stroke="rgba(255,255,255,0.08)" />
+                <polyline points="60,140 180,125 300,110 420,100 540,95" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" stroke-dasharray="4,4"/>
+                <defs>
+                  <linearGradient id="grad1" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#22D3EE"/><stop offset="50%" stop-color="#A78BFA"/><stop offset="100%" stop-color="#67E8F9"/>
+                  </linearGradient>
+                  <linearGradient id="grad2" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="rgba(34,211,238,0.15)"/><stop offset="100%" stop-color="rgba(34,211,238,0)"/>
+                  </linearGradient>
+                </defs>
+                <path d="M 60,150 L 180,120 L 300,90 L 420,62 L 540,40 L 540,190 L 60,190 Z" fill="url(#grad2)"/>
+                <polyline points="60,150 180,120 300,90 420,62 540,40" fill="none" stroke="url(#grad1)" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="60" cy="150" r="5" fill="#22D3EE"/><circle cx="60" cy="150" r="12" fill="#22D3EE" opacity="0.15"/>
+                <circle cx="180" cy="120" r="5" fill="#22D3EE"/><circle cx="180" cy="120" r="12" fill="#22D3EE" opacity="0.15"/>
+                <circle cx="300" cy="90" r="5" fill="#A78BFA"/><circle cx="300" cy="90" r="12" fill="#A78BFA" opacity="0.15"/>
+                <circle cx="420" cy="62" r="6" fill="#A78BFA"/><circle cx="420" cy="62" r="14" fill="#A78BFA" opacity="0.3"/>
+                <circle cx="540" cy="40" r="6" fill="#67E8F9"/><circle cx="540" cy="40" r="14" fill="#67E8F9" opacity="0.3"/>
+                <text x="420" y="50" fill="#C4B5FD" font-size="10" font-family="JetBrains Mono" text-anchor="middle">高光 · +28%</text>
+              </svg>
+              <div class="absolute inset-x-12 bottom-0 flex items-center justify-between text-[10px] text-ink-500 font-mono">
+                <span>授课 1</span><span>授课 2</span><span>对练 1</span><span>对练 2</span><span>调研</span>
+              </div>
+            </div>
+            <!-- Percentile -->
+            <div class="mt-4 pt-4 border-t hairline">
+              <div class="flex items-center justify-between text-[11px] mb-2">
+                <span class="text-[10px] text-ink-500 font-mono tracking-widest uppercase">匿名分位区间 · 项目内</span>
+                <span class="text-ink-400">本项目共 34 人</span>
+              </div>
+              <div class="relative h-5 rounded-full overflow-hidden" style="background:linear-gradient(90deg,rgba(106,112,133,0.2) 0%,rgba(106,112,133,0.35) 25%,rgba(167,139,250,0.15) 25%,rgba(167,139,250,0.15) 75%,rgba(34,211,238,0.25) 75%,rgba(34,211,238,0.4) 100%)">
+                <span class="absolute top-0 h-full w-0.5 shadow-glow-cyan" style="left:80%;background:#67E8F9"></span>
+                <span class="absolute -top-5 text-[10px] text-cyan-300 font-mono" style="left:77%">你</span>
+              </div>
+              <div class="mt-3 flex items-center justify-between text-[10px] text-ink-500 font-mono">
+                <span>后 25%</span><span>中间 50%</span><span class="text-cyan-300">前 25% ← 你在这里</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 高光 + 待改进 -->
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div class="card p-4 relative overflow-hidden">
+              <div class="absolute -top-10 -right-10 h-32 w-32 rounded-full blur-3xl pointer-events-none" style="background:rgba(52,211,153,0.12)"></div>
+              <div class="relative">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="chip border shadow-glow-emerald" style="background:rgba(52,211,153,0.1);color:#6EE7B7;border-color:rgba(52,211,153,0.3)"><i data-lucide="sparkles" class="h-2.5 w-2.5"></i>高光表现</span>
+                  <span class="text-[10px] text-ink-500 font-mono">对练 2 · T1</span>
+                </div>
+                <div class="text-[13px] text-ink-100 leading-relaxed">你在第二次对练中，<span class="text-emerald-300">第 1 轮就主动追问了对方的 Interest</span>——比第一次提前了 2 轮。</div>
+                <div class="mt-3 rounded-lg p-2.5 border" style="background:rgba(255,255,255,0.02);border-color:rgba(255,255,255,0.05)">
+                  <div class="text-[10px] text-ink-500 font-mono mb-1">你当时这样说</div>
+                  <div class="text-[11px] text-ink-300 italic leading-relaxed">"你现在人手这么紧，你这个活动真正怕翻车的环节是哪里？"</div>
+                </div>
+                <button class="mt-3 inline-flex items-center gap-1 text-[11px] text-emerald-300 hover:text-emerald-200"><i data-lucide="external-link" class="h-3 w-3"></i>查看完整对话记录</button>
+              </div>
+            </div>
+            <div class="card p-4 relative overflow-hidden">
+              <div class="absolute -top-10 -right-10 h-32 w-32 rounded-full blur-3xl pointer-events-none" style="background:rgba(244,168,85,0.1)"></div>
+              <div class="relative">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="chip border" style="background:rgba(244,168,85,0.1);color:#FCD34D;border-color:rgba(244,168,85,0.3)"><i data-lucide="target" class="h-2.5 w-2.5"></i>待改进点</span>
+                  <span class="text-[10px] text-ink-500 font-mono">Quiz · 四象限</span>
+                </div>
+                <div class="text-[13px] text-ink-100 leading-relaxed">四象限判断准确率 <span class="text-amber-300 font-mono tabular-nums">60%</span>（3/5）。把<span class="text-amber-300">"资源争夺型"</span>误判为<span class="text-amber-300">"冷漠回避型"</span>。</div>
+                <div class="mt-3 flex items-center gap-2 text-[11px] text-ink-400">
+                  <span class="font-mono">错误题:</span>
+                  <span class="chip text-[10px] border" style="background:rgba(244,168,85,0.08);color:#FCD34D;border-color:rgba(244,168,85,0.2)">第 3 题</span>
+                  <span class="chip text-[10px] border" style="background:rgba(244,168,85,0.08);color:#FCD34D;border-color:rgba(244,168,85,0.2)">第 5 题</span>
+                </div>
+                <button class="mt-3 inline-flex items-center gap-1 text-[11px] text-amber-300 hover:text-amber-200"><i data-lucide="external-link" class="h-3 w-3"></i>回到 Quiz 重做</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Evidence hint -->
+          <div class="card p-3.5 relative overflow-hidden">
+            <div class="absolute -top-6 -right-6 h-20 w-20 rounded-full blur-2xl pointer-events-none" style="background:rgba(167,139,250,0.1)"></div>
+            <div class="relative flex items-start gap-3">
+              <div class="h-8 w-8 rounded-lg flex items-center justify-center shrink-0" style="background:rgba(167,139,250,0.1);color:#C4B5FD;border:1px solid rgba(167,139,250,0.2)"><i data-lucide="link-2" class="h-3.5 w-3.5"></i></div>
+              <div class="flex-1 min-w-0">
+                <div class="text-[10px] text-violet-300 font-mono tracking-widest uppercase">Evidence Traceability · 证据追溯</div>
+                <div class="text-[12px] text-ink-200 mt-0.5 leading-relaxed">每个结论都可点击"查看证据"追溯到原始对话 · Quiz 答题 · 对练轮次。<span class="text-violet-300">Neo 不使用泛化评价。</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Part 3 -->
+        <section>
+          <div class="flex items-center gap-3 mb-4">
+            <div class="h-7 w-7 rounded-lg flex items-center justify-center text-ink-500 font-mono text-[12px] opacity-60" style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08)">3</div>
+            <div>
+              <div class="text-[10px] text-ink-500 font-mono tracking-[0.2em] uppercase">Part 03 · 接下来做什么</div>
+              <div class="mt-0.5 text-lg text-ink-500 font-medium">下一步应用计划</div>
+            </div>
+            <div class="flex-1"></div>
+            <span class="chip border text-ink-500 border-white/5 bg-white/[0.02]"><span class="h-1.5 w-1.5 rounded-full bg-white/10"></span>渐入中...</span>
+          </div>
+          <div class="card p-5 relative overflow-hidden opacity-80">
+            <div class="space-y-3">
+              <div class="flex items-start gap-3 p-3 rounded-xl" style="background:rgba(255,255,255,0.02)">
+                <div class="h-6 w-6 rounded-md flex items-center justify-center shrink-0 text-[10px] font-mono shadow-glow-cyan" style="background:rgba(34,211,238,0.12);color:#67E8F9;border:1px solid rgba(34,211,238,0.3)">01</div>
+                <div class="flex-1 min-w-0">
+                  <div class="text-[13px] text-ink-100 leading-relaxed">本周内，与市场部张总下次沟通时<span class="text-cyan-300">刻意使用 PIN 法第一步</span>——先追问对方具体需求。</div>
+                  <div class="mt-1.5 flex items-center gap-2 text-[10px] text-ink-500 font-mono">
+                    <span>关联 · 高光时刻</span>
+                    <span>·</span>
+                    <span>工具 · PIN 法对照表</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-start gap-3 p-3 rounded-xl" style="background:rgba(255,255,255,0.02)">
+                <div class="h-6 w-6 rounded-md flex items-center justify-center shrink-0 text-[10px] font-mono" style="background:rgba(244,168,85,0.12);color:#FCD34D;border:1px solid rgba(244,168,85,0.3)">02</div>
+                <div class="flex-1 min-w-0">
+                  <div class="text-[13px] text-ink-100 leading-relaxed">针对四象限判断薄弱项，<span class="text-amber-300">重新完成案例分析 Quiz</span>，关注"资源争夺 vs 冷漠回避"区分。</div>
+                  <div class="mt-1.5 flex items-center gap-2 text-[10px] text-ink-500 font-mono">
+                    <span>关联 · 待改进</span>
+                    <span>·</span>
+                    <span>工具 · 四象限应对指南</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-start gap-3 p-3 rounded-xl" style="background:rgba(255,255,255,0.02)">
+                <div class="h-6 w-6 rounded-md flex items-center justify-center shrink-0 text-[10px] font-mono" style="background:rgba(167,139,250,0.12);color:#C4B5FD;border:1px solid rgba(167,139,250,0.3)">03</div>
+                <div class="flex-1 min-w-0">
+                  <div class="text-[13px] text-ink-100 leading-relaxed">下次跨部门会议前，<span class="text-violet-300">下载并复习</span>「PIN 法三步走对照表」+「四象限应对指南」。</div>
+                  <div class="mt-1.5 flex items-center gap-2 text-[10px] text-ink-500 font-mono">
+                    <span>关联 · 工具库</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 pt-4 border-t hairline flex items-center justify-between">
+              <div class="text-[11px] text-ink-400">同步到「大厅 · 待办承诺」</div>
+              <button class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] font-medium shadow-glow-violet" style="background:linear-gradient(135deg,#A78BFA,#22D3EE);color:#0A0B10"><i data-lucide="check" class="h-3 w-3"></i>加入我的待办</button>
+            </div>
+          </div>
+        </section>
+
+        <footer class="py-8 text-center text-[10px] text-ink-600 font-mono tracking-wider">· AI TUTOR · REPORT · v0.4.0 ·</footer>
+      </div>
+    </main>
+
+    <!-- RIGHT: NEO -->
+    <aside class="w-[420px] shrink-0 border-l hairline backdrop-blur-md flex flex-col" style="background:rgba(10,11,16,0.4)">
+      <div class="px-5 pt-4 pb-3 border-b hairline">
+        <div class="flex items-center gap-3">
+          <div class="relative">
+            <div class="h-10 w-10 rounded-xl flex items-center justify-center shadow-glow-violet" style="background:linear-gradient(135deg,#A78BFA,#22D3EE)"><i data-lucide="graduation-cap" class="h-4 w-4" style="color:#0A0B10;stroke-width:2.4"></i></div>
+            <span class="absolute inset-0 rounded-xl animate-breathe" style="background:rgba(167,139,250,0.2)"></span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-medium text-ink-100">Neo</span>
+              <span class="chip border bg-violet-400/5 text-violet-300 border-violet-400/20"><span class="h-1.5 w-1.5 rounded-full animate-breathe shadow-glow-violet" style="background:#A78BFA"></span>在线</span>
+            </div>
+            <div class="text-[11px] text-ink-500 mt-0.5 font-mono">AI TUTOR · 报告解读 · 引用证据</div>
+          </div>
+        </div>
+        <div class="mt-3 text-[10px] text-ink-500 leading-relaxed">可以质疑评分 · 追问证据 · 请求解读 · 每个结论都可追溯</div>
+      </div>
+
+      <div class="flex-1 overflow-y-auto scrollbar-thin px-5 py-5 space-y-5">
+        <div class="flex gap-2.5">
+          <div class="h-7 w-7 rounded-lg flex items-center justify-center shrink-0 shadow-glow-violet" style="background:linear-gradient(135deg,#A78BFA,#22D3EE);color:#0A0B10"><i data-lucide="graduation-cap" class="h-3.5 w-3.5" style="stroke-width:2.4"></i></div>
+          <div class="max-w-[86%] space-y-1.5 min-w-0">
+            <div class="flex items-center gap-1.5 flex-wrap text-[10px] font-mono tracking-wider">
+              <span class="chip border uppercase text-violet-300 border-violet-400/30 bg-violet-400/5">报告解读</span>
+            </div>
+            <div class="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed border border-white/[0.08] text-ink-100" style="background:rgba(255,255,255,0.04);border-top-left-radius:0.375rem">我把报告分三部分给你看——先看了学的内容，再看你的表现，最后是接下来怎么用。你现在在看第 2 部分——<span class="text-violet-300">对哪个数据有疑问？</span></div>
+            <div class="text-[10px] text-ink-500 font-mono">刚刚</div>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2">
+          <div class="max-w-[82%]">
+            <div class="rounded-2xl px-3.5 py-2 text-sm leading-relaxed text-ink-100" style="background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.25);border-top-right-radius:0.375rem">你说我四象限判断准确率只有 60%，具体哪道题我判错了？</div>
+            <div class="mt-1 text-[10px] text-ink-500 text-right font-mono">14:30</div>
+          </div>
+          <div class="h-7 w-7 rounded-lg flex items-center justify-center shrink-0 text-[11px] font-medium border border-white/10" style="background:rgba(255,255,255,0.06);color:#E6E8EE">Z</div>
+        </div>
+
+        <div class="flex gap-2.5">
+          <div class="h-7 w-7 rounded-lg flex items-center justify-center shrink-0 shadow-glow-violet" style="background:linear-gradient(135deg,#A78BFA,#22D3EE);color:#0A0B10"><i data-lucide="graduation-cap" class="h-3.5 w-3.5" style="stroke-width:2.4"></i></div>
+          <div class="max-w-[86%] space-y-1.5 min-w-0">
+            <div class="flex items-center gap-1.5 flex-wrap text-[10px] font-mono tracking-wider">
+              <span class="chip border uppercase text-violet-300 border-violet-400/30 bg-violet-400/5">证据追溯</span>
+              <span class="chip bg-amber-400/5 text-amber-300 border border-amber-400/20">引用 · Quiz 记录</span>
+            </div>
+            <div class="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed border border-white/[0.08] text-ink-100" style="background:rgba(255,255,255,0.04);border-top-left-radius:0.375rem">第 3 题和第 5 题。<span class="text-amber-300">第 3 题的场景</span>是"同事不回消息不参加会议"，你选了"资源争夺型"，<span class="text-emerald-300">正确答案是"冷漠回避型"</span>。</div>
+            <div class="rounded-xl p-3 relative overflow-hidden cursor-pointer hover:brightness-110 transition" style="background:linear-gradient(135deg,rgba(167,139,250,0.08),rgba(34,211,238,0.04));border:1px solid rgba(167,139,250,0.2)">
+              <div class="flex items-start gap-2.5">
+                <div class="h-7 w-7 rounded-md flex items-center justify-center shrink-0" style="background:rgba(167,139,250,0.1);color:#C4B5FD;border:1px solid rgba(167,139,250,0.2)"><i data-lucide="file-question" class="h-3 w-3"></i></div>
+                <div class="flex-1 min-w-0">
+                  <div class="text-[10px] text-violet-300 font-mono tracking-wider uppercase">QUIZ · 第 3 题</div>
+                  <div class="text-[12px] text-ink-100 mt-0.5 leading-relaxed">同事不回消息不参加会议，最可能是哪一型？</div>
+                  <div class="mt-2 flex items-center gap-1.5 text-[10px]">
+                    <span class="chip text-[10px] border" style="background:rgba(244,168,85,0.08);color:#FCD34D;border-color:rgba(244,168,85,0.2)">你选 · 资源争夺型</span>
+                    <span class="text-ink-600">→</span>
+                    <span class="chip text-[10px] border" style="background:rgba(52,211,153,0.08);color:#6EE7B7;border-color:rgba(52,211,153,0.25)">正确 · 冷漠回避型</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed border border-white/[0.08] text-ink-100" style="background:rgba(255,255,255,0.04)">区别在于：<span class="text-cyan-300">资源争夺型</span>会主动要资源但不配合；<span class="text-amber-300">冷漠回避型</span>是完全不参与。这个点在四象限 PPT 的<span class="text-violet-300">第二页</span>有详细区分。</div>
+            <div class="flex gap-2">
+              <button class="inline-flex items-center gap-1 text-[10px] text-cyan-300 hover:text-cyan-200 px-2 py-1 rounded-md border border-cyan-400/20 bg-cyan-400/5"><i data-lucide="corner-up-left" class="h-2.5 w-2.5"></i>回到 PPT 第二页</button>
+              <button class="inline-flex items-center gap-1 text-[10px] text-amber-300 hover:text-amber-200 px-2 py-1 rounded-md border border-amber-400/20 bg-amber-400/5"><i data-lucide="refresh-ccw" class="h-2.5 w-2.5"></i>重做这题</button>
+            </div>
+            <div class="text-[10px] text-ink-500 font-mono">14:30</div>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2">
+          <div class="max-w-[82%]">
+            <div class="rounded-2xl px-3.5 py-2 text-sm leading-relaxed text-ink-100" style="background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.25);border-top-right-radius:0.375rem">前 25% 什么意思？是跟谁比？</div>
+            <div class="mt-1 text-[10px] text-ink-500 text-right font-mono">14:32</div>
+          </div>
+          <div class="h-7 w-7 rounded-lg flex items-center justify-center shrink-0 text-[11px] font-medium border border-white/10" style="background:rgba(255,255,255,0.06);color:#E6E8EE">Z</div>
+        </div>
+
+        <div class="flex gap-2.5">
+          <div class="h-7 w-7 rounded-lg flex items-center justify-center shrink-0 shadow-glow-violet" style="background:linear-gradient(135deg,#A78BFA,#22D3EE);color:#0A0B10"><i data-lucide="graduation-cap" class="h-3.5 w-3.5" style="stroke-width:2.4"></i></div>
+          <div class="max-w-[86%] space-y-1.5 min-w-0">
+            <div class="flex items-center gap-1.5 flex-wrap text-[10px] font-mono tracking-wider">
+              <span class="chip border uppercase text-violet-300 border-violet-400/30 bg-violet-400/5">解读</span>
+              <span class="chip text-ink-400 border border-white/10" style="background:rgba(255,255,255,0.03)">匿名 · 不透露名次</span>
+            </div>
+            <div class="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed border border-white/[0.08] text-ink-100 caret" style="background:rgba(255,255,255,0.04);border-top-left-radius:0.375rem">是你在项目里和其他学员的相对位置——前 25% 意味着你的总体表现排在项目里前四分之一。具体排名我看不到也不会告诉你——这只是帮你了解大致位置</div>
+            <div class="text-[10px] text-ink-500 font-mono">14:32</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-3 border-t hairline">
+        <div class="flex gap-1.5 mb-2 overflow-x-auto scrollbar-thin">
+          <button class="shrink-0 chip border text-ink-300 border-white/10 bg-white/[0.03] hover:bg-white/[0.05]">这个结论怎么来的？</button>
+          <button class="shrink-0 chip border text-ink-300 border-white/10 bg-white/[0.03] hover:bg-white/[0.05]">我不太同意</button>
+          <button class="shrink-0 chip border text-ink-300 border-white/10 bg-white/[0.03] hover:bg-white/[0.05]">下一步怎么做</button>
+        </div>
+        <div class="rounded-2xl overflow-hidden border border-white/10 focus-within:border-violet-400/40 transition" style="background:rgba(255,255,255,0.02)">
+          <textarea placeholder="质疑评分 · 追问证据 · 请求解读…" class="w-full bg-transparent px-4 py-3 text-sm text-ink-100 placeholder:text-ink-500 outline-none resize-none h-[64px] scrollbar-thin"></textarea>
+          <div class="flex items-center justify-between px-3 py-2 border-t hairline">
+            <span class="text-[10px] text-ink-500 font-mono">Enter 发送</span>
+            <button class="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-[11px] font-medium transition shadow-glow-violet" style="background:linear-gradient(135deg,#A78BFA,#22D3EE);color:#0A0B10"><i data-lucide="send" class="h-3 w-3"></i>发送</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- FLOATING NOTE BALL + WINDOW -->
+<button id="noteBall" title="随手记 · 长按可拖动" class="fixed z-40 h-14 w-14 rounded-full transition flex items-center justify-center border shadow-glow-amber hover:scale-105 select-none" style="bottom:140px;right:24px;cursor:grab;background:linear-gradient(135deg,#F4A855,#F59E0B);color:#0A0B10;border-color:rgba(252,211,77,0.5);box-shadow:0 0 32px rgba(244,168,85,0.5),inset 0 1px 0 rgba(255,255,255,0.2);touch-action:none">
+  <i data-lucide="notebook-pen" class="h-5 w-5" style="stroke-width:2.4" draggable="false"></i>
+  <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full text-[10px] leading-[18px] font-semibold text-center pointer-events-none" style="background:#A78BFA;color:#0A0B10">3</span>
+</button>
+<div id="noteWin" class="hidden fixed z-40 w-[380px] glass-strong rounded-2xl overflow-hidden fade-in" style="bottom:220px;right:24px">
+  <div class="px-4 py-3 border-b hairline flex items-center justify-between">
+    <div class="flex items-center gap-2"><i data-lucide="notebook-pen" class="h-3.5 w-3.5 text-amber-300"></i><span class="text-xs font-medium text-ink-100">随手记</span><span class="chip text-[9px]" style="background:rgba(244,168,85,0.1);color:#FCD34D;border:1px solid rgba(244,168,85,0.2)">悬浮窗</span></div>
+    <div class="flex items-center gap-1">
+      <button class="h-6 w-6 rounded-md flex items-center justify-center hover:bg-white/[0.05] text-ink-400"><i data-lucide="minus" class="h-3 w-3"></i></button>
+      <button onclick="toggleNote()" class="h-6 w-6 rounded-md flex items-center justify-center hover:bg-white/[0.05] text-ink-400"><i data-lucide="x" class="h-3 w-3"></i></button>
+    </div>
+  </div>
+  <div class="p-3">
+    <textarea placeholder="想到什么随手记一下…" class="w-full h-24 rounded-xl border border-white/[0.06] px-3 py-2 text-xs text-ink-100 placeholder:text-ink-500 outline-none focus:border-amber-400/40 resize-none scrollbar-thin" style="background:rgba(255,255,255,0.02)">关键行动：本周与张总碰面前，复习 PIN 法对照表，提前写好要探索的三个 Interest 假设。</textarea>
+    <div class="mt-2 flex items-center justify-between">
+      <button class="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] text-ink-400 hover:text-ink-100 hover:bg-white/[0.04]"><i data-lucide="image" class="h-3 w-3"></i>截图图表</button>
+      <button class="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-[11px] font-medium transition shadow-glow-amber" style="background:#F4A855;color:#0A0B10"><i data-lucide="save" class="h-3 w-3"></i>保存</button>
+    </div>
+    <div class="mt-2 pt-2 border-t hairline text-[10px] text-ink-500 font-mono flex items-center justify-between">
+      <span>当前位置：报告 · Course 2</span>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+  lucide.createIcons();
+  function toggleNote(){ const n=document.getElementById('noteWin'); n.classList.toggle('hidden'); if(!n.classList.contains('hidden')){ n.classList.add('fade-in'); lucide.createIcons(); repositionNoteWin(); } }
+  function togglePanel(){ const p=document.getElementById('leftPanel'); p.classList.toggle('collapsed'); }
+
+  // ---- Note ball: long-press drag ----
+  (function(){
+    const ball = document.getElementById('noteBall');
+    const noteWin = document.getElementById('noteWin');
+    const LONG_PRESS = 260;
+    let pressTimer = null, dragging = false, didDrag = false;
+    let start = { mx:0, my:0, bx:0, by:0 };
+    function ballRect(){ return ball.getBoundingClientRect(); }
+    function startDrag(mx, my){
+      dragging = true; didDrag = false;
+      const r = ballRect();
+      start = { mx, my, bx: r.left, by: r.top };
+      ball.style.cursor = 'grabbing'; ball.style.transition = 'none'; ball.style.transform = 'scale(1.08)';
+      ball.style.boxShadow = '0 0 48px rgba(244,168,85,0.7), inset 0 1px 0 rgba(255,255,255,0.25)';
+    }
+    function moveDrag(mx, my){
+      if (!dragging) return;
+      const dx = mx - start.mx, dy = my - start.my;
+      if (Math.abs(dx) > 2 || Math.abs(dy) > 2) didDrag = true;
+      const w = ball.offsetWidth, h = ball.offsetHeight;
+      const nx = Math.max(8, Math.min(start.bx + dx, window.innerWidth - w - 8));
+      const ny = Math.max(64, Math.min(start.by + dy, window.innerHeight - h - 8));
+      ball.style.left = nx + 'px'; ball.style.top = ny + 'px';
+      ball.style.right = 'auto'; ball.style.bottom = 'auto';
+      if (!noteWin.classList.contains('hidden')) repositionNoteWin();
+    }
+    function endDrag(){
+      if (dragging){
+        dragging = false;
+        ball.style.cursor = 'grab'; ball.style.transition = ''; ball.style.transform = '';
+        ball.style.boxShadow = '0 0 32px rgba(244,168,85,0.5), inset 0 1px 0 rgba(255,255,255,0.2)';
+      }
+    }
+    ball.addEventListener('mousedown', (e) => { e.preventDefault(); const mx=e.clientX, my=e.clientY; pressTimer = setTimeout(() => startDrag(mx, my), LONG_PRESS); });
+    document.addEventListener('mousemove', (e) => moveDrag(e.clientX, e.clientY));
+    document.addEventListener('mouseup', () => { clearTimeout(pressTimer); endDrag(); });
+    ball.addEventListener('click', (e) => { if (didDrag){ e.preventDefault(); e.stopPropagation(); didDrag = false; return; } toggleNote(); });
+    ball.addEventListener('touchstart', (e) => { if (!e.touches[0]) return; const mx=e.touches[0].clientX, my=e.touches[0].clientY; pressTimer = setTimeout(() => startDrag(mx, my), LONG_PRESS); }, {passive:true});
+    document.addEventListener('touchmove', (e) => { if (dragging && e.touches[0]){ e.preventDefault(); moveDrag(e.touches[0].clientX, e.touches[0].clientY); } }, {passive:false});
+    document.addEventListener('touchend', () => { clearTimeout(pressTimer); endDrag(); });
+    window.repositionNoteWin = function(){
+      const r = ballRect();
+      const winW = 380, winH = 260, margin = 12;
+      let left = r.left - winW - margin;
+      if (left < 8) left = r.right + margin;
+      if (left + winW > window.innerWidth - 8) left = window.innerWidth - winW - 8;
+      let top = r.top - winH + r.height;
+      if (top < 64) top = r.bottom + margin;
+      if (top + winH > window.innerHeight - 8) top = window.innerHeight - winH - 8;
+      noteWin.style.left = left + 'px'; noteWin.style.top = top + 'px';
+      noteWin.style.right = 'auto'; noteWin.style.bottom = 'auto';
+    };
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,1160 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>睿学 · 对练教室 · GROW辅导</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { theme: { extend: {
+  colors: {
+    ink: { 100:'#F1F3F8', 200:'#E6E8EE', 300:'#C4C8D4', 400:'#8B92A5', 500:'#6A7085', 600:'#4A5061', 700:'#353A48' },
+    cyan: { 300:'#67E8F9', 400:'#22D3EE', 500:'#06B6D4' },
+    violet: { 300:'#C4B5FD', 400:'#A78BFA', 500:'#8B5CF6' },
+    amber: { 300:'#FCD34D', 400:'#F4A855', 500:'#F59E0B' },
+    rose: { 300:'#FDA4AF', 400:'#FB7185', 500:'#F43F5E' },
+    emerald: { 300:'#6EE7B7', 400:'#34D399', 500:'#10B981' },
+  },
+  fontFamily: { sans:['Inter','PingFang SC','sans-serif'], mono:['JetBrains Mono','monospace'] },
+  boxShadow: { 'glow-cyan':'0 0 24px rgba(34,211,238,0.35)', 'glow-violet':'0 0 24px rgba(167,139,250,0.30)', 'glow-amber':'0 0 20px rgba(244,168,85,0.30)', 'glow-rose':'0 0 24px rgba(244,114,128,0.30)' },
+  animation: { breathe:'breathe 4s ease-in-out infinite', aurora:'aurora 18s ease-in-out infinite', caret:'caret 1s steps(2) infinite' },
+  keyframes: {
+    breathe:{'0%,100%':{opacity:'0.85'},'50%':{opacity:'1',filter:'brightness(1.25)'}},
+    aurora:{'0%,100%':{transform:'translate3d(0,0,0) scale(1)'},'50%':{transform:'translate3d(30px,-20px,0) scale(1.08)'}},
+    caret:{'0%,100%':{opacity:'0'},'50%':{opacity:'1'}},
+  },
+}}}
+</script>
+<style>
+html,body{height:100%;margin:0;background:#0A0B10;color:#E6E8EE;font-family:Inter,'PingFang SC',sans-serif;letter-spacing:-0.01em}
+.aurora-bg{position:relative;isolation:isolate}
+.aurora-bg::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(55% 40% at 12% 12%,rgba(167,139,250,0.18),transparent 60%),
+             radial-gradient(55% 50% at 92% 88%,rgba(244,114,128,0.15),transparent 60%),
+             linear-gradient(180deg,#0A0B10,#07080C);
+  animation:aurora 18s ease-in-out infinite;}
+.glass{background:rgba(255,255,255,0.03);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.06)}
+.glass-strong{background:rgba(24,27,37,0.94);backdrop-filter:blur(28px);border:1px solid rgba(255,255,255,0.1)}
+.card{background:rgba(255,255,255,0.03);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.06);border-radius:1rem}
+.hairline{border-color:rgba(255,255,255,0.06)}
+.scrollbar-thin::-webkit-scrollbar{width:6px;height:6px}
+.scrollbar-thin::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:999px}
+.kbd{display:inline-flex;align-items:center;justify-content:center;border-radius:6px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);padding:0 6px;height:20px;font-size:10px;font-family:'JetBrains Mono',monospace;color:#8B92A5}
+.chip{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:500}
+.caret::after{content:'\u258C';margin-left:2px;color:rgba(167,139,250,0.85);animation:caret 1s steps(2) infinite}
+.tabular-nums{font-variant-numeric:tabular-nums}
+.fade-in{animation:fadeIn 0.3s ease-out both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.phase{display:none !important;height:100%;min-height:0;overflow:hidden}
+.phase.active{display:flex !important;flex:1 1 auto;min-width:0;min-height:0;width:100%;overflow:hidden}
+
+/* Stepper */
+.stepper-item{position:relative;display:flex;align-items:flex-start;gap:12px;padding-bottom:28px}
+.stepper-item:last-child{padding-bottom:0}
+.stepper-item:not(:last-child)::after{content:'';position:absolute;left:11px;top:26px;bottom:0;width:2px;border-radius:1px}
+.stepper-item.done::after{background:linear-gradient(180deg,#22D3EE,#A78BFA)}
+.stepper-item.current::after,.stepper-item.locked::after{background:rgba(255,255,255,0.06)}
+.stepper-dot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;font-weight:600;transition:all 0.3s}
+.stepper-dot.done{background:linear-gradient(135deg,#22D3EE,#A78BFA);color:#0A0B10;box-shadow:0 0 16px rgba(34,211,238,0.3)}
+.stepper-dot.current{background:linear-gradient(135deg,#22D3EE,#A78BFA);color:#0A0B10;box-shadow:0 0 24px rgba(167,139,250,0.4);animation:breathe 4s ease-in-out infinite}
+.stepper-dot.locked{background:rgba(255,255,255,0.04);color:#4A5061;border:1px solid rgba(255,255,255,0.06)}
+
+/* Overlay nav panel */
+#navOverlayBackdrop{position:fixed;top:56px;left:0;right:0;bottom:0;z-index:50;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity 0.3s ease}
+#navOverlayBackdrop.open{opacity:1;pointer-events:auto}
+#navOverlayPanel{position:fixed;top:56px;left:0;bottom:0;width:280px;z-index:51;transform:translateX(-100%);transition:transform 0.3s cubic-bezier(.2,.8,.2,1)}
+#navOverlayPanel.open{transform:translateX(0)}
+.nav-tab-btn{position:relative;padding-bottom:10px;font-weight:500;color:#6A7085;transition:color 0.2s}
+.nav-tab-btn.active{color:#C4B5FD}
+.nav-tab-btn .nav-tab-indicator{opacity:0;transition:opacity 0.2s}
+.nav-tab-btn.active .nav-tab-indicator{opacity:1}
+.nav-tab-content{display:none}
+.nav-tab-content.active{display:flex;flex-direction:column;flex:1;min-height:0}
+</style>
+</head>
+<body class="aurora-bg h-full">
+<div class="h-full flex flex-col">
+
+  <!-- TOPBAR -->
+  <header class="h-14 shrink-0 px-5 flex items-center justify-between z-30 border-b hairline backdrop-blur-xl" style="background:rgba(10,11,16,0.6)">
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2">
+        <div class="h-8 w-8 rounded-xl flex items-center justify-center shadow-glow-violet" style="background:linear-gradient(135deg,#22D3EE,#8B5CF6)"><i data-lucide="sparkles" class="h-4 w-4" style="color:#0A0B10;stroke-width:2.4"></i></div>
+        <div class="leading-tight">
+          <div class="text-[13px] font-medium text-ink-100">睿学</div>
+          <div class="text-[10px] text-ink-500 -mt-0.5 font-mono">AI TUTOR &middot; v0.4</div>
+        </div>
+      </div>
+      <span class="h-4 w-px bg-white/10"></span>
+      <span class="chip bg-white/[0.04] text-ink-300 border border-white/5">学员端</span>
+      <span class="text-[11px] text-ink-500 hidden xl:inline font-mono">Course 1 &middot; A4 &middot; GROW辅导对练</span>
+    </div>
+    <div class="flex items-center gap-1">
+      <button class="relative rounded-lg p-2 hover:bg-white/[0.05]"><i data-lucide="bell" class="h-4 w-4 text-ink-300"></i></button>
+      <button class="flex items-center gap-2 rounded-lg p-0.5 pr-2 hover:bg-white/[0.05]">
+        <div class="h-7 w-7 rounded-lg flex items-center justify-center text-xs font-semibold shadow-glow-violet" style="background:linear-gradient(135deg,#22D3EE,#8B5CF6);color:#0A0B10">Z</div>
+        <span class="text-xs text-ink-300 hidden md:inline">张磊</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Sub-bar -->
+  <div class="h-11 shrink-0 px-6 flex items-center justify-between border-b hairline backdrop-blur-md" style="background:rgba(10,11,16,0.5)">
+    <div class="flex items-center gap-3">
+      <!-- Toggle button for left nav overlay -->
+      <button onclick="openNavOverlay()" class="h-8 w-8 rounded-lg flex items-center justify-center hover:bg-white/[0.05] text-ink-400 border border-white/[0.06] transition" title="展开导航"><i data-lucide="panel-left-open" class="h-4 w-4"></i></button>
+      <!-- Breadcrumb -->
+      <nav class="flex items-center gap-1.5 text-[12px] text-ink-300" aria-label="面包屑">
+        <a href="03-hall-daily.html" class="hover:text-cyan-300 transition">大厅</a>
+        <span class="text-ink-600">&rsaquo;</span>
+        <span>辅导型管理</span>
+        <span class="text-ink-600">&rsaquo;</span>
+        <span>A4 GROW辅导对练</span>
+      </nav>
+    </div>
+    <div class="flex items-center gap-3 text-[12px] text-ink-400 font-mono">
+      <span>进度 <span class="tabular-nums">3/5</span> 轮</span>
+      <span class="text-ink-600">&middot;</span>
+      <span id="timer">进行 02:15</span>
+      <span id="phaseLabel" class="hidden"></span>
+    </div>
+  </div>
+
+  <!-- OVERLAY NAV BACKDROP -->
+  <div id="navOverlayBackdrop" onclick="closeNavOverlay()"></div>
+
+  <!-- OVERLAY NAV PANEL -->
+  <aside id="navOverlayPanel" class="glass-strong flex flex-col" style="border-right:1px solid rgba(255,255,255,0.1)">
+    <!-- Header -->
+    <div class="px-4 py-3 border-b hairline flex items-center justify-between">
+      <div>
+        <div class="text-[10px] text-ink-500 font-mono tracking-widest uppercase">Course 1 &middot; Activity 4</div>
+        <div class="mt-0.5 text-[12px] font-medium text-ink-100">GROW辅导对练</div>
+      </div>
+      <button onclick="closeNavOverlay()" class="h-7 w-7 rounded-md flex items-center justify-center hover:bg-white/[0.05] text-ink-400" title="收起"><i data-lucide="x" class="h-3.5 w-3.5"></i></button>
+    </div>
+
+    <!-- Tab switcher -->
+    <div class="px-3 pt-3 border-b hairline relative">
+      <div class="flex items-center gap-4 text-sm">
+        <button onclick="setNavTab('phases')" class="nav-tab-btn active relative pb-2.5 font-medium transition" data-tab="phases">
+          <span>对练阶段</span>
+          <span class="nav-tab-indicator absolute left-0 right-0 bottom-0 h-0.5 rounded-full" style="background:linear-gradient(90deg,#22D3EE,#A78BFA)"></span>
+        </button>
+        <button onclick="setNavTab('outline')" class="nav-tab-btn relative pb-2.5 font-medium transition" data-tab="outline">
+          <span>课程大纲</span>
+          <span class="nav-tab-indicator absolute left-0 right-0 bottom-0 h-0.5 rounded-full" style="background:linear-gradient(90deg,#22D3EE,#A78BFA)"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab 1: 对练阶段 (stepper) -->
+    <div class="nav-tab-content active flex-1 min-h-0 flex flex-col" data-tab="phases">
+      <div class="px-5 py-5 flex-1 overflow-y-auto scrollbar-thin">
+        <div class="text-[10px] text-ink-500 font-mono tracking-widest uppercase mb-4">对练阶段</div>
+        <!-- Stepper -->
+        <div class="stepper-item current" id="step1">
+          <div class="stepper-dot current" id="dot1"><i data-lucide="briefcase" class="h-3 w-3" style="stroke-width:2.4"></i></div>
+          <div>
+            <div class="text-[12px] font-medium text-ink-100" id="stepLabel1">情景导入</div>
+            <div class="text-[10px] text-ink-500 mt-0.5">阅读背景 &middot; 了解任务</div>
+            <span class="chip text-[9px] mt-1.5 border" id="stepChip1" style="background:rgba(167,139,250,0.1);color:#C4B5FD;border-color:rgba(167,139,250,0.3)">进行中</span>
+          </div>
+        </div>
+        <div class="stepper-item locked" id="step2">
+          <div class="stepper-dot locked" id="dot2"><i data-lucide="users" class="h-3 w-3" style="stroke-width:2.4"></i></div>
+          <div>
+            <div class="text-[12px] font-medium text-ink-500" id="stepLabel2">角色扮演</div>
+            <div class="text-[10px] text-ink-600 mt-0.5">与赵工实战对话</div>
+            <span class="chip text-[9px] mt-1.5 border" id="stepChip2" style="background:rgba(255,255,255,0.02);color:#4A5061;border-color:rgba(255,255,255,0.06)"><i data-lucide="lock" class="h-2 w-2"></i>未解锁</span>
+          </div>
+        </div>
+        <div class="stepper-item locked" id="step3">
+          <div class="stepper-dot locked" id="dot3"><i data-lucide="scan-search" class="h-3 w-3" style="stroke-width:2.4"></i></div>
+          <div>
+            <div class="text-[12px] font-medium text-ink-500" id="stepLabel3">反思复盘</div>
+            <div class="text-[10px] text-ink-600 mt-0.5">回顾表现 &middot; 提炼方法</div>
+            <span class="chip text-[9px] mt-1.5 border" id="stepChip3" style="background:rgba(255,255,255,0.02);color:#4A5061;border-color:rgba(255,255,255,0.06)"><i data-lucide="lock" class="h-2 w-2"></i>未解锁</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 2: 课程大纲 -->
+    <div class="nav-tab-content flex-1 min-h-0 flex flex-col" data-tab="outline">
+      <div class="px-4 pt-3 pb-2 flex items-center justify-between">
+        <div class="text-[11px] text-ink-300 font-mono tracking-widest uppercase">Activity &middot; 5 门</div>
+        <span class="text-[10px] text-ink-500 font-mono">3/5</span>
+      </div>
+      <div class="flex-1 overflow-y-auto scrollbar-thin px-2 pb-3 space-y-1 text-[12.5px]">
+        <!-- A1 completed -->
+        <div class="flex items-center gap-2 px-2.5 py-2 rounded-md hover:bg-white/[0.03] cursor-pointer">
+          <span class="h-5 w-5 rounded-sm flex items-center justify-center shadow-glow-cyan shrink-0" style="background:rgba(34,211,238,0.15);color:#67E8F9;border:1px solid rgba(34,211,238,0.4)"><i data-lucide="check" class="h-3 w-3" style="stroke-width:3"></i></span>
+          <span class="text-ink-300">A1 &middot; 从指责到赋能：GROW模型</span>
+        </div>
+        <!-- A2 completed -->
+        <div class="flex items-center gap-2 px-2.5 py-2 rounded-md hover:bg-white/[0.03] cursor-pointer">
+          <span class="h-5 w-5 rounded-sm flex items-center justify-center shadow-glow-cyan shrink-0" style="background:rgba(34,211,238,0.15);color:#67E8F9;border:1px solid rgba(34,211,238,0.4)"><i data-lucide="check" class="h-3 w-3" style="stroke-width:3"></i></span>
+          <span class="text-ink-300">A2 &middot; 催化主动型员工</span>
+        </div>
+        <!-- A3 completed -->
+        <div class="flex items-center gap-2 px-2.5 py-2 rounded-md hover:bg-white/[0.03] cursor-pointer">
+          <span class="h-5 w-5 rounded-sm flex items-center justify-center shadow-glow-cyan shrink-0" style="background:rgba(34,211,238,0.15);color:#67E8F9;border:1px solid rgba(34,211,238,0.4)"><i data-lucide="check" class="h-3 w-3" style="stroke-width:3"></i></span>
+          <span class="text-ink-300">A3 &middot; 重构被动型员工</span>
+        </div>
+        <!-- A4 current -->
+        <div class="flex items-center gap-2 px-2.5 py-2 rounded-md relative cursor-pointer" style="background:linear-gradient(90deg,rgba(167,139,250,0.14),transparent);border-left:2px solid #A78BFA">
+          <span class="h-5 w-5 rounded-sm flex items-center justify-center shadow-glow-violet shrink-0" style="background:linear-gradient(135deg,#A78BFA,#22D3EE);color:#0A0B10"><i data-lucide="swords" class="h-3 w-3" style="stroke-width:2.4"></i></span>
+          <span class="text-ink-100 font-medium">A4 &middot; GROW辅导对练</span>
+          <span class="ml-auto text-[10px] text-violet-300 font-mono">进行中</span>
+        </div>
+        <!-- A5 locked -->
+        <div class="flex items-center gap-2 px-2.5 py-2 rounded-md opacity-55">
+          <span class="h-5 w-5 rounded-sm flex items-center justify-center shrink-0 bg-white/[0.02] text-ink-600 border border-white/5"><i data-lucide="lock" class="h-3 w-3"></i></span>
+          <span class="text-ink-500">A5 &middot; 辅导型管理报告</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Course progress (shared, always at bottom) -->
+    <div class="px-4 py-3 border-t hairline">
+      <div class="flex items-center justify-between text-[10px] text-ink-500 font-mono mb-1.5">
+        <span>Course 1 整体</span><span class="text-ink-200">3 / 5 &middot; 60%</span>
+      </div>
+      <div class="h-[3px] rounded-full bg-white/5 overflow-hidden">
+        <div class="h-full rounded-full shadow-glow-violet" style="width:60%;background:linear-gradient(90deg,#22D3EE,#A78BFA)"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT (full width, no left nav space reserved) -->
+  <div class="flex-1 min-h-0 flex overflow-hidden">
+
+    <!-- PHASE CONTAINER -->
+    <div class="flex-1 min-w-0 min-h-0 flex overflow-hidden">
+
+      <!-- ============ PHASE 1: 情景导入 (L-C) ============ -->
+      <section class="phase active" data-phase="intro">
+        <!-- LEFT: Briefing -->
+        <div class="flex-1 min-w-0 min-h-0 overflow-y-auto scrollbar-thin">
+          <div class="px-8 py-8">
+            <div class="text-[10px] text-violet-300 font-mono tracking-[0.2em] uppercase">Scenario &middot; 情景导入</div>
+            <h1 class="mt-2 text-2xl font-medium text-ink-100 tracking-tight">GROW辅导 &middot; 下属赵工</h1>
+            <p class="text-sm text-ink-400 mt-1.5">阅读背景信息，了解你的角色和任务目标，准备好后点击"开始对练"。</p>
+
+            <div class="mt-6 card p-6 space-y-5">
+              <!-- 背景 -->
+              <div>
+                <div class="flex items-center gap-2 mb-2">
+                  <i data-lucide="briefcase" class="h-3.5 w-3.5 text-cyan-300"></i>
+                  <span class="text-[10px] text-cyan-300 font-mono tracking-widest uppercase">背景</span>
+                </div>
+                <div class="text-[14px] text-ink-100 leading-relaxed space-y-2.5">
+                  <p>你是某公司部门经理，你的下属<span class="text-cyan-300">赵工</span>最近半年工作态度明显消极——会议上不发言，任务只做最低标准，被问到问题时总说"没什么问题"。但你知道他以前不是这样的。</p>
+                  <p>最近部门绩效下滑，你决定找赵工谈一次。</p>
+                </div>
+              </div>
+
+              <!-- 你的角色 -->
+              <div>
+                <div class="text-[10px] text-violet-300 font-mono tracking-widest uppercase mb-2">你的角色</div>
+                <div class="rounded-xl p-3.5 border" style="background:rgba(34,211,238,0.04);border-color:rgba(34,211,238,0.15)">
+                  <div class="flex items-center gap-2">
+                    <div class="h-8 w-8 rounded-lg flex items-center justify-center text-sm font-medium" style="background:rgba(34,211,238,0.15);color:#67E8F9">你</div>
+                    <div>
+                      <div class="text-[13px] text-ink-100">部门经理</div>
+                      <div class="text-[10px] text-ink-500">赵工的直属上级</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 任务目标 -->
+              <div>
+                <div class="text-[10px] text-amber-300 font-mono tracking-widest uppercase mb-2">任务目标 &middot; 5 项</div>
+                <div class="space-y-2">
+                  <div class="rounded-xl p-3 border" style="background:rgba(52,211,153,0.04);border-color:rgba(52,211,153,0.2)">
+                    <div class="flex gap-2 text-[12px] text-ink-100"><span class="text-emerald-300 shrink-0">&#x2726;</span><span><span class="text-emerald-300/80 font-mono text-[10px] mr-1">01</span>建立心理安全感，让赵工放下防御</span></div>
+                  </div>
+                  <div class="rounded-xl p-3 border" style="background:rgba(34,211,238,0.04);border-color:rgba(34,211,238,0.15)">
+                    <div class="flex gap-2 text-[12px] text-ink-100"><span class="text-cyan-300 shrink-0">&#x2726;</span><span><span class="text-cyan-300/80 font-mono text-[10px] mr-1">02</span>用 GROW 模型引导赵工认识到现状问题</span></div>
+                  </div>
+                  <div class="rounded-xl p-3 border" style="background:rgba(244,168,85,0.04);border-color:rgba(244,168,85,0.2)">
+                    <div class="flex gap-2 text-[12px] text-ink-100"><span class="text-amber-300 shrink-0">&#x2726;</span><span><span class="text-amber-300/80 font-mono text-[10px] mr-1">03</span>识别赵工的真实心理障碍（"被动"背后的原因）</span></div>
+                  </div>
+                  <div class="rounded-xl p-3 border" style="background:rgba(167,139,250,0.04);border-color:rgba(167,139,250,0.15)">
+                    <div class="flex gap-2 text-[12px] text-ink-100"><span class="text-violet-300 shrink-0">&#x2726;</span><span><span class="text-violet-300/80 font-mono text-[10px] mr-1">04</span>引导赵工自主提出 1-2 个改变方案</span></div>
+                  </div>
+                  <div class="rounded-xl p-3 border" style="background:rgba(251,113,133,0.04);border-color:rgba(251,113,133,0.2)">
+                    <div class="flex gap-2 text-[12px] text-ink-100"><span class="text-rose-300 shrink-0">&#x2726;</span><span><span class="text-rose-300/80 font-mono text-[10px] mr-1">05</span>达成至少一个具体改进行动承诺</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 知识回顾 -->
+              <div>
+                <div class="text-[10px] text-emerald-300 font-mono tracking-widest uppercase mb-2">知识回顾 &middot; 对练会用到</div>
+                <div class="rounded-xl p-3.5 border" style="background:rgba(167,139,250,0.04);border-color:rgba(167,139,250,0.15)">
+                  <div class="flex items-center gap-2 mb-2.5">
+                    <span class="chip text-[10px] border" style="background:rgba(167,139,250,0.1);color:#C4B5FD;border-color:rgba(167,139,250,0.3)">核心</span>
+                    <div class="text-[12px] text-ink-100 font-medium">GROW 辅导模型</div>
+                  </div>
+                  <div class="text-[11px] text-ink-300 leading-relaxed mb-2.5">
+                    <b class="text-emerald-300">G</b>(Goal 目标) &rarr; <b class="text-cyan-300">R</b>(Reality 现实) &rarr; <b class="text-violet-300">O</b>(Options 选项) &rarr; <b class="text-amber-300">W</b>(Will 意愿)
+                  </div>
+                  <!-- Key questions per letter -->
+                  <div class="grid grid-cols-1 gap-1.5 mb-2.5">
+                    <div class="flex items-start gap-2 rounded-md px-2.5 py-1.5" style="background:rgba(52,211,153,0.06);border:1px solid rgba(52,211,153,0.15)">
+                      <span class="h-5 w-5 rounded-md flex items-center justify-center shrink-0 text-[11px] font-bold" style="background:rgba(52,211,153,0.15);color:#6EE7B7">G</span>
+                      <div class="flex-1 min-w-0">
+                        <div class="text-[10px] text-emerald-300/80 font-mono">Goal &middot; 目标</div>
+                        <div class="text-[11px] text-ink-200">&ldquo;你想达成什么？&rdquo;</div>
+                      </div>
+                    </div>
+                    <div class="flex items-start gap-2 rounded-md px-2.5 py-1.5" style="background:rgba(34,211,238,0.06);border:1px solid rgba(34,211,238,0.15)">
+                      <span class="h-5 w-5 rounded-md flex items-center justify-center shrink-0 text-[11px] font-bold" style="background:rgba(34,211,238,0.15);color:#67E8F9">R</span>
+                      <div class="flex-1 min-w-0">
+                        <div class="text-[10px] text-cyan-300/80 font-mono">Reality &middot; 现实</div>
+                        <div class="text-[11px] text-ink-200">&ldquo;现在情况如何？&rdquo;</div>
+                      </div>
+                    </div>
+                    <div class="flex items-start gap-2 rounded-md px-2.5 py-1.5" style="background:rgba(167,139,250,0.06);border:1px solid rgba(167,139,250,0.15)">
+                      <span class="h-5 w-5 rounded-md flex items-center justify-center shrink-0 text-[11px] font-bold" style="background:rgba(167,139,250,0.15);color:#C4B5FD">O</span>
+                      <div class="flex-1 min-w-0">
+                        <div class="text-[10px] text-violet-300/80 font-mono">Options &middot; 选项</div>
+                        <div class="text-[11px] text-ink-200">&ldquo;还有什么可能？&rdquo;</div>
+                      </div>
+                    </div>
+                    <div class="flex items-start gap-2 rounded-md px-2.5 py-1.5" style="background:rgba(244,168,85,0.06);border:1px solid rgba(244,168,85,0.15)">
+                      <span class="h-5 w-5 rounded-md flex items-center justify-center shrink-0 text-[11px] font-bold" style="background:rgba(244,168,85,0.15);color:#FCD34D">W</span>
+                      <div class="flex-1 min-w-0">
+                        <div class="text-[10px] text-amber-300/80 font-mono">Will &middot; 意愿</div>
+                        <div class="text-[11px] text-ink-200">&ldquo;你决定怎么做？&rdquo;</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="text-[11px] text-ink-400 leading-relaxed">先明确对话要去的方向，再探索现状事实，接着拓展可能的方案，最后锁定行动承诺。</div>
+                </div>
+              </div>
+
+              <!-- 开始 -->
+              <div class="pt-4 border-t hairline flex items-center gap-3">
+                <button onclick="goPhase2()" class="inline-flex items-center gap-1.5 rounded-lg px-4 py-2.5 text-[13px] font-medium transition shadow-glow-violet" style="background:linear-gradient(135deg,#22D3EE,#A78BFA);color:#0A0B10"><i data-lucide="play" class="h-4 w-4" fill="currentColor"></i>开始对练</button>
+                <span class="text-[11px] text-ink-400">预计 10 分钟 &middot; 可随时暂停</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Neo Chat -->
+        <aside class="w-[360px] lg:w-[380px] xl:w-[420px] shrink-0 border-l hairline backdrop-blur-md flex flex-col min-h-0" style="background:rgba(10,11,16,0.4)">
+          <!-- Neo brand hero -->
+          <div class="neo-brand-hero shrink-0 h-[160px] xl:h-[220px] border-b hairline flex items-center justify-center relative overflow-hidden">
+            <div class="absolute inset-0" style="background: radial-gradient(ellipse at center, rgba(139,92,246,0.15), transparent 70%);"></div>
+            <img src="../assets/neo-male.svg" alt="Neo" class="neo-brand-avatar h-28 w-28 xl:h-40 xl:w-40 object-contain relative z-10" />
+            <div class="absolute bottom-3 left-0 right-0 text-center">
+              <div class="text-[13px] font-medium text-ink-100">Neo</div>
+              <div class="text-[10px] text-ink-500 font-mono">AI Tutor</div>
+            </div>
+          </div>
+          <div class="shrink-0 px-5 pt-3 pb-3 border-b hairline">
+            <div class="flex items-center gap-3">
+              <img src="../assets/neo-male.svg" alt="Neo" class="neo-avatar h-10 w-10 rounded-xl object-cover" />
+              <div class="flex-1">
+                <span class="text-sm font-medium text-ink-100">Neo</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex-1 min-h-0 overflow-y-auto scrollbar-thin px-5 py-5 space-y-4">
+            <!-- Neo Msg 1 -->
+            <div class="flex gap-2.5">
+              <img src="../assets/neo-male.svg" alt="Neo" class="neo-avatar h-7 w-7 rounded-lg object-cover shrink-0" />
+              <div class="max-w-[86%] space-y-1.5 min-w-0">
+                <div class="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed border border-white/[0.08] text-ink-100" style="background:rgba(255,255,255,0.04);border-top-left-radius:0.375rem">接下来你会和下属<span class="text-cyan-300">赵工</span>进行一次辅导对话。先看看左边的背景信息，了解你们各自的处境。准备好了就点「<span class="text-violet-300">开始对练</span>」。有任何疑问随时在这边问我。</div>
+                <div class="text-[10px] text-ink-500 font-mono">14:00</div>
+              </div>
+            </div>
+
+            <!-- User question -->
+            <div class="flex justify-end gap-2.5">
+              <div class="max-w-[82%]">
+                <div class="rounded-2xl px-3.5 py-2 text-sm leading-relaxed text-ink-100" style="background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.25);border-top-right-radius:0.375rem">GROW里的R阶段，怎么让对方说出真实想法？</div>
+                <div class="mt-1 text-[10px] text-ink-500 text-right font-mono">14:01</div>
+              </div>
+              <div class="h-7 w-7 rounded-lg flex items-center justify-center shrink-0 text-[11px] font-medium border border-white/10" style="background:rgba(255,255,255,0.06);color:#E6E8EE">Z</div>
+            </div>
+
+            <!-- Neo answer -->
+            <div class="flex gap-2.5">
+              <img src="../assets/neo-male.svg" alt="Neo" class="neo-avatar h-7 w-7 rounded-lg object-cover shrink-0" />
+              <div class="max-w-[86%] space-y-1.5 min-w-0">
+                <div class="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed border border-white/[0.08] text-ink-100" style="background:rgba(255,255,255,0.04);border-top-left-radius:0.375rem">好问题。R阶段的关键是提"<span class="text-violet-300">摄像机问题</span>"——问对方"如果有一台摄像机一直在拍，它会拍到什么？"这样引导对方描述客观事实而非主观判断。</div>
+                <div class="flex flex-wrap gap-1.5 mt-1">
+                  <button class="chip border text-ink-300 border-white/10 bg-white/[0.03] hover:bg-white/[0.05]">GROW 忘了？</button>
+                  <button class="chip border text-ink-300 border-white/10 bg-white/[0.03] hover:bg-white/[0.05]">赵工什么性格？</button>
+                </div>
+                <div class="text-[10px] text-ink-500 font-mono">14:02</div>
+              </div>
+            </div>
+          </div>
+          <div class="shrink-0 p-3 border-t hairline">
+            <div class="rounded-2xl overflow-hidden border border-white/10 focus-within:border-violet-400/40 transition" style="background:rgba(255,255,255,0.02)">
+              <textarea placeholder="你可以随时提问……" class="w-full bg-transparent px-4 py-3 text-sm text-ink-100 placeholder:text-ink-500 outline-none resize-none h-[68px] scrollbar-thin"></textarea>
+              <div class="flex items-center justify-between px-3 py-2 border-t hairline">
+                <span class="text-[10px] text-ink-500 font-mono">Enter 发送 &middot; Shift+Enter 换行</span>
+                <button class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] font-medium shadow-glow-violet" style="background:linear-gradient(135deg,#A78BFA,#22D3EE);color:#0A0B10"><i data-lucide="send" class="h-3 w-3"></i>发送</button>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <!-- ============ PHASE 2: 角色扮演 (3-column) ============ -->
+      <section class="phase" data-phase="roleplay">
+        <!-- LEFT: Actor info -->
+        <aside class="w-[300px] lg:w-[340px] xl:w-[380px] shrink-0 border-r hairline flex flex-col min-h-0" style="background:rgba(10,11,16,0.35)">
+          <!-- Actor header -->
+          <div class="shrink-0 p-4 text-center border-b hairline">
+            <div class="relative inline-block">
+              <img
+                src="../assets/avatar-zhao.jpg"
+                onerror="this.onerror=null;this.src='https://i.pravatar.cc/200?img=60';"
+                alt="赵工"
+                class="h-24 w-24 rounded-2xl object-cover mx-auto"
+                style="border:2px solid rgba(34,211,238,0.4);box-shadow:0 0 24px rgba(34,211,238,0.25)"
+              />
+            </div>
+            <div class="mt-2.5 text-[13px] font-medium text-ink-100">赵工</div>
+            <div class="text-[11px] text-ink-400 mt-0.5">产品部高级工程师</div>
+            <!-- Emotion indicator -->
+            <div class="mt-2" id="emotionChip">
+              <span class="chip border text-ink-300 border-white/10 bg-white/[0.03] text-[10px]">&#128528; 中性</span>
+            </div>
+            <!-- Emotion curve (replaces 耐心值 bar) -->
+            <div class="mt-3 px-3" id="emotionCurve">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-[11px] text-ink-400">赵工情绪曲线</span>
+                <span class="text-[10px] font-mono text-violet-300">T1 &rarr; T5</span>
+              </div>
+              <div class="rounded-lg px-2 py-1.5 border" style="background:rgba(255,255,255,0.02);border-color:rgba(255,255,255,0.06)">
+                <!-- Compact SVG line chart -->
+                <svg viewBox="0 0 160 48" width="100%" height="48" preserveAspectRatio="none" aria-label="情绪曲线">
+                  <!-- Grid baseline -->
+                  <line x1="0" y1="24" x2="160" y2="24" stroke="rgba(255,255,255,0.05)" stroke-width="1" stroke-dasharray="2,3" />
+                  <!-- Line path: 5 points. y: lower = more positive.
+                       T1 😟 cautious (y=34), T2 😐 neutral (y=28), T3 😐 neutral (y=28), T4 😔 frustrated (y=40), T5 🙂 opening up (y=14) -->
+                  <polyline points="12,34 49,28 86,28 123,40 152,14"
+                    fill="none"
+                    stroke="url(#emoGrad)"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round" />
+                  <defs>
+                    <linearGradient id="emoGrad" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stop-color="#FB7185" />
+                      <stop offset="50%" stop-color="#8B92A5" />
+                      <stop offset="100%" stop-color="#34D399" />
+                    </linearGradient>
+                  </defs>
+                  <!-- Points with colored dots -->
+                  <circle cx="12"  cy="34" r="3.5" fill="#FB7185" />
+                  <circle cx="49"  cy="28" r="3.5" fill="#8B92A5" />
+                  <circle cx="86"  cy="28" r="3.5" fill="#8B92A5" />
+                  <circle cx="123" cy="40" r="3.5" fill="#F4A855" />
+                  <circle cx="152" cy="14" r="3.5" fill="#34D399" />
+                </svg>
+                <!-- Emoji row -->
+                <div class="flex items-center justify-between mt-0.5 text-[12px] leading-none select-none">
+                  <span title="T1 · 戒备">&#128543;</span>
+                  <span title="T2 · 中性">&#128528;</span>
+                  <span title="T3 · 中性">&#128528;</span>
+                  <span title="T4 · 防御">&#128532;</span>
+                  <span title="T5 · 松动">&#128578;</span>
+                </div>
+                <div class="flex items-center justify-between mt-0.5 text-[9px] text-ink-500 font-mono">
+                  <span>T1</span><span>T2</span><span>T3</span><span>T4</span><span>T5</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Scrollable background info -->
+          <div class="flex-1 min-h-0 overflow-y-auto scrollbar-thin px-3 py-3 space-y-3 text-[13px]">
+            <details open class="group">
+              <summary class="list-none cursor-pointer flex items-center gap-1.5 mb-1.5 select-none">
+                <i data-lucide="chevron-down" class="h-3 w-3 text-ink-500 transition group-open:rotate-0 -rotate-90"></i>
+                <span class="text-[12px] text-cyan-300 font-mono tracking-widest uppercase">背景</span>
+              </summary>
+              <div class="pl-4 space-y-2 text-ink-300 text-[13px] leading-relaxed">
+                <p>赵工，入职3年，曾是部门骨干。</p>
+                <p>最近半年态度消极——会议不发言，任务只做最低标准，被问到总说<span class="text-ink-400 italic">"没什么问题"</span>。</p>
+                <p>你了解到他之前曾多次提出改进方案，但<span class="text-amber-300">都没被采纳</span>，慢慢变得沉默。</p>
+              </div>
+            </details>
+
+            <details open class="group">
+              <summary class="list-none cursor-pointer flex items-center gap-1.5 mb-1.5 select-none">
+                <i data-lucide="chevron-down" class="h-3 w-3 text-ink-500 transition group-open:rotate-0 -rotate-90"></i>
+                <span class="text-[12px] text-violet-300 font-mono tracking-widest uppercase">性格</span>
+              </summary>
+              <div class="pl-4 space-y-1 text-ink-300 text-[13px] leading-relaxed">
+                <p>&middot; 内向但有想法</p>
+                <p>&middot; 被忽视后倾向回避</p>
+                <p>&middot; 需要安全感才会开口</p>
+              </div>
+            </details>
+
+            <details class="group">
+              <summary class="list-none cursor-pointer flex items-center gap-1.5 mb-1.5 select-none">
+                <i data-lucide="chevron-down" class="h-3 w-3 text-ink-500 transition group-open:rotate-0 -rotate-90"></i>
+                <span class="text-[12px] text-emerald-300 font-mono tracking-widest uppercase">方法工具</span>
+              </summary>
+              <div class="pl-4 flex flex-wrap gap-1">
+                <span class="chip border text-cyan-300 border-cyan-400/30 bg-cyan-400/5"><i data-lucide="target" class="h-2.5 w-2.5"></i>GROW</span>
+                <span class="chip border text-violet-300 border-violet-400/30 bg-violet-400/5"><i data-lucide="heart" class="h-2.5 w-2.5"></i>安全感</span>
+              </div>
+            </details>
+          </div>
+        </aside>
+
+        <!-- CENTER: Actor dialogue -->
+        <main class="flex-1 min-w-0 min-h-0 flex flex-col overflow-hidden">
+          <div class="shrink-0 px-6 py-3 border-b hairline flex items-center gap-3 text-[11px] text-ink-500 font-mono" style="background:rgba(255,255,255,0.015)">
+            <span class="inline-flex items-center gap-1.5 text-cyan-300"><span class="h-2 w-2 rounded-full animate-breathe shadow-glow-cyan" style="background:#22D3EE"></span>对练进行中</span>
+            <span class="h-3 w-px bg-white/10"></span>
+            <span>与赵工的对话</span>
+            <div class="flex-1"></div>
+            <span>第 <span class="text-ink-100 tabular-nums" id="roundCounter">3</span> 轮</span>
+          </div>
+
+          <div class="flex-1 min-h-0 overflow-y-auto scrollbar-thin px-6 py-6 space-y-5" id="dialogArea">
+            <!-- Turn 1: 赵工 -->
+            <div class="flex gap-3">
+              <div class="h-9 w-9 rounded-xl overflow-hidden shrink-0" style="border:1px solid rgba(34,211,238,0.4);box-shadow:0 0 16px rgba(34,211,238,0.2)">
+                <img src="../assets/avatar-zhao.jpg" onerror="this.onerror=null;this.src='https://i.pravatar.cc/200?img=60';" alt="赵" class="h-full w-full object-cover" />
+              </div>
+              <div class="max-w-[82%] space-y-1.5 min-w-0">
+                <div class="flex items-center gap-1.5 flex-wrap text-[10px] font-mono tracking-wider">
+                  <span class="chip border uppercase text-cyan-300 border-cyan-400/30 bg-cyan-400/5">赵工 &middot; Actor</span>
+                  <span class="text-ink-500">&middot; T1 &middot; 开场</span>
+                </div>
+                <div class="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed border text-ink-100" style="background:linear-gradient(135deg,rgba(34,211,238,0.05),rgba(255,255,255,0.02));border-color:rgba(34,211,238,0.2);border-top-left-radius:0.375rem">领导，你找我？有什么事吗？</div>
+                <div class="text-[10px] text-ink-500 font-mono">14:05</div>
+              </div>
+            </div>
+
+            <!-- Turn 1: 你 -->
+            <div class="flex justify-end gap-3">
+              <div class="max-w-[80%]">
+                <div class="flex items-center gap-1.5 justify-end text-[10px] font-mono tracking-wider mb-1 text-ink-500">T1 &middot; 你</div>
+                <div class="rounded-2xl px-3.5 py-2 text-sm leading-relaxed text-ink-100" style="background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.25);border-top-right-radius:0.375rem">赵工，最近想跟你聊聊。其实我自己最近也在反思管理方式，觉得可能有些地方没做好，想听听你的想法。</div>
+                <div class="mt-1 text-[10px] text-ink-500 text-right font-mono">14:06</div>
+              </div>
+              <div class="h-9 w-9 rounded-xl flex items-center justify-center shrink-0 text-sm font-medium" style="background:rgba(167,139,250,0.15);color:#C4B5FD;border:1px solid rgba(167,139,250,0.3)">你</div>
+            </div>
+
+            <!-- Turn 2: 赵工 -->
+            <div class="flex gap-3">
+              <div class="h-9 w-9 rounded-xl overflow-hidden shrink-0" style="border:1px solid rgba(34,211,238,0.4);box-shadow:0 0 16px rgba(34,211,238,0.2)">
+                <img src="../assets/avatar-zhao.jpg" onerror="this.onerror=null;this.src='https://i.pravatar.cc/200?img=60';" alt="赵" class="h-full w-full object-cover" />
+              </div>
+              <div class="max-w-[82%] space-y-1.5 min-w-0">
+                <div class="flex items-center gap-1.5 flex-wrap text-[10px] font-mono tracking-wider">
+                  <span class="chip border uppercase text-cyan-300 border-cyan-400/30 bg-cyan-400/5">赵工 &middot; Actor</span>
+                  <span class="chip border bg-white/[0.03] text-ink-400 border-white/10">情绪 &middot; 回避</span>
+                </div>
+                <div class="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed border text-ink-100" style="background:linear-gradient(135deg,rgba(34,211,238,0.05),rgba(255,255,255,0.02));border-color:rgba(34,211,238,0.2);border-top-left-radius:0.375rem">嗯……也没什么特别的。工作都在正常推进。</div>
+                <div class="text-[10px] text-ink-500 font-mono">14:07</div>
+              </div>
+            </div>
+
+            <!-- Turn 2: 你 -->
+            <div class="flex justify-end gap-3">
+              <div class="max-w-[80%]">
+                <div class="flex items-center gap-1.5 justify-end text-[10px] font-mono tracking-wider mb-1 text-ink-500">T2 &middot; 你</div>
+                <div class="rounded-2xl px-3.5 py-2 text-sm leading-relaxed text-ink-100" style="background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.25);border-top-right-radius:0.375rem">我注意到最近你在会上比较安静。我不是在批评，只是想了解——是不是有什么让你不太舒服的？</div>
+                <div class="mt-1 text-[10px] text-ink-500 text-right font-mono">14:08</div>
+              </div>
+              <div class="h-9 w-9 rounded-xl flex items-center justify-center shrink-0 text-sm font-medium" style="background:rgba(167,139,250,0.15);color:#C4B5FD;border:1px solid rgba(167,139,250,0.3)">你</div>
+            </div>
+
+            <!-- Turn 3: 赵工 (emotion shift) -->
+            <div class="flex gap-3">
+              <div class="h-9 w-9 rounded-xl overflow-hidden shrink-0" style="border:1px solid rgba(34,211,238,0.4);box-shadow:0 0 16px rgba(34,211,238,0.2)">
+                <img src="../assets/avatar-zhao.jpg" onerror="this.onerror=null;this.src='https://i.pravatar.cc/200?img=60';" alt="赵" class="h-full w-full object-cover" />
+              </div>
+              <div class="max-w-[82%] space-y-1.5 min-w-0">
+                <div class="flex items-center gap-1.5 flex-wrap text-[10px] font-mono tracking-wider">
+                  <span class="chip border uppercase text-cyan-300 border-cyan-400/30 bg-cyan-400/5">赵工 &middot; Actor</span>
+                  <span class="chip border bg-amber-400/5 text-amber-300 border-amber-400/20">情绪 &middot; 松动 &darr;</span>
+                </div>
+                <div class="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed border text-ink-100" style="background:linear-gradient(135deg,rgba(34,211,238,0.05),rgba(255,255,255,0.02));border-color:rgba(34,211,238,0.2);border-top-left-radius:0.375rem">其实……也不是什么大事。就是觉得之前提的方案都没被采纳，慢慢就不太想说了。</div>
+                <div class="text-[10px] text-ink-500 font-mono">14:09</div>
+              </div>
+            </div>
+
+            <!-- Current turn indicator -->
+            <div class="pt-2 border-t border-dashed hairline">
+              <div class="text-[10px] text-ink-500 font-mono tracking-widest uppercase mb-1">第 4 轮 &middot; 你的回合</div>
+            </div>
+          </div>
+
+          <div class="shrink-0 p-4 border-t hairline">
+            <div class="rounded-2xl overflow-hidden border focus-within:border-cyan-400/40 transition" style="background:rgba(34,211,238,0.02);border-color:rgba(34,211,238,0.15)">
+              <div class="flex items-center justify-between px-4 pt-2.5">
+                <span class="chip border text-cyan-300 border-cyan-400/30 bg-cyan-400/5 text-[10px] font-mono tracking-wider uppercase"><span class="h-1.5 w-1.5 rounded-full shadow-glow-cyan" style="background:#22D3EE"></span>对赵工说</span>
+              </div>
+              <textarea placeholder="对赵工说……" class="w-full bg-transparent px-4 py-2 text-sm text-ink-100 placeholder:text-ink-500 outline-none resize-none h-[64px] scrollbar-thin"></textarea>
+              <div class="flex items-center justify-between px-3 py-2 border-t hairline">
+                <span class="text-[10px] text-ink-500 font-mono inline-flex items-center gap-1.5"><i data-lucide="info" class="h-3 w-3 text-ink-600"></i><span id="finishHint">剧本进行中，可用状态自动激活</span></span>
+                <div class="flex items-center gap-2">
+                  <button onclick="goPhase3()" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border hairline hover:border-emerald-400/30 text-emerald-300 text-[10px] transition" id="finishBtn" style="display:none"><i data-lucide="check-circle" class="h-3 w-3"></i>完成对练</button>
+                  <button class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] font-medium shadow-glow-cyan" style="background:linear-gradient(135deg,#22D3EE,#A78BFA);color:#0A0B10"><i data-lucide="send" class="h-3 w-3"></i>发给赵工</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+
+        <!-- RIGHT: Neo coaching -->
+        <aside class="w-[320px] lg:w-[350px] xl:w-[380px] shrink-0 border-l hairline backdrop-blur-md flex flex-col min-h-0" style="background:rgba(10,11,16,0.4)">
+          <!-- Neo brand hero (compact for 380px column) -->
+          <div class="neo-brand-hero shrink-0 h-[140px] xl:h-[200px] border-b hairline flex items-center justify-center relative overflow-hidden">
+            <div class="absolute inset-0" style="background: radial-gradient(ellipse at center, rgba(139,92,246,0.15), transparent 70%);"></div>
+            <img src="../assets/neo-male.svg" alt="Neo" class="neo-brand-avatar h-24 w-24 xl:h-36 xl:w-36 object-contain relative z-10" />
+            <div class="absolute bottom-3 left-0 right-0 text-center">
+              <div class="text-[13px] font-medium text-ink-100">Neo</div>
+              <div class="text-[10px] text-ink-500 font-mono">AI Tutor</div>
+            </div>
+          </div>
+          <div class="shrink-0 px-5 pt-3 pb-3 border-b hairline">
+            <div class="flex items-center gap-3">
+              <img src="../assets/neo-male.svg" alt="Neo" class="neo-avatar h-10 w-10 rounded-xl object-cover" />
+              <div class="flex-1">
+                <span class="text-sm font-medium text-ink-100">Neo</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex-1 min-h-0 overflow-y-auto scrollbar-thin px-4 py-5 space-y-4">
+            <!-- Neo coaching card (highlight) -->
+            <div class="relative rounded-2xl px-4 py-3 border" style="background:linear-gradient(135deg,rgba(167,139,250,0.08),rgba(34,211,238,0.04));border-color:rgba(167,139,250,0.25)">
+              <div class="text-[13px] text-ink-100 leading-relaxed">
+                <span class="text-violet-300">注意！</span>赵工刚才说"<span class="text-amber-300">提的方案都没被采纳</span>"——这是一个关键信号。他的防御正在松动。现在是进入<span class="text-cyan-300">R(现实)</span>阶段的好时机，试试追问"<span class="text-emerald-300">能举个具体例子吗？</span>"
+              </div>
+            </div>
+
+            <!-- User question -->
+            <div class="flex justify-end gap-2">
+              <div class="max-w-[82%]">
+                <div class="rounded-2xl px-3.5 py-2 text-sm leading-relaxed text-ink-100" style="background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.25);border-top-right-radius:0.375rem">这时候我应该道歉吗？</div>
+                <div class="mt-1 text-[10px] text-ink-500 text-right font-mono">14:10</div>
+              </div>
+              <div class="h-7 w-7 rounded-lg flex items-center justify-center shrink-0 text-[11px] font-medium" style="background:rgba(167,139,250,0.15);color:#C4B5FD;border:1px solid rgba(167,139,250,0.3)">你</div>
+            </div>
+
+            <!-- Neo answer -->
+            <div class="flex gap-2.5">
+              <img src="../assets/neo-male.svg" alt="Neo" class="neo-avatar h-7 w-7 rounded-lg object-cover shrink-0" />
+              <div class="max-w-[86%] space-y-1.5 min-w-0">
+                <div class="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed border border-white/[0.08] text-ink-100 caret" style="background:rgba(255,255,255,0.04);border-top-left-radius:0.375rem">不急着道歉。先继续用GROW的<span class="text-cyan-300">R阶段</span>探索事实——让赵工把具体的经历说出来。等事实清晰后，你的回应会更有针对性。</div>
+                <div class="text-[10px] text-ink-500 font-mono">14:10</div>
+              </div>
+            </div>
+          </div>
+          <div class="shrink-0 p-3 border-t hairline">
+            <div class="rounded-2xl overflow-hidden border focus-within:border-violet-400/40 transition" style="background:rgba(167,139,250,0.02);border-color:rgba(167,139,250,0.15)">
+              <div class="px-4 pt-2.5 flex items-center gap-2">
+                <span class="chip border text-violet-300 border-violet-400/30 bg-violet-400/5 text-[10px] font-mono tracking-wider uppercase"><span class="h-1.5 w-1.5 rounded-full shadow-glow-violet" style="background:#A78BFA"></span>问Neo &middot; 不打断对练</span>
+              </div>
+              <textarea placeholder="问Neo……（不影响左侧赵工对话）" class="w-full bg-transparent px-4 py-2 text-sm text-ink-100 placeholder:text-ink-500 outline-none resize-none h-[56px] scrollbar-thin"></textarea>
+              <div class="flex items-center justify-between px-3 py-2 border-t hairline">
+                <span class="text-[10px] text-ink-500 font-mono">向 Neo 请教</span>
+                <button class="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-[11px] font-medium shadow-glow-violet" style="background:linear-gradient(135deg,#A78BFA,#22D3EE);color:#0A0B10"><i data-lucide="send" class="h-3 w-3"></i>问Neo</button>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <!-- ============ PHASE 3: 反思复盘 (L-C) ============ -->
+      <section class="phase" data-phase="review">
+        <!-- LEFT: Practice Summary -->
+        <div class="flex-1 min-w-0 min-h-0 overflow-y-auto scrollbar-thin">
+          <div class="px-8 py-8">
+            <div class="text-[10px] text-violet-300 font-mono tracking-[0.2em] uppercase">Review &middot; 对练小结</div>
+            <h1 class="mt-2 text-2xl font-medium text-ink-100 tracking-tight">这次你做得怎么样？</h1>
+            <p class="text-sm text-ink-400 mt-1.5">Neo 会在右侧苏格拉底式追问 &middot; 下方是你的对练数据</p>
+
+            <!-- 目标达成 -->
+            <div class="mt-6 card p-5">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="chip border" style="background:rgba(52,211,153,0.1);color:#6EE7B7;border-color:rgba(52,211,153,0.3)"><i data-lucide="check-circle" class="h-2.5 w-2.5"></i>目标达成</span>
+              </div>
+              <div class="text-[13px] text-ink-100 leading-relaxed">
+                <span class="text-emerald-300">&#x2705;</span> 主目标达成：成功让赵工放下防御，表达了真实想法
+              </div>
+            </div>
+
+            <!-- 高光表现 -->
+            <div class="card p-5 mt-3 relative overflow-hidden">
+              <div class="absolute -top-10 -right-10 h-32 w-32 rounded-full blur-3xl pointer-events-none" style="background:rgba(52,211,153,0.12)"></div>
+              <div class="relative flex items-center gap-2 mb-3">
+                <span class="chip border" style="background:rgba(52,211,153,0.1);color:#6EE7B7;border-color:rgba(52,211,153,0.3)"><i data-lucide="sparkles" class="h-2.5 w-2.5"></i>高光表现</span>
+                <span class="text-[10px] text-ink-500 font-mono">T4 &middot; 关键转折</span>
+              </div>
+              <div class="relative text-[13px] text-ink-100 leading-relaxed mb-3">
+                第4轮使用"<span class="text-emerald-300">自我归因</span>"策略（"我觉得可能是我的问题"），有效降低了赵工的防御。
+              </div>
+              <div class="relative rounded-lg p-3 border" style="background:rgba(255,255,255,0.02);border-color:rgba(255,255,255,0.05)">
+                <div class="text-[10px] text-ink-500 font-mono mb-1">你当时这样说</div>
+                <div class="text-[11px] text-ink-300 italic leading-relaxed">"我回想了一下，你之前确实提过好几个方案……是不是我当时没认真对待让你失望了？"</div>
+              </div>
+            </div>
+
+            <!-- 待改进 -->
+            <div class="card p-5 mt-3 relative overflow-hidden">
+              <div class="absolute -top-10 -right-10 h-32 w-32 rounded-full blur-3xl pointer-events-none" style="background:rgba(244,168,85,0.1)"></div>
+              <div class="relative flex items-center gap-2 mb-3">
+                <span class="chip border" style="background:rgba(244,168,85,0.1);color:#FCD34D;border-color:rgba(244,168,85,0.3)"><i data-lucide="target" class="h-2.5 w-2.5"></i>待改进</span>
+                <span class="text-[10px] text-ink-500 font-mono">T1-T2 &middot; 前2轮</span>
+              </div>
+              <div class="relative text-[13px] text-ink-100 leading-relaxed">
+                前2轮过于直接询问，导致赵工给出"<span class="text-amber-300">没什么问题</span>"的防御性回答。建议下次更早使用自我归因策略。
+              </div>
+            </div>
+
+            <!-- 对话回看 -->
+            <div class="card p-5 mt-3">
+              <div class="flex items-center gap-2 mb-3">
+                <div class="text-[10px] text-violet-300 font-mono tracking-widest uppercase">对话回看</div>
+                <span class="text-[10px] text-ink-500">共 5 轮 &middot; 标注 1 处关键节点</span>
+              </div>
+              <div class="space-y-1.5">
+                <div class="flex gap-3 items-start rounded-lg p-2.5 hover:bg-white/[0.02] cursor-pointer">
+                  <span class="text-[10px] text-ink-500 font-mono shrink-0 w-8">T1</span>
+                  <div class="flex-1 text-[12px] text-ink-300">赵工回应召唤 &middot; <span class="text-ink-500">你自我反思开场</span></div>
+                </div>
+                <div class="flex gap-3 items-start rounded-lg p-2.5 hover:bg-white/[0.02] cursor-pointer">
+                  <span class="text-[10px] text-ink-500 font-mono shrink-0 w-8">T2</span>
+                  <div class="flex-1 text-[12px] text-ink-300">初步试探 &middot; <span class="text-ink-500">赵工防御性回答</span></div>
+                </div>
+                <div class="flex gap-3 items-start rounded-lg p-2.5 hover:bg-white/[0.02] cursor-pointer">
+                  <span class="text-[10px] text-ink-500 font-mono shrink-0 w-8">T3</span>
+                  <div class="flex-1 text-[12px] text-ink-300">赵工防御 &middot; <span class="text-amber-300">首次吐露心声</span></div>
+                  <span class="chip text-[10px] border" style="background:rgba(244,168,85,0.08);color:#FCD34D;border-color:rgba(244,168,85,0.2)">松动</span>
+                </div>
+                <!-- T4 expanded -->
+                <div class="rounded-lg p-2.5 border" style="background:rgba(52,211,153,0.04);border-color:rgba(52,211,153,0.15)">
+                  <div class="flex gap-3 items-start">
+                    <span class="text-[10px] text-ink-500 font-mono shrink-0 w-8">T4</span>
+                    <div class="flex-1 text-[12px] text-ink-300">
+                      <span class="text-emerald-300">&#11088; 关键转折</span> &middot; 自我归因策略
+                    </div>
+                    <span class="chip text-[10px] border shadow-glow-emerald" style="background:rgba(52,211,153,0.1);color:#6EE7B7;border-color:rgba(52,211,153,0.3)">&#x2728; 高光</span>
+                  </div>
+                  <div class="mt-2 ml-11 text-[11px] text-ink-400 leading-relaxed space-y-1.5">
+                    <div><span class="text-violet-300">你:</span> "我回想了一下，你之前确实提过好几个方案……是不是我当时没认真对待让你失望了？"</div>
+                    <div><span class="text-cyan-300">赵工:</span> "其实……是有点。上次数据中台那个方案我准备了两周，结果会上一句话就被否了。"</div>
+                  </div>
+                </div>
+                <div class="flex gap-3 items-start rounded-lg p-2.5 hover:bg-white/[0.02] cursor-pointer">
+                  <span class="text-[10px] text-ink-500 font-mono shrink-0 w-8">T5</span>
+                  <div class="flex-1 text-[12px] text-ink-300">深入探索 &middot; <span class="text-violet-300">达成行动承诺</span></div>
+                  <span class="chip text-[10px] border" style="background:rgba(167,139,250,0.08);color:#C4B5FD;border-color:rgba(167,139,250,0.2)">&#127919; 达成</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-6 flex items-center gap-3 flex-wrap">
+              <button onclick="goPhase2FromReview()" class="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-[11px] border hairline hover:border-white/10 text-ink-300 transition"><i data-lucide="refresh-ccw" class="h-3 w-3"></i>重新练习</button>
+              <span class="inline-flex items-center gap-1.5 text-[11px] text-ink-500">
+                <i data-lucide="info" class="h-3 w-3 text-cyan-300/70"></i>
+                重练将保留本次记录，可在复盘中对比多次尝试
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Neo reflection -->
+        <aside class="w-[360px] lg:w-[380px] xl:w-[420px] shrink-0 border-l hairline backdrop-blur-md flex flex-col min-h-0" style="background:rgba(10,11,16,0.4)">
+          <!-- Neo brand hero -->
+          <div class="neo-brand-hero shrink-0 h-[160px] xl:h-[220px] border-b hairline flex items-center justify-center relative overflow-hidden">
+            <div class="absolute inset-0" style="background: radial-gradient(ellipse at center, rgba(139,92,246,0.15), transparent 70%);"></div>
+            <img src="../assets/neo-male.svg" alt="Neo" class="neo-brand-avatar h-28 w-28 xl:h-40 xl:w-40 object-contain relative z-10" />
+            <div class="absolute bottom-3 left-0 right-0 text-center">
+              <div class="text-[13px] font-medium text-ink-100">Neo</div>
+              <div class="text-[10px] text-ink-500 font-mono">AI Tutor</div>
+            </div>
+          </div>
+          <div class="shrink-0 px-5 pt-3 pb-3 border-b hairline">
+            <div class="flex items-center gap-3">
+              <img src="../assets/neo-male.svg" alt="Neo" class="neo-avatar h-10 w-10 rounded-xl object-cover" />
+              <div class="flex-1">
+                <span class="text-sm font-medium text-ink-100">Neo</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex-1 min-h-0 overflow-y-auto scrollbar-thin px-5 py-5 space-y-4">
+            <!-- Neo reflection 1 -->
+            <div class="flex gap-2.5">
+              <img src="../assets/neo-male.svg" alt="Neo" class="neo-avatar h-7 w-7 rounded-lg object-cover shrink-0" />
+              <div class="max-w-[86%] space-y-1.5 min-w-0">
+                <div class="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed border border-white/[0.08] text-ink-100" style="background:rgba(255,255,255,0.04);border-top-left-radius:0.375rem">这次对练表现不错。来看看左边的小结——你在第4轮改变了策略，从直接询问转为自我归因。<span class="text-violet-300">你觉得是什么让你在那个时候换了方式？</span></div>
+                <div class="text-[10px] text-ink-500 font-mono">14:20</div>
+              </div>
+            </div>
+
+            <!-- User answer -->
+            <div class="flex justify-end gap-2">
+              <div class="max-w-[82%]">
+                <div class="rounded-2xl px-3.5 py-2 text-sm leading-relaxed text-ink-100" style="background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.25);border-top-right-radius:0.375rem">因为前面直接问他都说没问题，我想起了课上说的"先解决心情再解决事情"。</div>
+                <div class="mt-1 text-[10px] text-ink-500 text-right font-mono">14:21</div>
+              </div>
+              <div class="h-7 w-7 rounded-lg flex items-center justify-center shrink-0 text-[11px] font-medium" style="background:rgba(167,139,250,0.15);color:#C4B5FD;border:1px solid rgba(167,139,250,0.3)">你</div>
+            </div>
+
+            <!-- Neo follow-up -->
+            <div class="flex gap-2.5">
+              <img src="../assets/neo-male.svg" alt="Neo" class="neo-avatar h-7 w-7 rounded-lg object-cover shrink-0" />
+              <div class="max-w-[86%] space-y-1.5 min-w-0">
+                <div class="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed border border-white/[0.08] text-ink-100 caret" style="background:rgba(255,255,255,0.04);border-top-left-radius:0.375rem">很好的觉察！这说明你已经能在实时对话中运用课上学的原则了。下次遇到类似防御，你可以<span class="text-violet-300">更快地切入自我归因——甚至在开场就用</span></div>
+                <div class="text-[10px] text-ink-500 font-mono">刚刚</div>
+              </div>
+            </div>
+
+            <!-- Discovery push card -->
+            <div class="flex gap-2.5">
+              <img src="../assets/neo-male.svg" alt="Neo" class="neo-avatar h-7 w-7 rounded-lg object-cover shrink-0" />
+              <div class="flex-1 min-w-0">
+                <div class="rounded-xl border border-amber-400/30 bg-amber-400/5 p-3 my-1">
+                  <div class="flex items-center gap-2 mb-2">
+                    <i data-lucide="sparkles" class="h-3.5 w-3.5 text-amber-300"></i>
+                    <span class="text-[11px] text-amber-300 font-medium">Neo 发现了你的亮眼表现</span>
+                  </div>
+                  <div class="text-sm text-ink-100 mb-1">&#x1F31F; 自我归因策略的灵活运用</div>
+                  <div class="text-[12px] text-ink-400 mb-3">你在对练第4轮切换到"自我归因"策略，成功突破赵工防御——这是一个值得保留的管理行为。</div>
+                  <div class="flex gap-2">
+                    <button onclick="this.closest('.rounded-xl').style.display='none'" class="flex-1 rounded-lg px-3 py-1.5 text-[12px] font-medium text-amber-300 border border-amber-400/40 hover:bg-amber-400/10 transition">
+                      &#x2713; 收藏到 Discovery 库
+                    </button>
+                    <button onclick="this.closest(&apos;.rounded-xl&apos;).style.display=&apos;none&apos;" class="rounded-lg px-3 py-1.5 text-[12px] text-ink-400 hover:bg-white/[0.03] transition">
+                      忽略
+                    </button>
+                  </div>
+                </div>
+                <div class="text-[10px] text-ink-500 font-mono">刚刚</div>
+              </div>
+            </div>
+          </div>
+          <div class="shrink-0 p-3 border-t hairline">
+            <div class="rounded-2xl overflow-hidden border border-white/10 focus-within:border-violet-400/40 transition" style="background:rgba(255,255,255,0.02)">
+              <textarea placeholder="继续对话……" class="w-full bg-transparent px-4 py-3 text-sm text-ink-100 placeholder:text-ink-500 outline-none resize-none h-[64px] scrollbar-thin"></textarea>
+              <div class="flex items-center justify-between px-3 py-2 border-t hairline">
+                <span class="text-[10px] text-ink-500 font-mono">Enter 发送</span>
+                <button class="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-[11px] font-medium shadow-glow-violet" style="background:linear-gradient(135deg,#A78BFA,#22D3EE);color:#0A0B10"><i data-lucide="send" class="h-3 w-3"></i>发送</button>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- FLOATING NOTE BALL + WINDOW -->
+<button id="noteBall" title="随手记 · 长按可拖动" class="fixed z-40 h-14 w-14 rounded-full transition flex items-center justify-center border shadow-glow-violet hover:scale-105 select-none" style="bottom:140px;right:24px;cursor:grab;background:linear-gradient(135deg,#22D3EE,#8B5CF6);color:#0A0B10;border-color:rgba(167,139,250,0.5);box-shadow:0 0 32px rgba(139,92,246,0.5),inset 0 1px 0 rgba(255,255,255,0.2);touch-action:none">
+  <i data-lucide="notebook-pen" class="h-5 w-5" style="stroke-width:2.4" draggable="false"></i>
+  <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full text-[10px] leading-[18px] font-semibold text-center pointer-events-none" style="background:#FCD34D;color:#0A0B10">2</span>
+</button>
+<div id="noteWin" class="hidden fixed z-40 w-[380px] glass-strong rounded-2xl overflow-hidden fade-in" style="bottom:220px;right:24px">
+  <div class="px-4 py-3 border-b hairline flex items-center justify-between">
+    <div class="flex items-center gap-2"><i data-lucide="notebook-pen" class="h-3.5 w-3.5 text-violet-300"></i><span class="text-xs font-medium text-ink-100">随手记</span><span class="chip text-[9px]" style="background:rgba(139,92,246,0.1);color:#C4B5FD;border:1px solid rgba(139,92,246,0.2)">悬浮窗</span></div>
+    <div class="flex items-center gap-1">
+      <button class="h-6 w-6 rounded-md flex items-center justify-center hover:bg-white/[0.05] text-ink-400"><i data-lucide="minus" class="h-3 w-3"></i></button>
+      <button onclick="toggleNote()" class="h-6 w-6 rounded-md flex items-center justify-center hover:bg-white/[0.05] text-ink-400"><i data-lucide="x" class="h-3 w-3"></i></button>
+    </div>
+  </div>
+  <div class="p-3">
+    <input id="noteTitle" type="text" placeholder="标题（可选）" class="w-full mb-2 rounded-lg border border-white/[0.06] px-3 py-1.5 text-xs text-ink-100 placeholder:text-ink-500 outline-none focus:border-violet-400/40" style="background:rgba(255,255,255,0.02)" />
+    <textarea id="noteContent" placeholder="对练中想到什么随手记一下…" class="w-full h-24 rounded-xl border border-white/[0.06] px-3 py-2 text-xs text-ink-100 placeholder:text-ink-500 outline-none focus:border-violet-400/40 resize-none scrollbar-thin" style="background:rgba(255,255,255,0.02)">GROW的R阶段：用"摄像机问题"引导描述客观事实。赵工在第4轮开始松动，自我归因策略有效。</textarea>
+    <div class="mt-2 flex items-center justify-between">
+      <div class="flex items-center gap-1">
+        <button class="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] text-ink-400 hover:text-ink-100 hover:bg-white/[0.04]"><i data-lucide="image" class="h-3 w-3"></i>截图</button>
+      </div>
+      <button onclick="saveNote()" class="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-[11px] font-medium transition shadow-glow-violet" style="background:linear-gradient(135deg,#22D3EE,#8B5CF6);color:#0A0B10"><i data-lucide="save" class="h-3 w-3"></i>保存</button>
+    </div>
+    <div class="mt-2 pt-2 border-t hairline text-[10px] text-ink-500 font-mono flex items-center justify-between">
+      <span>当前位置：对练 &middot; A4 &middot; GROW辅导</span>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+  lucide.createIcons();
+
+  // --- Restore Neo avatar preference (set in 03-hall-daily.html settings) ---
+  (function() {
+    const saved = localStorage.getItem('neoAvatar');
+    if (saved === 'female') {
+      document.querySelectorAll('.neo-avatar, .neo-brand-avatar').forEach(img => img.src = '../assets/neo-female.svg');
+    }
+  })();
+
+  // --- Nav overlay panel ---
+  function openNavOverlay() {
+    document.getElementById('navOverlayBackdrop').classList.add('open');
+    document.getElementById('navOverlayPanel').classList.add('open');
+    lucide.createIcons();
+  }
+  function closeNavOverlay() {
+    document.getElementById('navOverlayBackdrop').classList.remove('open');
+    document.getElementById('navOverlayPanel').classList.remove('open');
+  }
+
+  // --- Nav tabs ---
+  function setNavTab(tab) {
+    document.querySelectorAll('.nav-tab-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.tab === tab);
+    });
+    document.querySelectorAll('.nav-tab-content').forEach(c => {
+      c.classList.toggle('active', c.dataset.tab === tab);
+    });
+    lucide.createIcons();
+  }
+
+  // --- Phase switching ---
+  function setPhase(name) {
+    document.querySelectorAll('.phase').forEach(p => p.classList.remove('active'));
+    document.querySelector('.phase[data-phase="'+name+'"]').classList.add('active');
+    lucide.createIcons();
+  }
+
+  function updateStepper(phase) {
+    const dot1 = document.getElementById('dot1');
+    const dot2 = document.getElementById('dot2');
+    const dot3 = document.getElementById('dot3');
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const step3 = document.getElementById('step3');
+    const label1 = document.getElementById('stepLabel1');
+    const label2 = document.getElementById('stepLabel2');
+    const label3 = document.getElementById('stepLabel3');
+    const chip1 = document.getElementById('stepChip1');
+    const chip2 = document.getElementById('stepChip2');
+    const chip3 = document.getElementById('stepChip3');
+    const phaseLabel = document.getElementById('phaseLabel');
+
+    if (phase === 1) {
+      // Phase 1 current, 2&3 locked
+      step1.className = 'stepper-item current';
+      dot1.className = 'stepper-dot current';
+      dot1.innerHTML = '<i data-lucide="briefcase" class="h-3 w-3" style="stroke-width:2.4"></i>';
+      label1.className = 'text-[12px] font-medium text-ink-100';
+      chip1.innerHTML = '进行中';
+      chip1.style.cssText = 'background:rgba(167,139,250,0.1);color:#C4B5FD;border-color:rgba(167,139,250,0.3)';
+
+      step2.className = 'stepper-item locked';
+      dot2.className = 'stepper-dot locked';
+      dot2.innerHTML = '<i data-lucide="users" class="h-3 w-3" style="stroke-width:2.4"></i>';
+      label2.className = 'text-[12px] font-medium text-ink-500';
+      chip2.innerHTML = '<i data-lucide="lock" class="h-2 w-2"></i>未解锁';
+      chip2.style.cssText = 'background:rgba(255,255,255,0.02);color:#4A5061;border-color:rgba(255,255,255,0.06)';
+
+      step3.className = 'stepper-item locked';
+      dot3.className = 'stepper-dot locked';
+      dot3.innerHTML = '<i data-lucide="scan-search" class="h-3 w-3" style="stroke-width:2.4"></i>';
+      label3.className = 'text-[12px] font-medium text-ink-500';
+      chip3.innerHTML = '<i data-lucide="lock" class="h-2 w-2"></i>未解锁';
+      chip3.style.cssText = 'background:rgba(255,255,255,0.02);color:#4A5061;border-color:rgba(255,255,255,0.06)';
+
+      phaseLabel.textContent = '情景导入';
+    } else if (phase === 2) {
+      // Phase 1 done, Phase 2 current, 3 locked
+      step1.className = 'stepper-item done';
+      dot1.className = 'stepper-dot done';
+      dot1.innerHTML = '<i data-lucide="check" class="h-3 w-3" style="stroke-width:3"></i>';
+      label1.className = 'text-[12px] font-medium text-ink-300';
+      chip1.innerHTML = '&#x2705; 完成';
+      chip1.style.cssText = 'background:rgba(34,211,238,0.1);color:#67E8F9;border-color:rgba(34,211,238,0.3)';
+
+      step2.className = 'stepper-item current';
+      dot2.className = 'stepper-dot current';
+      dot2.innerHTML = '<i data-lucide="users" class="h-3 w-3" style="stroke-width:2.4"></i>';
+      label2.className = 'text-[12px] font-medium text-ink-100';
+      chip2.innerHTML = '进行中';
+      chip2.style.cssText = 'background:rgba(167,139,250,0.1);color:#C4B5FD;border-color:rgba(167,139,250,0.3)';
+
+      step3.className = 'stepper-item locked';
+      dot3.className = 'stepper-dot locked';
+      dot3.innerHTML = '<i data-lucide="scan-search" class="h-3 w-3" style="stroke-width:2.4"></i>';
+      label3.className = 'text-[12px] font-medium text-ink-500';
+      chip3.innerHTML = '<i data-lucide="lock" class="h-2 w-2"></i>未解锁';
+      chip3.style.cssText = 'background:rgba(255,255,255,0.02);color:#4A5061;border-color:rgba(255,255,255,0.06)';
+
+      phaseLabel.textContent = '角色扮演';
+
+      // Show finish button after剧本进展 — simulated (~3 user turns worth of time)
+      setTimeout(() => {
+        const btn = document.getElementById('finishBtn');
+        if(btn) btn.style.display = 'inline-flex';
+        const hint = document.getElementById('finishHint');
+        if(hint) hint.textContent = '剧本已进入收尾，可结束对练';
+        lucide.createIcons();
+      }, 2000);
+    } else if (phase === 3) {
+      // Phase 1&2 done, Phase 3 current
+      step1.className = 'stepper-item done';
+      dot1.className = 'stepper-dot done';
+      dot1.innerHTML = '<i data-lucide="check" class="h-3 w-3" style="stroke-width:3"></i>';
+      label1.className = 'text-[12px] font-medium text-ink-300';
+      chip1.innerHTML = '&#x2705; 完成';
+      chip1.style.cssText = 'background:rgba(34,211,238,0.1);color:#67E8F9;border-color:rgba(34,211,238,0.3)';
+
+      step2.className = 'stepper-item done';
+      dot2.className = 'stepper-dot done';
+      dot2.innerHTML = '<i data-lucide="check" class="h-3 w-3" style="stroke-width:3"></i>';
+      label2.className = 'text-[12px] font-medium text-ink-300';
+      chip2.innerHTML = '&#x2705; 完成';
+      chip2.style.cssText = 'background:rgba(34,211,238,0.1);color:#67E8F9;border-color:rgba(34,211,238,0.3)';
+
+      step3.className = 'stepper-item current';
+      dot3.className = 'stepper-dot current';
+      dot3.innerHTML = '<i data-lucide="scan-search" class="h-3 w-3" style="stroke-width:2.4"></i>';
+      label3.className = 'text-[12px] font-medium text-ink-100';
+      chip3.innerHTML = '进行中';
+      chip3.style.cssText = 'background:rgba(167,139,250,0.1);color:#C4B5FD;border-color:rgba(167,139,250,0.3)';
+
+      phaseLabel.textContent = '反思复盘';
+    }
+    lucide.createIcons();
+  }
+
+  function goPhase2() {
+    setPhase('roleplay');
+    updateStepper(2);
+  }
+
+  function goPhase3() {
+    setPhase('review');
+    updateStepper(3);
+  }
+
+  function goPhase2FromReview() {
+    setPhase('roleplay');
+    updateStepper(2);
+  }
+
+  // --- Note ball ---
+  function toggleNote() {
+    const n = document.getElementById('noteWin');
+    n.classList.toggle('hidden');
+    if (!n.classList.contains('hidden')) {
+      n.classList.add('fade-in');
+      lucide.createIcons();
+      repositionNoteWin();
+    }
+  }
+
+  // --- Note ball drag ---
+  (function(){
+    const ball = document.getElementById('noteBall');
+    const noteWin = document.getElementById('noteWin');
+    const LONG_PRESS = 260;
+    let pressTimer = null;
+    let dragging = false;
+    let didDrag = false;
+    let start = { mx:0, my:0, bx:0, by:0 };
+    function ballRect(){ return ball.getBoundingClientRect(); }
+    function startDrag(mx, my){
+      dragging = true; didDrag = false;
+      const r = ballRect();
+      start = { mx, my, bx: r.left, by: r.top };
+      ball.style.cursor = 'grabbing'; ball.style.transition = 'none'; ball.style.transform = 'scale(1.08)';
+      ball.style.boxShadow = '0 0 48px rgba(244,168,85,0.7), inset 0 1px 0 rgba(255,255,255,0.25)';
+    }
+    function moveDrag(mx, my){
+      if (!dragging) return;
+      const dx = mx - start.mx, dy = my - start.my;
+      if (Math.abs(dx) > 2 || Math.abs(dy) > 2) didDrag = true;
+      const w = ball.offsetWidth, h = ball.offsetHeight;
+      const maxX = window.innerWidth - w - 8, maxY = window.innerHeight - h - 8;
+      const nx = Math.max(8, Math.min(start.bx + dx, maxX));
+      const ny = Math.max(64, Math.min(start.by + dy, maxY));
+      ball.style.left = nx + 'px'; ball.style.top = ny + 'px';
+      ball.style.right = 'auto'; ball.style.bottom = 'auto';
+      if (!noteWin.classList.contains('hidden')) repositionNoteWin();
+    }
+    function endDrag(){
+      if (dragging){
+        dragging = false;
+        ball.style.cursor = 'grab'; ball.style.transition = ''; ball.style.transform = '';
+        ball.style.boxShadow = '0 0 32px rgba(244,168,85,0.5), inset 0 1px 0 rgba(255,255,255,0.2)';
+      }
+    }
+    ball.addEventListener('mousedown', (e) => { e.preventDefault(); const mx = e.clientX, my = e.clientY; pressTimer = setTimeout(() => startDrag(mx, my), LONG_PRESS); });
+    document.addEventListener('mousemove', (e) => moveDrag(e.clientX, e.clientY));
+    document.addEventListener('mouseup', () => { clearTimeout(pressTimer); endDrag(); });
+    ball.addEventListener('click', (e) => { if (didDrag){ e.preventDefault(); e.stopPropagation(); didDrag = false; return; } toggleNote(); });
+    ball.addEventListener('touchstart', (e) => { if (!e.touches[0]) return; const mx = e.touches[0].clientX, my = e.touches[0].clientY; pressTimer = setTimeout(() => startDrag(mx, my), LONG_PRESS); }, {passive:true});
+    document.addEventListener('touchmove', (e) => { if (dragging && e.touches[0]){ e.preventDefault(); moveDrag(e.touches[0].clientX, e.touches[0].clientY); } }, {passive:false});
+    document.addEventListener('touchend', () => { clearTimeout(pressTimer); endDrag(); });
+    window.repositionNoteWin = function(){
+      const r = ballRect();
+      const winW = 380, winH = 260, margin = 12;
+      let left = r.left - winW - margin;
+      if (left < 8) left = r.right + margin;
+      if (left + winW > window.innerWidth - 8) left = window.innerWidth - winW - 8;
+      let top = r.top - winH + r.height;
+      if (top < 64) top = r.bottom + margin;
+      if (top + winH > window.innerHeight - 8) top = window.innerHeight - winH - 8;
+      noteWin.style.left = left + 'px'; noteWin.style.top = top + 'px';
+      noteWin.style.right = 'auto'; noteWin.style.bottom = 'auto';
+    };
+  })();
+
+  // --- Timer ---
+  (function(){
+    let seconds = 135; // start at 02:15
+    function updateTimer() {
+      const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+      const s = String(seconds % 60).padStart(2, '0');
+      document.getElementById('timer').textContent = '进行 ' + m + ':' + s;
+    }
+    updateTimer();
+    setInterval(() => {
+      seconds++;
+      updateTimer();
+    }, 1000);
+  })();
+
+  // --- Unified saveNote() for floating note ball ---
+  function saveNote() {
+    const titleEl = document.getElementById('noteTitle');
+    const contentEl = document.getElementById('noteContent');
+    const title = (titleEl && titleEl.value.trim()) || '未命名笔记';
+    const content = contentEl ? contentEl.value.trim() : '';
+    if (!content) { alert('笔记内容不能为空'); return; }
+    const pageSources = {
+      '03-hall-daily.html': '大厅',
+      '04-lecture.html': 'A3 · 授课',
+      '05-practice.html': 'A4 · 对练',
+      '06-report-learner.html': 'A5 · 报告',
+      '11-inquiry-p3.html': 'A0 · 调研'
+    };
+    const pageName = window.location.pathname.split('/').pop();
+    const source = pageSources[pageName] || '场域';
+    if (titleEl) titleEl.value = '';
+    if (contentEl) contentEl.value = '';
+    const noteWin = document.getElementById('note') || document.getElementById('noteWin');
+    if (noteWin) noteWin.classList.add('hidden');
+    alert('已保存到笔记库');
+  }
+
+</script>
+</body>
+</html>

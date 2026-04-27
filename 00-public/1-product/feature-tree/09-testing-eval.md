@@ -114,7 +114,7 @@ K. UI 交互层
    K1 浏览器驱动（Playwright / Puppeteer，纯黑盒）
    K2 视觉理解（截图 + DOM 识别控件）
    K3 基础操作（点击 / 输入 / 滚动 / 等待）
-   K4 与 Leo / Neo / Actor 对话时像真人回复（有人设风格 / 不暴露 AI 身份）
+   K4 与 Neo / Actor 对话时像真人回复（有人设风格 / 不暴露 AI 身份）
    K5 错误 / 卡顿 / 超时的感知（不容忍、不重试到成功）
 
 L. 体验感知
@@ -161,8 +161,8 @@ P. 典型使用场景
 | Practice (03) | G 能力评估碎片产出 + 打标 |
 | Inquiry (04) | F BEI 评分 + 画像 / 困惑 / 高光碎片 |
 | Report (05) | H 所有碎片消费 + 成长幅度 + 分位 |
-| Operation (06) | G Ora 查询的数据底层 ← `06.G` |
-| Hall+Leo (01) | B4 Leo 记忆引用数据源 |
+| Operation (06) | G 管理端 Agent 查询的数据底层 |
+| Hall (01) | B4 Neo 在大厅的记忆引用数据源 |
 | ContentMgt (08) | rubric / 维度定义消费 |
 | Infra (07) | N 统一 Database / I 模型路由 |
 | **Simulation (9-B) 依赖** ||
