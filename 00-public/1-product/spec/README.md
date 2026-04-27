@@ -1,20 +1,45 @@
-# 1-product/spec/ -- 需求规格
+# 1-product/spec/ -- 产品规格说明书
 
-## 文件索引
+> 睿学（AI TUTOR）产品的完整需求规格文档库
 
-| 文件 | 状态 | 说明 |
+## 目录结构
+
+| 目录 | 内容 | 状态 |
 |------|------|------|
-| [requirements-v0.3.3.md](requirements-v0.3.3.md) | **当前版本** | 产品需求规格 v0.3.3，完整产品定义。所有设计工作的源头。 |
-| [rawIdea.md](rawIdea.md) | 参考 | 原始需求创意记录 |
+| [design/](design/) | **当前生效 spec v0.4.0**（19 个文件已审阅 + 03-ai-brand + 07-discovery-library 新增）| 当前 |
+| [plan/](plan/) | spec 更新计划（v0.4.0 → v0.5.0 的全量更新路径）| 当前 |
 
-> **已迁移**：`architecture.md`、`product-design-v0.1.md` 和 `archive/` 历史版本目录已迁移至 DM_Temp 审阅区，审阅通过后会移回。`temp/` 中的 debate 过程文件也已清理。
+## 从这里开始看
 
-## 来源
+### 产品规格（当前生效）
+- **总纲**：[design/requirements-v0.4.0.md](design/requirements-v0.4.0.md)
+- **学员端**：[design/learner/](design/learner/)（7 模块 + overview）
+- **管理端**：[design/management/](design/management/)（4 模块 + overview）
+- **通用**：[design/common/](design/common/)（4 模块）
+- **未来迭代**：[design/[已审阅]00-future-iterations.md](design/[已审阅]00-future-iterations.md)
 
-requirements-v0.3.3.md 综合了以下输入：
-- 产品架构白板图 + 确认访谈
-- R1/R2 辩论汇总 + 创始人回应
-- ADR-001 至 006
-- 豆包聊天记录分析
-- AOM/Prosona/SIDE 技术分析
-- 早期 MVP 定义、功能优先级、用户旅程（已整合进 v0.3.3）
+### spec 更新规划（v0.4.0 → v0.5.0）
+- **更新计划**：[plan/01-spec-update-plan-2026-04-27.md](plan/01-spec-update-plan-2026-04-27.md)
+
+## 4 大输入源（v0.4.0 → v0.5.0）
+
+当前 spec 更新有 4 个输入源：
+1. **0424 决策 31 条**（[02-temp/0424-spec-diff-decisions.md](../../../02-temp/0424-spec-diff-decisions.md)）
+2. **底层建设期 know-how 库**（[4-decisions/底层建设期-2026-04-26/](../../4-decisions/底层建设期-2026-04-26/)）
+3. **三轮 spec 深化 debate 共识**（[5-process/debates/2026-04-26-spec-deepening/](../../5-process/debates/2026-04-26-spec-deepening/)）
+4. **Leo 完全取消**（已落地，无新增工作）
+
+## 历史归档
+
+- [4-decisions/历史/spec-archive/](../../4-decisions/历史/spec-archive/) -- v0.3.3 + rawIdea 归档（不要直接参考）
+
+## 更新约定
+
+- spec 改动方式：直接编辑 `[已审阅]` 文件；新设计追加"反向补充：XXX"章节，不删原文
+- ADR 决策记录：[4-decisions/](../../4-decisions/)
+- 推翻早期决策时必须加注"原 X 决策已被 Y 推翻 → 见新章节"
+
+---
+
+**版本状态**：design/ v0.4.0 当前生效；plan/ 中规划 v0.5.0 更新路径
+**最后更新**：2026-04-27

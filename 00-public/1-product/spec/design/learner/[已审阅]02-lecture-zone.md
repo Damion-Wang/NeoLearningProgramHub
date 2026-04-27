@@ -381,6 +381,127 @@ Neo 做授课口播引导：
 
 ---
 
+## 反向补充：ASSESSMENT_TAG SCO 五字段 + tagConfig schema
+
+> 来源：v0.3.3 §10.6 第 1010-1046 行（迁移于 2026-04-27）
+
+互动 SCO 和打标 SCO 明确分离——互动负责采集学员信息，打标负责基于累积信号进行标签判定。
+
+### 打标 SCO 设计原则
+
+- 打标 SCO 作为 AOM 中独立的 SCO 类型（`scoType: ASSESSMENT_TAG`），KGP 在 Activity 编排时显式放置
+- 打标 SCO 不自己做独立判定，而是汇总前序互动 SCO 的累积信号，用概率模型输出标签
+- 一个 Activity 内可以有多个打标点，形成"分段式自适应"
+
+### 打标结果存储字段（5 字段）
+
+| 字段 | 说明 | 示例 |
+|------|------|------|
+| `tag_dimension` | 标签维度 | "冲突处理风格" |
+| `assigned_tag` | 判定标签 | "利益博弈型" |
+| `confidence` | 置信度（0-1） | 0.78 |
+| `evidence_summary` | 判定依据摘要 | "学员3次提及资源交换，2次回避情感诉求" |
+| `effective_until` | 有效截止位置 | 下一个打标 SCO 的 ID，或 Activity 结束 |
+
+### 打标影响范围规则
+
+- 打标结果的影响范围只到下一个打标 SCO 为止——每段影响范围独立。一个 Activity 内多个打标 SCO 时，后一个打标 SCO 执行后，前一个的标签不再影响后续 Segment 选择（Round-02 R3 新增明确）
+- **标签严格限于 Activity 内，跨 Activity 不传递**——对练 Activity 无法自动获取授课 Activity 的打标结果
+- 对练如果需要个性化版本切换，需要在自己的导学阶段内置打标 SCO，导学阶段的打标完成后自动匹配对应版本的对练剧本（Round-02 R3 新增明确）
+- 这简化了数据流设计，避免跨 Activity 的复杂标签依赖
+
+### 低置信度降级策略（0.6 阈值）
+
+> 来源：v0.3.3 §10.6 第 1027-1028 行 + §18 第 2061 行（迁移于 2026-04-27）
+
+- **置信度低于 0.6 时，降级为默认 Segment 版本，不硬猜**
+- 宁可给学员默认版本，也不给一个猜错的版本（Round-02 R2 确认）
+
+### 打标对学员的透明度
+
+- 打标判定过程对学员是纯后台行为，学员无感知
+- 但应让学员知道有几个版本存在——通过前一页 PPT 的内容表述，或通过 UI 功能展示（具体方式待定）
+- KGP 不需要配置概率权重——概率模型参数由技术团队按互动类型设定默认值
+
+### 打标 SCO 的 AOM 配置（tagConfig schema）
+
+```
+{
+  "scoType": "ASSESSMENT_TAG",
+  "tagConfig": {
+    "tagDimension": "冲突处理风格",
+    "possibleTags": ["防御拖延型", "利益博弈型", "情绪对抗型"],
+    "dataSourceRange": "前序所有互动SCO",
+    "fallbackStrategy": "默认Segment版本"
+  }
+}
+```
+
+**字段说明**：
+- `tagDimension`：本次打标的标签维度（如「冲突处理风格」）
+- `possibleTags`：候选标签数组，与该维度下的 Segment 版本一一对应
+- `dataSourceRange`：数据来源范围，本期默认为「前序所有互动 SCO」
+- `fallbackStrategy`：低置信度时的降级策略，默认 `默认Segment版本`
+
+---
+
+## 反向补充：FEEDBACK_COLLECT schema（课前采集记忆存储模板）
+
+> 来源：v0.3.3 §17.4a 第 1929-1949 行（迁移于 2026-04-27，Round-02 R2 确认）
+
+闭环反馈 `FEEDBACK_COLLECT` SCO 采集的学员场景数据，使用以下双层存储模板：
+
+```
+{
+  "memory_id": "mem_xxx",
+  "student_id": "xxx",
+  "activity_id": "xxx",
+  "sco_id": "xxx",
+  "collect_timestamp": "2026-06-15T09:00:00",
+  "structured_tags": {
+    "topic_dimension": "横向协作",
+    "scenario_type": "跨部门资源协调",
+    "scenario_keywords": ["资源争夺", "优先级冲突", "KPI不一致"],
+    "emotional_state": "焦虑",
+    "specific_challenge": "市场部要求紧急支援但产品路线图已满"
+  },
+  "raw_dialogue": [
+    {"role": "ai", "content": "你在横向协作中遇到过什么困难？"},
+    {"role": "student", "content": "上周市场部的张总找我..."},
+    ...
+  ]
+}
+```
+
+### structured_tags 层用途
+
+- 后续 `FEEDBACK_REVIEW` SCO 精确调取学员场景
+- 授课中 `referenceSlots`（引用槽）的场景匹配
+- 辅导教练的跨 Course 记忆引用
+
+### raw_dialogue 层用途
+
+- 报告中的行为证据追溯
+- AI 在复盘时引用学员的原话
+
+### 字段定义
+
+| 字段 | 说明 |
+|------|------|
+| `memory_id` | 全局唯一记忆 ID，用于 FEEDBACK_REVIEW 精确关联 |
+| `student_id` | 学员 ID |
+| `activity_id` | 所属 Activity ID |
+| `sco_id` | 采集发生的 SCO ID |
+| `collect_timestamp` | 采集时间戳 |
+| `structured_tags.topic_dimension` | 主题维度（对应 Course 名称，如「横向协作」） |
+| `structured_tags.scenario_type` | 场景类型（细化的子场景） |
+| `structured_tags.scenario_keywords` | 关键词数组，用于检索匹配 |
+| `structured_tags.emotional_state` | 情绪状态（焦虑/无奈/兴奋等） |
+| `structured_tags.specific_challenge` | 具体挑战的一句话描述 |
+| `raw_dialogue` | 完整对话记录数组（含 AI 提问与学员回答） |
+
+---
+
 ## 反向补充：Activity 完成弹窗（精细化）
 
 原设计：Activity 完成后在看板区显示完成卡片+任务链接。
