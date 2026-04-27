@@ -161,7 +161,7 @@ P. 典型使用场景
 | Practice (03) | G 能力评估碎片产出 + 打标 |
 | Inquiry (04) | F BEI 评分 + 画像 / 困惑 / 高光碎片 |
 | Report (05) | H 所有碎片消费 + 成长幅度 + 分位 |
-| Operation (06) | G 管理端 Agent 查询的数据底层 |
+| Operation (06) | G Ora 查询的数据底层 ← `06.G` |
 | Hall+Leo (01) | B4 Leo 记忆引用数据源 |
 | ContentMgt (08) | rubric / 维度定义消费 |
 | Infra (07) | N 统一 Database / I 模型路由 |

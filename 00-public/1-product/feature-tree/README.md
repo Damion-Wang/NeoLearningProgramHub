@@ -16,9 +16,9 @@
 | 01 | [01-hall-leo.md](01-hall-leo.md) | 鼎明、显华 | 大厅 + Leo Coach + 笔记悬浮球 |
 | 02 | [02-lecture.md](02-lecture.md) | 银江、张青、李灿、周毅、冲哥 | Neo 按 AOM 脚本结构化教学 |
 | 03 | [03-practice.md](03-practice.md) | 寅恒、曾亚、志扬 | Actor 角色扮演 + Neo 三任务 + 后台导演 |
-| 04 | [04-inquiry.md](04-inquiry.md) | 胡璐、打野 | Neo 通过对话或量表采集（P1 可选） |
+| 04 | [04-inquiry.md](04-inquiry.md) | 胡璐、打野 | Neo 通过对话或量表采集（**P3**，本期不做） |
 | 05 | [05-report.md](05-report.md) | 娄跃、陈波 | 三部分报告 + Neo 讨论 + BI 图表 |
-| 06 | [06-operation.md](06-operation.md) | 鼎明、显华 | HR / 运营合一的管理端 |
+| 06 | [06-operation.md](06-operation.md) | 鼎明、显华 | 管理员统一管理端（Ora 驱动） |
 | 07 | [07-infra.md](07-infra.md) | 显华、葛演、李灿 | 平台底座（登录 / 权限 / Topbar / TTS / 模型 / 布局 / DB） |
 | 08 | [08-content-mgt.md](08-content-mgt.md) | 张青 | 运行时 AOM 内容包管理 |
 | 09 | [09-testing-eval.md](09-testing-eval.md) | 银江、鼎明、许齐、玉祥 | 产品内评估引擎 + 独立 UX 测试 Agent |
