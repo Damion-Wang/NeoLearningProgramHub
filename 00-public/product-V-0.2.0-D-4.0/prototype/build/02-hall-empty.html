@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<!--
+  version: V-0.2.0-D-4.0
+  status: reviewed
+  last-updated: 2026-04-29
+-->
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>S02 · Hall Empty State · 睿学</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        base: { 900:'#07080C', 800:'#0A0B10', 700:'#0E1016', 600:'#12141C', 500:'#181B25', 400:'#1F232F', 300:'#2A2F3E' },
+        ink:  { 100:'#F1F3F8', 200:'#E6E8EE', 300:'#C4C8D4', 400:'#8B92A5', 500:'#6A7085', 600:'#4A5061', 700:'#353A48' },
+        cyan: { 300:'#67E8F9', 400:'#22D3EE', 500:'#06B6D4', 600:'#0891B2' },
+        violet: { 300:'#C4B5FD', 400:'#A78BFA', 500:'#8B5CF6', 600:'#7C3AED' },
+        amber: { 300:'#FCD34D', 400:'#F4A855', 500:'#F59E0B' },
+        emerald: { 400:'#34D399' },
+      },
+      fontFamily: {
+        sans: ['Inter','-apple-system','PingFang SC','HarmonyOS Sans SC','Microsoft YaHei','sans-serif'],
+        mono: ['JetBrains Mono','ui-monospace','Consolas','monospace'],
+      },
+      boxShadow: {
+        'glow-cyan':   '0 0 24px rgba(34,211,238,0.35)',
+        'glow-violet': '0 0 24px rgba(167,139,250,0.30)',
+        'glow-amber':  '0 0 20px rgba(244,168,85,0.30)',
+      },
+      animation: {
+        breathe: 'breathe 4s ease-in-out infinite',
+        aurora:  'aurora 18s ease-in-out infinite',
+        caret:   'caret 1s steps(2) infinite',
+      },
+      keyframes: {
+        breathe: { '0%,100%': { opacity:'0.85', filter:'brightness(1)' }, '50%': { opacity:'1', filter:'brightness(1.25)' } },
+        aurora:  { '0%,100%': { transform:'translate3d(0,0,0) scale(1)' }, '50%': { transform:'translate3d(30px,-20px,0) scale(1.08)' } },
+        caret:   { '0%,100%': { opacity:'0' }, '50%': { opacity:'1' } },
+      },
+    },
+  },
+}
+</script>
+<style>
+html,body { height:100%; margin:0; background:#0A0B10; color:#E6E8EE; font-family:Inter,-apple-system,'PingFang SC',sans-serif; -webkit-font-smoothing:antialiased; letter-spacing:-0.01em; }
+::selection { background: rgba(167,139,250,0.35); color:#fff; }
+
+.aurora-bg { position:relative; isolation:isolate; }
+.aurora-bg::before, .aurora-bg::after { content:''; position:fixed; inset:0; z-index:-1; pointer-events:none; }
+.aurora-bg::before {
+  background:
+    radial-gradient(60% 45% at 12% 12%, rgba(34,211,238,0.18) 0%, transparent 60%),
+    radial-gradient(55% 50% at 92% 88%, rgba(167,139,250,0.22) 0%, transparent 60%),
+    radial-gradient(40% 30% at 80% 15%, rgba(244,168,85,0.10) 0%, transparent 60%),
+    linear-gradient(180deg, #0A0B10 0%, #07080C 100%);
+  animation: aurora 18s ease-in-out infinite;
+}
+.aurora-bg::after {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.25 0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.6'/></svg>");
+  opacity:0.04; mix-blend-mode:overlay;
+}
+
+.glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border:1px solid rgba(255,255,255,0.06); box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.04); }
+.glass-strong { background: rgba(24,27,37,0.94); backdrop-filter: blur(28px); border:1px solid rgba(255,255,255,0.1);
+  box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.06), 0 24px 60px -20px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,0,0,0.3); }
+.card { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border:1px solid rgba(255,255,255,0.06); border-radius: 1rem; box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.04); }
+.hairline { border-color: rgba(255,255,255,0.06); }
+.chip { display:inline-flex; align-items:center; gap:4px; border-radius:999px; padding: 2px 8px; font-size:11px; font-weight:500; letter-spacing:-0.01em; }
+
+.scrollbar-thin::-webkit-scrollbar { width:6px; height:6px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius:999px; }
+.scrollbar-thin::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
+
+.kbd { display:inline-flex; align-items:center; justify-content:center; border-radius:6px; border:1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04); padding: 0 6px; height:20px; font-size:10px; font-family:'JetBrains Mono',monospace; color:#8B92A5; }
+
+.fade-in { animation: fadeIn 0.3s ease-out both; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+[data-lucide] { width:1em; height:1em; }
+.tabular-nums { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body class="aurora-bg h-full">
+<div class="h-full flex flex-col">
+
+  <!-- ================= TOPBAR ================= -->
+  <header class="h-14 shrink-0 px-5 flex items-center justify-between z-30 border-b hairline backdrop-blur-xl" style="background: rgba(10,11,16,0.6)">
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2">
+        <div class="relative h-8 w-8 rounded-xl flex items-center justify-center shadow-glow-violet" style="background: linear-gradient(135deg,#22D3EE,#8B5CF6)">
+          <i data-lucide="sparkles" class="h-4 w-4" style="color:#0A0B10;stroke-width:2.4"></i>
+        </div>
+        <span class="text-[13px] font-medium text-ink-100">睿学</span>
+      </div>
+      <span class="h-4 w-px bg-white/10"></span>
+      <span class="chip bg-white/[0.04] text-ink-300 border border-white/5">学员端</span>
+    </div>
+    <div class="flex items-center gap-1">
+      <!-- bell -->
+      <div class="relative">
+        <button onclick="toggle('bell')" aria-label="消息提醒" class="relative rounded-lg p-2 hover:bg-white/[0.05] transition">
+          <i data-lucide="bell" class="h-4 w-4 text-ink-300"></i>
+        </button>
+        <div id="bell" class="hidden absolute right-0 mt-2 w-64 glass rounded-xl p-3 z-50 fade-in">
+          <div class="text-[11px] text-ink-500 text-center">暂无通知</div>
+        </div>
+      </div>
+      <!-- avatar -->
+      <div class="relative">
+        <button onclick="toggle('user')" class="flex items-center gap-2 rounded-lg p-0.5 pr-2 hover:bg-white/[0.05] transition">
+          <div class="h-7 w-7 rounded-lg flex items-center justify-center text-xs font-semibold shadow-glow-violet" style="background:linear-gradient(135deg,#22D3EE,#8B5CF6);color:#0A0B10">学</div>
+        </button>
+        <div id="user" class="hidden absolute right-0 mt-2 w-48 glass rounded-xl p-1.5 z-50 fade-in">
+          <div class="px-3 py-2 border-b hairline">
+            <div class="text-xs font-medium text-ink-100">新学员</div>
+            <div class="text-[10px] text-ink-400 mt-0.5">首次登录</div>
+          </div>
+          <div class="flex items-center gap-2 px-2.5 py-1.5 text-xs text-ink-300 rounded-md hover:bg-white/[0.05] cursor-pointer"><i data-lucide="settings" class="h-3.5 w-3.5"></i>个人设置</div>
+          <div class="flex items-center gap-2 px-2.5 py-1.5 text-xs text-ink-300 rounded-md hover:bg-white/[0.05] cursor-pointer"><i data-lucide="help-circle" class="h-3.5 w-3.5"></i>帮助</div>
+          <div class="my-1 border-t hairline"></div>
+          <div class="flex items-center gap-2 px-2.5 py-1.5 text-xs rounded-md hover:bg-white/[0.05] cursor-pointer text-rose-400"><i data-lucide="log-out" class="h-3.5 w-3.5"></i>退出登录</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= THREE COLUMN ================= -->
+  <div class="flex-1 min-h-0 flex">
+
+    <!-- LEFT NAV (collapsed icon rail) -->
+    <aside class="w-14 shrink-0 border-r hairline backdrop-blur-md flex flex-col items-center py-4" style="background:rgba(10,11,16,0.4)">
+      <div class="flex flex-col gap-1.5">
+        <button class="group relative h-10 w-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-cyan-400/20 to-violet-500/20 text-cyan-300 ring-1 ring-cyan-400/20 shadow-glow-cyan">
+          <i data-lucide="home" class="h-4 w-4"></i>
+          <span class="pointer-events-none absolute left-full ml-2 whitespace-nowrap rounded-md border hairline backdrop-blur px-2 py-1 text-[11px] text-ink-200 opacity-0 group-hover:opacity-100 transition z-50" style="background:rgba(14,16,22,0.9)">大厅</span>
+        </button>
+        <button class="group relative h-10 w-10 rounded-xl flex items-center justify-center text-ink-600 cursor-not-allowed opacity-40">
+          <i data-lucide="compass" class="h-4 w-4"></i>
+          <span class="pointer-events-none absolute left-full ml-2 whitespace-nowrap rounded-md border hairline backdrop-blur px-2 py-1 text-[11px] text-ink-200 opacity-0 group-hover:opacity-100 transition z-50" style="background:rgba(14,16,22,0.9)">学习旅程 · 未开放</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ================= CENTER BOARD ================= -->
+    <main class="flex-1 min-w-0 overflow-y-auto scrollbar-thin">
+      <div class="max-w-4xl mx-auto px-8 py-8 space-y-5">
+
+        <!-- ===== SECTION 1: DASHBOARD (empty) ===== -->
+        <div class="card p-6 relative overflow-hidden">
+          <div class="absolute -top-24 -right-24 h-64 w-64 rounded-full blur-3xl pointer-events-none" style="background:rgba(34,211,238,0.06)"></div>
+          <div class="absolute -bottom-24 -left-24 h-48 w-48 rounded-full blur-3xl pointer-events-none" style="background:rgba(167,139,250,0.06)"></div>
+
+          <!-- Top row: Progress left + Heatmap right -->
+          <div class="relative flex gap-8">
+            <!-- Left: Progress -->
+            <div class="flex-1 min-w-0">
+              <div class="text-[10px] text-cyan-300 font-mono tracking-[0.2em] uppercase">Progress · 学习进度</div>
+              <div class="mt-4 flex items-baseline gap-2">
+                <span class="text-5xl font-light text-ink-600 tabular-nums font-mono">0%</span>
+              </div>
+              <div class="mt-1 text-[11px] text-ink-500 font-mono">0 / 4 Course</div>
+              <div class="mt-3 h-[3px] rounded-full bg-white/5 overflow-hidden">
+                <div class="h-full rounded-full" style="width:0%;background:linear-gradient(90deg,#22D3EE,#A78BFA)"></div>
+              </div>
+            </div>
+
+            <!-- Right: Heatmap -->
+            <div class="shrink-0">
+              <div class="text-[10px] text-cyan-300 font-mono tracking-[0.2em] uppercase mb-3">本月学习热力图</div>
+              <div class="flex gap-1">
+                <div class="flex flex-col gap-1 text-[9px] text-ink-600 font-mono mr-1.5 justify-between">
+                  <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                </div>
+                <div class="flex gap-1" id="heatmap"></div>
+              </div>
+              <div class="mt-2 text-[10px] text-ink-500 font-mono text-right">连续 0 天 · 合计 0h</div>
+            </div>
+          </div>
+
+          <!-- Bottom: Todo strip -->
+          <div class="relative mt-5 pt-4 border-t hairline">
+            <div class="flex items-center gap-2">
+              <div class="text-[10px] text-violet-300 font-mono tracking-[0.2em] uppercase">Todo · 待办任务</div>
+            </div>
+            <div class="mt-2 flex items-center gap-2 text-[11px] text-ink-500">
+              <i data-lucide="check-square" class="h-3.5 w-3.5 text-ink-600"></i>
+              <span>暂无待办，完成课程后 Neo 会为你安排</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== SECTION 2: COURSE DIRECTORY (cards, 2×2 grid, all locked) ===== -->
+        <div class="card p-6">
+          <div class="flex items-center justify-between mb-5">
+            <div>
+              <div class="text-[10px] text-violet-300 font-mono tracking-[0.2em] uppercase">Course Directory · 课程目录</div>
+              <div class="mt-1 text-[11px] text-ink-500">4 门课程 · 完成 Neo 对话后解锁第 1 门</div>
+            </div>
+            <span class="text-[11px] text-ink-500 font-mono">0 / 4</span>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <!-- Course 1: 辅导型管理 -->
+            <div class="rounded-2xl p-4 border opacity-60 cursor-not-allowed relative overflow-hidden" style="background:rgba(167,139,250,0.03);border-color:rgba(167,139,250,0.12)">
+              <div class="absolute top-3 right-3"><i data-lucide="lock" class="h-3.5 w-3.5 text-ink-600"></i></div>
+              <div class="flex items-center gap-2.5 mb-2">
+                <div class="h-8 w-8 rounded-lg flex items-center justify-center shrink-0" style="background:rgba(167,139,250,0.1);color:#C4B5FD;border:1px solid rgba(167,139,250,0.15)"><i data-lucide="users" class="h-4 w-4"></i></div>
+                <div class="text-[10px] text-violet-300 font-mono tracking-wider uppercase">Course 1</div>
+              </div>
+              <div class="text-sm font-medium text-ink-300">辅导型管理</div>
+              <div class="mt-1.5 text-[11px] text-ink-500 leading-relaxed">从 GROW 模型开始，学会把被动员工激活</div>
+              <div class="mt-3 pt-2.5 border-t hairline flex items-center gap-2 text-[10px] text-ink-600 font-mono">
+                <span class="inline-flex items-center gap-1"><i data-lucide="clock" class="h-2.5 w-2.5"></i>约 4.5h</span>
+                <span>·</span>
+                <span>5 Activity</span>
+              </div>
+            </div>
+            <!-- Course 2: 横向协作 -->
+            <div class="rounded-2xl p-4 border opacity-50 cursor-not-allowed relative overflow-hidden" style="background:rgba(255,255,255,0.01);border-color:rgba(255,255,255,0.06)">
+              <div class="absolute top-3 right-3"><i data-lucide="lock" class="h-3.5 w-3.5 text-ink-600"></i></div>
+              <div class="flex items-center gap-2.5 mb-2">
+                <div class="h-8 w-8 rounded-lg flex items-center justify-center shrink-0 bg-white/[0.02] text-ink-600 border border-white/5"><i data-lucide="git-merge" class="h-4 w-4"></i></div>
+                <div class="text-[10px] text-ink-500 font-mono tracking-wider uppercase">Course 2</div>
+              </div>
+              <div class="text-sm font-medium text-ink-400">横向协作</div>
+              <div class="mt-1.5 text-[11px] text-ink-600 leading-relaxed">PIN 法搞定跨部门协同谈判</div>
+              <div class="mt-3 pt-2.5 border-t hairline flex items-center gap-2 text-[10px] text-ink-600 font-mono">
+                <span class="inline-flex items-center gap-1"><i data-lucide="clock" class="h-2.5 w-2.5"></i>约 3.2h</span>
+                <span>·</span>
+                <span>5 Activity</span>
+              </div>
+              <div class="mt-1 text-[10px] text-ink-600 font-mono">完成辅导型管理后解锁</div>
+            </div>
+            <!-- Course 3: 向上沟通 -->
+            <div class="rounded-2xl p-4 border opacity-50 cursor-not-allowed relative overflow-hidden" style="background:rgba(255,255,255,0.01);border-color:rgba(255,255,255,0.06)">
+              <div class="absolute top-3 right-3"><i data-lucide="lock" class="h-3.5 w-3.5 text-ink-600"></i></div>
+              <div class="flex items-center gap-2.5 mb-2">
+                <div class="h-8 w-8 rounded-lg flex items-center justify-center shrink-0 bg-white/[0.02] text-ink-600 border border-white/5"><i data-lucide="arrow-up-right" class="h-4 w-4"></i></div>
+                <div class="text-[10px] text-ink-500 font-mono tracking-wider uppercase">Course 3</div>
+              </div>
+              <div class="text-sm font-medium text-ink-400">向上沟通</div>
+              <div class="mt-1.5 text-[11px] text-ink-600 leading-relaxed">向上管理：争取资源、对齐期望</div>
+              <div class="mt-3 pt-2.5 border-t hairline flex items-center gap-2 text-[10px] text-ink-600 font-mono">
+                <span class="inline-flex items-center gap-1"><i data-lucide="clock" class="h-2.5 w-2.5"></i>约 3h</span>
+                <span>·</span>
+                <span>5 Activity</span>
+              </div>
+              <div class="mt-1 text-[10px] text-ink-600 font-mono">完成横向协作后解锁</div>
+            </div>
+            <!-- Course 4: 团队激励 -->
+            <div class="rounded-2xl p-4 border opacity-50 cursor-not-allowed relative overflow-hidden" style="background:rgba(255,255,255,0.01);border-color:rgba(255,255,255,0.06)">
+              <div class="absolute top-3 right-3"><i data-lucide="lock" class="h-3.5 w-3.5 text-ink-600"></i></div>
+              <div class="flex items-center gap-2.5 mb-2">
+                <div class="h-8 w-8 rounded-lg flex items-center justify-center shrink-0 bg-white/[0.02] text-ink-600 border border-white/5"><i data-lucide="flame" class="h-4 w-4"></i></div>
+                <div class="text-[10px] text-ink-500 font-mono tracking-wider uppercase">Course 4</div>
+              </div>
+              <div class="text-sm font-medium text-ink-400">团队激励</div>
+              <div class="mt-1.5 text-[11px] text-ink-600 leading-relaxed">点燃团队：目标感、成就感、归属感</div>
+              <div class="mt-3 pt-2.5 border-t hairline flex items-center gap-2 text-[10px] text-ink-600 font-mono">
+                <span class="inline-flex items-center gap-1"><i data-lucide="clock" class="h-2.5 w-2.5"></i>约 3.5h</span>
+                <span>·</span>
+                <span>5 Activity</span>
+              </div>
+              <div class="mt-1 text-[10px] text-ink-600 font-mono">完成向上沟通后解锁</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== SECTION 3: LIBRARIES (2×2 grid, empty state) ===== -->
+        <div class="grid grid-cols-2 gap-5">
+
+          <!-- Tool Library -->
+          <div class="card p-5 flex flex-col">
+            <div class="flex items-center gap-2.5 pb-3 mb-3 border-b hairline">
+              <div class="h-8 w-8 rounded-lg flex items-center justify-center shrink-0" style="background:rgba(34,211,238,0.08);color:#67E8F9;border:1px solid rgba(34,211,238,0.15)"><i data-lucide="package" class="h-4 w-4"></i></div>
+              <div class="flex-1 min-w-0">
+                <div class="text-[10px] text-cyan-300 font-mono tracking-[0.2em] uppercase">TOOL · 工具库</div>
+                <div class="text-[11px] text-ink-500 mt-0.5">结构化模板和清单</div>
+              </div>
+              <span class="chip text-[9px] border border-white/5 bg-white/[0.02] text-ink-500">0</span>
+            </div>
+            <div class="flex-1 space-y-2.5 text-[12px]">
+              <div>
+                <div class="flex items-center gap-1.5 text-ink-500 mb-1.5"><i data-lucide="folder" class="h-3.5 w-3.5 text-ink-600"></i><span>辅导型管理</span><span class="text-[10px] text-ink-600 font-mono">(未解锁)</span></div>
+                <ul class="space-y-1 pl-5">
+                  <li class="flex items-center gap-2 rounded-md px-2 py-1.5 opacity-50">
+                    <i data-lucide="lock" class="h-3 w-3 text-ink-600 shrink-0"></i>
+                    <span class="text-ink-500 truncate flex-1">GROW 辅导对话模板</span>
+                  </li>
+                  <li class="flex items-center gap-2 rounded-md px-2 py-1.5 opacity-50">
+                    <i data-lucide="lock" class="h-3 w-3 text-ink-600 shrink-0"></i>
+                    <span class="text-ink-500 truncate flex-1">心理安全对话清单</span>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <div class="flex items-center gap-1.5 text-ink-500 mb-1.5"><i data-lucide="folder" class="h-3.5 w-3.5 text-ink-600"></i><span>横向协作</span><span class="text-[10px] text-ink-600 font-mono">(未解锁)</span></div>
+                <div class="pl-5 text-[11px] text-ink-600">完成课程后解锁</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Note Library -->
+          <div class="card p-5 flex flex-col">
+            <div class="flex items-center gap-2.5 pb-3 mb-3 border-b hairline">
+              <div class="h-8 w-8 rounded-lg flex items-center justify-center shrink-0" style="background:rgba(244,168,85,0.08);color:#FCD34D;border:1px solid rgba(244,168,85,0.15)"><i data-lucide="notebook-pen" class="h-4 w-4"></i></div>
+              <div class="flex-1 min-w-0">
+                <div class="text-[10px] text-amber-300 font-mono tracking-[0.2em] uppercase">NOTE · 笔记库</div>
+                <div class="text-[11px] text-ink-500 mt-0.5">学习过程中记录的要点</div>
+              </div>
+              <span class="chip text-[9px] border border-white/5 bg-white/[0.02] text-ink-500">0</span>
+            </div>
+            <div class="flex-1 flex items-center justify-center min-h-[120px]">
+              <div class="text-center text-[11px] text-ink-600">
+                <i data-lucide="notebook-pen" class="h-5 w-5 mx-auto mb-1.5 text-ink-700"></i>
+                <div>还没有笔记</div>
+                <div class="mt-1 text-[10px]">学习时可随手记录要点</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Discovery Library -->
+          <div class="card p-5 flex flex-col">
+            <div class="flex items-center gap-2.5 pb-3 mb-3 border-b hairline">
+              <div class="h-8 w-8 rounded-lg flex items-center justify-center shrink-0" style="background:rgba(167,139,250,0.08);color:#C4B5FD;border:1px solid rgba(167,139,250,0.15)"><i data-lucide="sparkles" class="h-4 w-4"></i></div>
+              <div class="flex-1 min-w-0">
+                <div class="text-[10px] text-violet-300 font-mono tracking-[0.2em] uppercase">DISCOVERY · 发现库</div>
+                <div class="text-[11px] text-ink-500 mt-0.5">Neo 发现的亮眼表现 · 卡片接受后入库</div>
+              </div>
+              <span class="chip text-[9px] border border-white/5 bg-white/[0.02] text-ink-500">0</span>
+            </div>
+            <div class="flex-1 flex items-center justify-center min-h-[120px]">
+              <div class="text-center text-[11px] text-ink-600">
+                <i data-lucide="sparkles" class="h-5 w-5 mx-auto mb-1.5 text-ink-700"></i>
+                <div>暂无收藏发现</div>
+                <div class="mt-1 text-[10px]">学习中 Neo 会主动推送</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Result Library -->
+          <div class="card p-5 flex flex-col">
+            <div class="flex items-center gap-2.5 pb-3 mb-3 border-b hairline">
+              <div class="h-8 w-8 rounded-lg flex items-center justify-center shrink-0" style="background:rgba(52,211,153,0.08);color:#34D399;border:1px solid rgba(52,211,153,0.15)"><i data-lucide="bar-chart-3" class="h-4 w-4"></i></div>
+              <div class="flex-1 min-w-0">
+                <div class="text-[10px] font-mono tracking-[0.2em] uppercase" style="color:#34D399">RESULT · 报告库</div>
+                <div class="text-[11px] text-ink-500 mt-0.5">统一报告库 · 阶段性成果</div>
+              </div>
+              <span class="chip text-[9px] border border-white/5 bg-white/[0.02] text-ink-500">0</span>
+            </div>
+            <div class="flex-1 flex items-center justify-center min-h-[120px]">
+              <div class="text-center text-[11px] text-ink-600">
+                <i data-lucide="bar-chart-3" class="h-5 w-5 mx-auto mb-1.5 text-ink-700"></i>
+                <div>暂无报告</div>
+                <div class="mt-1 text-[10px]">完成课程后生成</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== SECTION 4: Community ===== -->
+        <div class="card p-5">
+          <div class="text-[10px] text-ink-500 font-mono tracking-[0.2em] uppercase mb-3">Community · 社区</div>
+          <div class="flex items-center justify-center h-16 text-[11px] text-ink-500">
+            <span class="flex items-center gap-1.5"><i data-lucide="users" class="h-3 w-3"></i>建构中 · 敬请期待</span>
+          </div>
+        </div>
+
+        <footer class="py-8 text-center text-[10px] text-ink-600 font-mono tracking-wider">· AI TUTOR · S02 HALL EMPTY · STATIC PROTOTYPE · v0.4.0 ·</footer>
+      </div>
+    </main>
+
+    <!-- ================= RIGHT: NEO CHAT ================= -->
+    <aside class="w-[420px] shrink-0 border-l hairline backdrop-blur-md flex flex-col" style="background:rgba(10,11,16,0.4)">
+      <!-- Neo brand hero -->
+      <div class="neo-brand-hero h-[220px] border-b hairline flex items-center justify-center relative overflow-hidden">
+        <div class="absolute inset-0" style="background: radial-gradient(ellipse at center, rgba(139,92,246,0.15), transparent 70%);"></div>
+        <img src="../assets/neo-male.svg" alt="Neo" class="neo-brand-avatar h-40 w-40 object-contain relative z-10" />
+        <div class="absolute bottom-3 left-0 right-0 text-center">
+          <div class="text-[13px] font-medium text-ink-100">Neo</div>
+          <div class="text-[10px] text-ink-500 font-mono">AI Tutor</div>
+        </div>
+      </div>
+
+      <!-- Chat header (simplified, name line only) -->
+      <div class="px-5 pt-3 pb-3 border-b hairline">
+        <div class="flex items-center gap-3">
+          <img src="../assets/neo-male.svg" alt="Neo" class="neo-avatar h-10 w-10 rounded-xl object-cover" />
+          <div class="flex-1 min-w-0">
+            <span class="text-sm font-medium text-ink-100">Neo</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat messages -->
+      <div class="flex-1 overflow-y-auto scrollbar-thin px-5 py-5 space-y-5">
+
+        <!-- Neo intro card (special styled, glass-strong background) -->
+        <div class="flex gap-2.5">
+          <img src="../assets/neo-male.svg" alt="Neo" class="neo-avatar h-7 w-7 rounded-lg object-cover shrink-0" />
+          <div class="max-w-[84%] space-y-1.5 min-w-0">
+            <div class="rounded-2xl px-4 py-3 text-sm leading-relaxed text-ink-100 whitespace-pre-wrap relative overflow-hidden" style="background:linear-gradient(135deg,rgba(167,139,250,0.08),rgba(34,211,238,0.04));border:1px solid rgba(167,139,250,0.2);border-top-left-radius:0.375rem">
+              <div class="absolute -top-10 -right-10 h-32 w-32 rounded-full blur-2xl pointer-events-none" style="background:rgba(167,139,250,0.1)"></div>
+              <span class="relative">你好！我是 Neo，你的辅导教练。在整个学习旅程中，我会陪伴你、帮你制定计划、解答困惑。有任何问题随时跟我说。</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Neo message: MENTOR OPENING -->
+        <div class="flex gap-2.5">
+          <img src="../assets/neo-male.svg" alt="Neo" class="neo-avatar h-7 w-7 rounded-lg object-cover shrink-0" />
+          <div class="max-w-[84%] space-y-1.5 min-w-0">
+            <div class="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed border border-white/[0.08] text-ink-100 whitespace-pre-wrap" style="background:rgba(255,255,255,0.04);border-top-left-radius:0.375rem">你目前在管理工作中有什么困扰或想提升的方向吗？</div>
+          </div>
+        </div>
+
+        <!-- User message -->
+        <div class="flex justify-end gap-2">
+          <div class="max-w-[82%]">
+            <div class="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed text-ink-100 whitespace-pre-wrap" style="background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.25);border-top-right-radius:0.375rem">带团队的时候，下属总是不主动，什么都要我推着走。</div>
+          </div>
+          <div class="h-7 w-7 rounded-lg flex items-center justify-center shrink-0 text-[11px] font-medium border border-white/10" style="background:rgba(255,255,255,0.06);color:#E6E8EE">学</div>
+        </div>
+
+        <!-- Neo reply: MENTOR EXPLORING + task card -->
+        <div class="flex gap-2.5">
+          <img src="../assets/neo-male.svg" alt="Neo" class="neo-avatar h-7 w-7 rounded-lg object-cover shrink-0" />
+          <div class="max-w-[84%] space-y-1.5 min-w-0">
+            <div class="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed border border-white/[0.08] text-ink-100 whitespace-pre-wrap" style="background:rgba(255,255,255,0.04);border-top-left-radius:0.375rem">这个情况很常见——很多管理者都会经历这个阶段。好消息是，有一套系统的方法可以帮你从「推着走」变成「自己跑」。</div>
+
+            <!-- Reason for recommendation -->
+            <div class="rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed border text-ink-100 whitespace-pre-wrap" style="background:rgba(167,139,250,0.06);border-color:rgba(167,139,250,0.2);border-top-left-radius:0.375rem">
+              <div class="flex items-center gap-1.5 text-[10px] text-violet-300 font-mono tracking-wider uppercase mb-1.5"><i data-lucide="lightbulb" class="h-3 w-3"></i>推荐理由</div>
+              你提到「下属不主动、什么都要推着走」——这其实是「被动型员工」的典型特征。我推荐你从 <span class="text-violet-300 font-medium">GROW 模型</span>开始学——它是专门解决这类问题的教练式管理方法。
+            </div>
+
+            <!-- Embedded task card -->
+            <a href="04-lecture.html" class="group relative rounded-2xl p-3 flex items-center gap-3 cursor-pointer transition overflow-hidden block no-underline" style="background:linear-gradient(135deg,rgba(167,139,250,0.1),rgba(34,211,238,0.05));border:1px solid rgba(167,139,250,0.2)">
+              <div class="absolute inset-0" style="background:radial-gradient(60% 80% at 0% 0%,rgba(167,139,250,0.15),transparent)"></div>
+              <div class="relative h-10 w-10 rounded-xl flex items-center justify-center shrink-0 shadow-glow-violet" style="background:linear-gradient(135deg,#A78BFA,#22D3EE);color:#0A0B10"><i data-lucide="graduation-cap" class="h-4 w-4" style="stroke-width:2.4"></i></div>
+              <div class="relative flex-1 min-w-0">
+                <div class="text-xs text-violet-300 font-mono tracking-wider uppercase">Course 1 · 授课</div>
+                <div class="text-sm font-medium text-ink-100 mt-0.5 truncate">辅导型管理 · GROW 模型</div>
+                <div class="text-[10px] text-ink-400 mt-0.5 font-mono">约 45 分钟</div>
+              </div>
+              <button class="relative inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-[11px] font-medium shadow-glow-cyan group-hover:brightness-110 transition shrink-0" style="background:linear-gradient(135deg,#22D3EE,#A78BFA);color:#0A0B10"><i data-lucide="play" class="h-3 w-3" fill="currentColor"></i>开始学习</button>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Chat input -->
+      <div class="p-3 border-t hairline">
+        <div class="rounded-2xl overflow-hidden border border-white/10 focus-within:border-cyan-400/40 transition" style="background:rgba(255,255,255,0.02)">
+          <textarea aria-label="向教练发送消息" placeholder="把工作里的问题甩给我…" class="w-full bg-transparent px-4 py-3 text-sm text-ink-100 placeholder:text-ink-500 outline-none resize-none h-[60px] scrollbar-thin"></textarea>
+          <div class="flex items-center justify-between px-3 py-2 border-t hairline">
+            <span class="text-[10px] text-ink-500 font-mono">Enter 发送 · Shift+Enter 换行</span>
+            <button class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] font-medium transition shadow-glow-cyan hover:brightness-110" style="background:linear-gradient(135deg,#22D3EE,#A78BFA);color:#0A0B10"><i data-lucide="send" class="h-3 w-3"></i>发送</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- ================= FLOATING NOTE BALL ================= -->
+<button onclick="toggle('note')" title="随手记" class="fixed bottom-6 right-6 z-40 h-11 w-11 rounded-2xl transition flex items-center justify-center border shadow-glow-violet" style="background:linear-gradient(135deg,#22D3EE,#8B5CF6);color:#0A0B10;border-color:rgba(167,139,250,0.4)">
+  <i data-lucide="notebook-pen" class="h-4 w-4" style="stroke-width:2.4"></i>
+</button>
+<div id="note" class="hidden fixed bottom-20 right-6 z-40 w-[280px] glass rounded-xl overflow-hidden fade-in" style="background:rgba(24,27,37,0.94);backdrop-filter:blur(28px);border:1px solid rgba(255,255,255,0.1)">
+  <div class="px-4 py-3 border-b hairline flex items-center justify-between">
+    <div class="flex items-center gap-2"><i data-lucide="notebook-pen" class="h-3.5 w-3.5 text-violet-300"></i><span class="text-xs font-medium text-ink-100">随手记</span></div>
+    <button onclick="toggle('note')" class="p-1 rounded hover:bg-white/[0.05]"><i data-lucide="x" class="h-3 w-3 text-ink-400"></i></button>
+  </div>
+  <div class="p-3">
+    <textarea placeholder="想到什么随手记一下…" class="w-full h-20 rounded-lg border border-white/[0.06] px-3 py-2 text-xs text-ink-100 placeholder:text-ink-500 outline-none focus:border-cyan-400/40 resize-none scrollbar-thin" style="background:rgba(255,255,255,0.02)"></textarea>
+    <div class="mt-2 flex justify-end">
+      <button class="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-[11px] font-medium shadow-glow-cyan" style="background:linear-gradient(135deg,#22D3EE,#06B6D4);color:#0A0B10"><i data-lucide="save" class="h-3 w-3"></i>保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= SCRIPTS ================= -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script>
+lucide.createIcons();
+
+// Toggle dropdowns
+function toggle(id) {
+  const el = document.getElementById(id);
+  const wasHidden = el.classList.contains('hidden');
+  ['bell','user','note'].forEach(x => document.getElementById(x)?.classList.add('hidden'));
+  if (wasHidden) el.classList.remove('hidden');
+}
+
+// Close dropdowns on outside click
+document.addEventListener('click', e => {
+  ['bell','user'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const btn = el.parentElement.querySelector('button');
+    if (!el.contains(e.target) && !btn.contains(e.target)) el.classList.add('hidden');
+  });
+});
+
+// Restore Neo avatar preference from localStorage (set by 个人设置 in 03-hall-daily.html)
+(function() {
+  const saved = localStorage.getItem('neoAvatar');
+  if (saved === 'female') {
+    document.querySelectorAll('.neo-avatar, .neo-brand-avatar').forEach(img => img.src = '../assets/neo-female.svg');
+  }
+})();
+
+// Generate empty heatmap grid (4 weeks x 7 days)
+(function(){
+  const grid = document.getElementById('heatmap');
+  for (let w = 0; w < 4; w++) {
+    const col = document.createElement('div');
+    col.className = 'flex flex-col gap-1';
+    for (let d = 0; d < 7; d++) {
+      const cell = document.createElement('div');
+      cell.className = 'h-3 w-3 rounded-[3px]';
+      cell.style.cssText = 'background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05)';
+      col.appendChild(cell);
+    }
+    grid.appendChild(col);
+  }
+})();
+</script>
+</body>
+</html>

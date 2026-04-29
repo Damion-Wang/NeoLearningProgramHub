@@ -3,7 +3,7 @@
 # Playwright MCP cache and root-level screenshots
 .playwright-mcp/
 /*.png
-DM_Temp/prototype/ref/neo-female-options/
+00-public/product-V-0.2.0-D-4.0/prototype/ref/neo-female-options/
 
 # HBR Coaching Real Leaders 音频素材（本地工作目录，~3.37GB 不入仓库）
 # 保留：清单 JSON / Markdown / 下载脚本 / RSS feed.xml

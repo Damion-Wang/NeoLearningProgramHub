@@ -1,4 +1,4 @@
-# 00-public/ -- 正式交付物
+# 00-public/ — 正式交付物
 
 项目的正式产出文档。所有经过审阅确认的设计文档、分析报告、决策记录归档在此。
 
@@ -6,33 +6,41 @@
 
 | 目录 | 说明 | 当前状态 |
 |------|------|---------|
-| [1-product/](1-product/) | 产品设计（需求规格、功能树、功能流程、UX规格、原型） | spec v0.4.0 已审阅完成 |
-| [2-business/](2-business/) | 商业分析（市场调研、战略、财务、验证） | 已基于 v0.3.3 更新 |
-| [3-tech/](3-tech/) | 技术分析与设计（现有技术栈分析、coaching-skills 项目分析） | 分析完成 |
-| [4-decisions/](4-decisions/) | ADR 决策记录 + 主题决策包 | 6 ADR + 1 底层建设期决策包（2026-04-26） |
-| [5-process/](5-process/) | 过程记录（设计日志、辩论记录、Backlog） | 持续更新 |
-| [6-content/](6-content/) | 课程内容参考（FLM 17 份管理学脚本、GROW 12 份教练素材、AOM 样例） | 有效 |
+| [product-V-0.2.0-D-4.0/](product-V-0.2.0-D-4.0/) | ★ D-4.0 已审阅 spec + feature-tree + 原型 | 冻结快照 |
+| [product-V-0.2.0-D-5.0/](product-V-0.2.0-D-5.0/) | ★ D-5.0 v0.5.0 全文 + backlog + 元规划 | §1-§9 完成 / §10 待写 |
+| [2-business/](2-business/) | 商业分析（市场调研、战略、财务、验证、品牌）| 已基于 v0.3.3 更新 |
+| [3-tech/](3-tech/) | 技术分析与设计（现有技术栈、coaching-skills 项目）| 分析完成 |
+| [4-decisions/](4-decisions/) | ADR + 主题决策包 | 6 ADR + 1 底层建设期决策包（2026-04-26） |
+| [5-process/](5-process/) | 过程记录（设计日志、辩论、Backlog） | 持续更新 |
+| [6-content/](6-content/) | 课程内容参考（FLM 17 份 + GROW 12 份 + AOM 样例）| 有效 |
 
 ## 核心文件
 
-- **需求规格**：[1-product/spec/design/requirements-v0.4.0.md](1-product/spec/design/requirements-v0.4.0.md) — 当前 spec 总纲（v0.4.0，2026-04-22 审阅完成）
-- **功能树**：[1-product/feature-tree/](1-product/feature-tree/) — 10 份功能树（v0.4.0 对齐版）
+- **D-5.0 主体文档**：[product-V-0.2.0-D-5.0/plan/03-v0.5.0-full.md](product-V-0.2.0-D-5.0/plan/03-v0.5.0-full.md) — v0.5.0 全文（§1-§9）
+- **D-4.0 总纲**：[product-V-0.2.0-D-4.0/spec/requirements-v0.4.0.md](product-V-0.2.0-D-4.0/spec/requirements-v0.4.0.md) — v0.4.0 总纲（已冻结）
+- **D-4.0 功能树**：[product-V-0.2.0-D-4.0/feature-tree/](product-V-0.2.0-D-4.0/feature-tree/) — 10 份功能树（v0.4.0 对齐版）
 - **底层建设决策**：[4-decisions/底层建设期-2026-04-26/](4-decisions/底层建设期-2026-04-26/) — 50 题 PM 决策 + 三大底层原则 + Neo Soul final + 数据集与样本
 
 ## 当前阶段
 
 ```
-spec v0.4.0（已完成 2026-04-22）→ 原型 v1.1（已完成 2026-04-23）→ 底层建设期 know-how 库（已完成 2026-04-26）→ 平台 / Agent 构建（待启动）
+spec v0.4.0（已完成 2026-04-22）→ 原型 v1.1（已完成 2026-04-23）
+  → 底层建设期 know-how 库（已完成 2026-04-26）
+    → V-0.2.0 / D-5.0 spec 推进期（当前，§1-§9 完成）
+      → 平台 / Agent 构建（待启动）
 ```
 
 ## 重要约定
 
-- spec 改动方式：直接编辑 [已审阅] 文件；新设计追加"反向补充：XXX"章节，不删原内容
-- ADR 编号格式：001-简短标题.md
+- **D-4.0 文件已冻结**，新设计走 D-5.0
+- 文件名已去 `[已审阅]` 前缀（路径 `product-V-0.2.0-D-4.0/` 即表达已审阅状态）
+- ADR 编号格式：`001-简短标题.md`
 - 主题决策包：跨多议题决策集合，按 `主题-YYYY-MM-DD/` 命名（见 4-decisions/）
+- 版本号体系：详见根 [CLAUDE.md](../CLAUDE.md) "版本号体系" 章节
 
 ## 历史变更
 
+- **2026-04-29**：V-0.2.0 目录归集（D-4.0 + D-5.0）+ 临时区拆分（02-temp + claude-workspace）+ 退出底层建设期
 - **2026-04-26**：底层建设期决策包建立（50 题 PM 决策 + 12 份 know-how 文档）
 - **2026-04-23**：原型 v1.1 交付 + spec 反向补充 18 条
 - **2026-04-22**：spec v0.4.0 全部审阅完成

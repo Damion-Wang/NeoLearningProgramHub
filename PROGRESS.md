@@ -43,7 +43,7 @@
   - DM_Temp 内容归档到 5-process/debates/ 和 5-process/journal/
   - 教学素材归档到 6-content/grow-coaching-source/
   - 教室 HTML 参考归档到 01-ref/prototype-references/
-  - 保留 DM_Temp/prototype/build/ + assets/ 作为持续在编基线
+  - 保留 00-public/product-V-0.2.0-D-4.0/prototype/build/ + assets/ 作为持续在编基线
 - [x] **2026-04-23** CLAUDE.md 全面重写：从 SDD 豁免单声明扩展为 AI 入门完整手册（关键路径+核心约束+工作流+Checkpoint）
 - [x] **2026-04-23** 创建 4 个项目级 Skills：
   - `multi-round-debate` — 5 角色辩论生成产品决策
@@ -184,8 +184,76 @@ v0.5.0 全文完成 + 拆分到 spec/design/ 后进入研发对接：
 - 03-v0.5.0-full.md（2843 行,§ 1-§ 9 完整）
 - 04-v0.5.0-backlog.md（标题体系对齐 spec § X.Y.Z）
 - plan/05-v0.5.0-section-7-9.md（§ 9 管理端草稿,待后续合并）
-- 02-temp/review/03-full/（4 维审查 6 个产出文件 + 修复 task list v2）
-- 02-temp/backup/03-v0.5.0-full.backup-2026-04-29.md（修复前完整备份）
+- claude-workspace/review/03-full/（4 维审查 6 个产出文件 + 修复 task list v2）
+- claude-workspace/backup/03-v0.5.0-full.backup-2026-04-29.md（修复前完整备份）
+
+---
+
+## Phase 14 · V-0.2.0 目录归集 + 临时区拆分（2026-04-29）
+
+**项目命名 + 版本号体系建立**：
+
+- 项目内部名：`AI_TUTOR_PROJECT · 睿学业务规划` → **`20260408睿学program版产品规划`**
+- Git 仓库名（待 GitLab 后台改名）：`AI_TUTOR_PROJECT` → **`NeoLearningProgramPRD`**
+- 版本号体系启用：
+  - 产品版本 V-0.2.0（用到 6 月交付）
+  - 文档版本 D-4.0（已审阅 spec + 原型）/ D-5.0（v0.5.0 plan/ 草稿）
+  - 三件套表达：① 顶层目录名 `product-V-0.2.0-D-X.0/` ② 文件 frontmatter ③ VERSION.md / README banner
+
+**目录重组**：
+
+- 新建 3 个目录：
+  - `00-public/product-V-0.2.0-D-4.0/`（spec 17 + feature-tree 13 + prototype 11）
+  - `00-public/product-V-0.2.0-D-5.0/`（plan 6）
+  - `claude-workspace/`（Claude 临时区）
+- 迁移文件 ≈ 54 项：
+  - 1-product/spec/design/* → product-V-0.2.0-D-4.0/spec/（去 [已审阅] 前缀）
+  - 1-product/feature-tree/* → product-V-0.2.0-D-4.0/feature-tree/
+  - DM_Temp/prototype/* → product-V-0.2.0-D-4.0/prototype/
+  - 1-product/spec/plan/* → product-V-0.2.0-D-5.0/plan/
+  - 02-temp 5 项 → claude-workspace/（cleanup-plan + 2 gap-report + backup + review/03-full）
+  - common/03-ai-brand.md 跨目录 → 2-business/brand/ai-brand.md
+- 删除 2 个目录：`00-public/1-product/` + `DM_Temp/`
+- 文件名仅去 `[已审阅]` 前缀，其他不动
+
+**临时区职责拆分（核心约束新增）**：
+
+- `02-temp/` = DM 临时区（DM 自己的临时改动、会议笔记、产品思考、未定型笔记）
+- `claude-workspace/` = Claude 临时区（行动规划、gap 报告、备份、审查产出、执行 log）
+- 两区职责清晰分离
+
+**版本元信息加载**：
+
+- 所有 D-4.0 spec / feature-tree 文件加 frontmatter（version + status: reviewed + last-updated）
+- D-5.0 plan/ 文件加 frontmatter（status: draft）
+- D-4.0/spec/learner/07-discovery-library.md 单独 status: unreviewed
+- 11 个 HTML 加版本注释
+- 各级 README + VERSION.md 写明版本号
+
+**引用更新**：
+
+- CLAUDE.md 全部路径引用更新 + "底层建设阶段（当前）" 章节同步改为 "V-0.2.0 / D-5.0 spec 推进期"
+- 顶层 README.md 重写 + 项目改名
+- 00-public/README.md 重写
+- 02-temp/README.md 重写为 DM 区声明
+- claude-workspace/README.md 新建为 Claude 区声明
+- 使用手册.md 重写
+- .gitignore 更新（删 DM_Temp 行 + 加新原型 ref 路径）
+- 2-business/README.md + brand/README.md 加 ai-brand.md 引用
+- .claude/skills/git-push-guard / completion-gate 路径示例更新
+
+**关键产出**：
+
+- claude-workspace/cleanup-plan-2026-04-29.md（v3 方案，3 轮迭代）
+- 00-public/product-V-0.2.0-D-4.0/{README,VERSION,prototype/README}.md（新写）
+- 00-public/product-V-0.2.0-D-5.0/{README,VERSION,plan/README}.md（新写）
+- claude-workspace/backup/old-readmes/（1-product 老 README + DM_Temp 老 README 备份）
+
+**Phase 14 退出阶段**：
+
+- ⏳ Phase 8（DM 待办）：GitLab 后台改名 → 给 Claude 新 URL → set-url + push
+
+---
 
 ## Next Steps · 下一阶段
 
@@ -193,7 +261,11 @@ v0.5.0 全文完成 + 拆分到 spec/design/ 后进入研发对接：
 - § 10 管理端（plan/05 草稿,待 PM 决议后合并 03-full）
 - 修复完成后再次跑 4 维审查 skill diff 模式验证（可选）
 
-待启动 · Phase 14 · 平台 / Agent 构建：
+待 DM 操作：
+- GitLab 后台改名 `AI_TUTOR_PROJECT` → `NeoLearningProgramPRD`
+- 改完给新 URL，Claude 执行 `git remote set-url origin <new>` + push
+
+待启动 · Phase 15 · 平台 / Agent 构建：
 - 按 v0.5.0 spec + 底层建设期 know-how 输出工程接口文档
 - 选定开发栈
 - 试点客户 onboarding（60 家天使用户中 3-5 家先行）

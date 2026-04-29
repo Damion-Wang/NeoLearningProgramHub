@@ -120,7 +120,7 @@ DM（PM）已锁定 4 项协作偏好：
 
 ## 相关 spec / 决策
 
-- `00-public/1-product/spec/design/requirements-v0.4.0.md` — 当前 spec（不动，待研发后再 sync）
+- `00-public/product-V-0.2.0-D-4.0/spec/requirements-v0.4.0.md` — 当前 spec（不动，待研发后再 sync）
 - `00-public/4-decisions/` — 其他 ADR 决策记录
 - `02-temp/0424-spec-diff-decisions.md` — 0424 决策 31 条（**保持原决定，本调研不重评**）
 
