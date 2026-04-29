@@ -23,6 +23,7 @@
 | `backup/03-v0.5.0-full.backup-2026-04-29.md` | 03-full 修复前备份（4 维审查后用）| 2026-04-29 |
 | `backup/old-readmes/` | 1-product 老 README + DM_Temp 老 README 备份 | 2026-04-29 |
 | `review/03-full/` | 4 维审查 6 文件（00-summary + 01-04 维审查 + repair-tasks）| 2026-04-29 |
+| `archive/2026-04/` | 2026-04 历史归档（10 个文件：0420/0424 会议系列 6 + 早期规划/反馈 4）| 2026-04-29 归档（原在 02-temp/） |
 
 ## 行为约定
 

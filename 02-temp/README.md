@@ -1,53 +1,40 @@
 # 02-temp/ — DM 临时工作区
 
 > **拥有者**：DM（王鼎明）
-> **最近一次重整**：2026-04-29（拆分出 Claude 临时区）
-> **目的**：DM 自己的临时改动、会议笔记、产品思考、未定型笔记
+> **最近一次重整**：2026-04-29
+> **目的**：DM 自己实际打字写的临时改动、笔记、思考
+
+## 当前状态
+
+**目录基本为空**——DM 实际很少自己打字写文件，绝大多数"会议笔记 / 分析 / 规划"都是 Claude 帮 DM 整理的，已统一归到 `claude-workspace/`。
+
+```
+02-temp/
+├── README.md       本文件
+└── record/         （空目录，预留 DM 自己手写笔记）
+```
 
 ## 与 claude-workspace/ 的关系
 
 | 目录 | 拥有者 | 内容性质 |
 |------|--------|---------|
-| `02-temp/` | **DM** | DM 自己的临时改动、会议笔记、产品思考、未定型笔记 |
-| `claude-workspace/` | **Claude** | 行动规划、gap 报告、备份、审查产出、执行 log |
+| `02-temp/` | **DM** | DM 亲手打字的临时改动 / 笔记（不是 Claude 整理的产出） |
+| `claude-workspace/` | **Claude** | 行动规划、会议分析、gap 报告、备份、审查产出、执行 log |
 
-两个临时区职责清晰分离。Claude 不应往本目录写新文件；DM 不需要往 claude-workspace/ 改内容（但可以读）。
+**判断标准**：按"实际打字的人"分流，而非内容主题。即使是 DM 视角的产品思考，只要是 Claude 整理成 markdown 的，归 `claude-workspace/`。
 
-## 当前内容（2026-04-29 分流后）
+## 历史归档去向（2026-04-29 大整理）
 
-| 文件 | 说明 | 来源日期 |
-|------|------|---------|
-| [0424-meeting-analysis.md](0424-meeting-analysis.md) | 0424 会议初步分析 | 2026-04-24 |
-| [0424-spec-diff.md](0424-spec-diff.md) | 0424 会议 spec 差异 31 条 | 2026-04-24 |
-| [0424-spec-diff-decisions.md](0424-spec-diff-decisions.md) | 0424 决策 31 条最终结果 | 2026-04-24 |
-| [2026-04-20-meeting-notes.md](2026-04-20-meeting-notes.md) | 0420 会议记录 | 2026-04-20 |
-| [2026-04-20-leo-neo-design.md](2026-04-20-leo-neo-design.md) | 0420 Leo/Neo 设计草案（Leo 已取消）| 2026-04-20 |
-| [2026-04-20-v31-analysis.md](2026-04-20-v31-analysis.md) | 0420 v3.1 分析 | 2026-04-20 |
-| [v3-founder-feedback.md](v3-founder-feedback.md) | 创始人反馈记录 | 2026-04 |
-| [pending-updates.md](pending-updates.md) | DM 早期产品笔记（豆包对话内化）| 2026-04-13 |
-| [requirements-restructure-plan.md](requirements-restructure-plan.md) | DM 早期产品思考（v2 → v3 重构）| 2026-04-13 |
-| [project-cleanup-plan.md](project-cleanup-plan.md) | 项目清理计划（DM + Claude 共创）| 2026-04-23 |
-| record/ | 记录草稿目录（空） | — |
-
-## 2026-04-29 分流移出去的内容（迁到 claude-workspace/）
-
-| 原 02-temp 路径 | 新位置 |
-|----------------|--------|
-| `cleanup-plan-2026-04-29.md` | `claude-workspace/cleanup-plan-2026-04-29.md` |
-| `product-cleanup-gap-report.md` | `claude-workspace/product-cleanup-gap-report.md` |
-| `spec-cleanup-gap-report.md` | `claude-workspace/spec-cleanup-gap-report.md` |
-| `backup/03-v0.5.0-full.backup-2026-04-29.md` | `claude-workspace/backup/` |
-| `review/03-full/` (6 文件) | `claude-workspace/review/03-full/` |
-
-## 历史归档（2026-04-26）
-
-20 份 0426-* 调研产出已归档到 `00-public/4-decisions/底层建设期-2026-04-26/`：
-- 5 份 r1-r5 外部调研 + 4 份 gap 内化扫描 + 1 份综合 gap → `6-原始调研/`
-- 3 份 a2-a5 早期规划 + 4 份 v0.1 早期文档 + 2 份 brief → `7-早期文档/`（已被 50 题决策替代）
+原 02-temp 中的 17 项已分流：
+- 5 项移到 `claude-workspace/`（cleanup-plan + 2 gap-report + backup + review/03-full）
+- 10 项历史 Claude 产出移到 `claude-workspace/archive/2026-04/`：
+  - 0424 会议系列 3 个（meeting-analysis / spec-diff / spec-diff-decisions）
+  - 0420 会议系列 3 个（leo-neo-design / meeting-notes / v31-analysis）
+  - v3-founder-feedback / pending-updates / requirements-restructure-plan / project-cleanup-plan
 
 ## 清理原则
 
 - 本目录文件经确认后应归档到 `00-public/` 对应目录
-- 早期版本文件归档时必须标注「已被替代 → 新位置」
 - 季度末整体归档为 `02-temp/archived-YYYY-Q*/`
-- 本目录**不参与版本号体系**（不属于产品文档），不需要 frontmatter
+- 本目录**不参与版本号体系**，不需要 frontmatter
+- DM 想写新笔记直接 `02-temp/<name>.md` 即可

@@ -212,6 +212,7 @@ v0.5.0 全文完成 + 拆分到 spec/design/ 后进入研发对接：
   - DM_Temp/prototype/* → product-V-0.2.0-D-4.0/prototype/
   - 1-product/spec/plan/* → product-V-0.2.0-D-5.0/plan/
   - 02-temp 5 项 → claude-workspace/（cleanup-plan + 2 gap-report + backup + review/03-full）
+  - 02-temp 余下 10 项二次分流 → claude-workspace/archive/2026-04/（DM 复审发现这些"会议笔记"实为 Claude 整理产出，不是 DM 自己打字写的）
   - common/03-ai-brand.md 跨目录 → 2-business/brand/ai-brand.md
 - 删除 2 个目录：`00-public/1-product/` + `DM_Temp/`
 - 文件名仅去 `[已审阅]` 前缀，其他不动
