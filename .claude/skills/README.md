@@ -10,6 +10,7 @@
 | [session-opener](./session-opener/SKILL.md) | 新对话开场显示项目状态续接 | session 第一次工具调用前自动 | 1 屏仪表盘消息 |
 | [completion-gate](./completion-gate/SKILL.md) | 用户声明"完成"时强制 4 件套核验 | 用户说"完成/搞定/done" | 门控报告 + 跳过日志 |
 | [git-push-guard](./git-push-guard/SKILL.md) | 推送前 cleanup + progress + readme 三联检查 | 用户说"推 git/commit/push" | 三联报告 + 续写草稿 |
+| [long-doc-review](./long-doc-review/SKILL.md) | 长文本 4 维审查全量（fan-out 4 Agent + 合并 + PM 决议 + 自动修复 + diff）| 用户说"审查/4 维审查/long-doc-review" | `02-temp/review/{file}/` 6 文件 + 修复 log + 备份 |
 
 ## 使用建议
 
