@@ -1,4 +1,4 @@
-# AI Teacher (AI老师) — Quantitative Demand Signals Report
+# AI Teacher (睿学) — Quantitative Demand Signals Report
 
 **Date:** 2026-04-08
 **Confidence:** Medium (web research synthesis; China-specific granular data is limited)

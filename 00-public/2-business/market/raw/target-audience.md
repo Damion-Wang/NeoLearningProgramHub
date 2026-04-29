@@ -1,4 +1,4 @@
-# Target Audience Research: AI老师 — AI-Native Corporate Training Platform
+# Target Audience Research: 睿学 — AI-Native Corporate Training Platform
 
 > Research Date: 2026-04-08
 > Market: China, Large Enterprises (2000+ employees)
@@ -256,7 +256,7 @@
 
 | Gap | Why It Matters | Suggested Method |
 |---|---|---|
-| **具体完课率数据** | 需要量化"AI老师"相对于视频课程的提升空间 | 客户访谈、绚星内部数据 |
+| **具体完课率数据** | 需要量化"睿学"相对于视频课程的提升空间 | 客户访谈、绚星内部数据 |
 | **AI培训产品付费意愿** | 不确定客户是否愿意为"AI自适应"单独付费还是期望平台内置 | 定价测试、conjoint分析 |
 | **培训经理对AI的真实态度** | "AI替代培训师"可能引发抵触而非欢迎 | 深度访谈(n=10+) |
 | **企业微信 vs 钉钉 vs 飞书的市场份额分布（按目标客群）** | 决定优先集成哪个平台 | 客户调研、公开数据 |
@@ -267,11 +267,11 @@
 
 ---
 
-## 10. Strategic Implications for AI老师
+## 10. Strategic Implications for 睿学
 
 Based on this research:
 
-1. **Lead with ROI visibility, not AI novelty** — 64%企业因"效果不可视"砍预算，AI老师的核心价值叙事应该是"让培训效果可量化"，而不是"我们用了AI"
+1. **Lead with ROI visibility, not AI novelty** — 64%企业因"效果不可视"砍预算，睿学的核心价值叙事应该是"让培训效果可量化"，而不是"我们用了AI"
 
 2. **Solve the Training Manager's political problem** — 培训经理最需要的是向上汇报的"武器"：可视化的业务影响数据、自动生成的ROI报告
 
@@ -281,7 +281,7 @@ Based on this research:
 
 5. **Budget timing matters** — Q4是次年预算规划期，最佳的营销节奏应在Q3开始预热
 
-6. **Training Ops staff are internal champions** — 培训运营人员是日常用户，如果AI老师能大幅减少他们的手动工作量，他们会成为内部推动者
+6. **Training Ops staff are internal champions** — 培训运营人员是日常用户，如果睿学能大幅减少他们的手动工作量，他们会成为内部推动者
 
 7. **Beware the "AI fear" among training managers** — 需要定位为"赋能培训经理"而非"替代培训经理"
 

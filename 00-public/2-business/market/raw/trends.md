@@ -2,7 +2,7 @@
 
 **Date:** 2026-04-08
 **Scope:** Technology trends, investment signals, behavioral shifts, expert predictions for AI-native corporate training
-**Context:** Strategic input for "AI Teacher" (AI老师) product — an AI-native corporate training delivery platform targeting large Chinese enterprises (2000+ employees)
+**Context:** Strategic input for "AI Teacher" (睿学) product — an AI-native corporate training delivery platform targeting large Chinese enterprises (2000+ employees)
 
 ---
 
@@ -63,7 +63,7 @@
 
 | Attribute | Detail |
 |-----------|--------|
-| **Trend** | LLM inference costs have dropped dramatically, enabling cost-effective deployment of AI tutors at scale |
+| **Trend** | LLM inference costs have dropped dramatically, enabling cost-effective deployment of NeoLearnings at scale |
 | **Adoption Stage** | Mature — cost reductions already realized |
 | **Impact** | Makes personalized AI-driven learning economically viable for large-scale enterprise deployment; enables lightweight customized solutions |
 | **Timeline** | Ongoing acceleration |
@@ -287,7 +287,7 @@
 | **Regulatory environment for AI-generated training content in China** | MEDIUM | Need legal review of 生成式AI管理办法 implications for enterprise training use case |
 | **ROI data from Chinese enterprises using AI in training** | MEDIUM | Josh Bersin data is Western-centric; need China-specific case studies |
 | **Specific Gartner/IDC reports on China corporate e-learning** | MEDIUM | Search returned primarily global reports; need to check IDC China and Gartner China for local data |
-| **Employee/learner satisfaction data with AI tutoring** | MEDIUM | Most data is from vendors (potentially biased); need independent research |
+| **Employee/learner satisfaction data with NeoLearninging** | MEDIUM | Most data is from vendors (potentially biased); need independent research |
 | **Integration requirements with major Chinese enterprise platforms** | LOW-MEDIUM | Map DingTalk, WeCom, Feishu, and Chinese HR system integration requirements |
 
 ---

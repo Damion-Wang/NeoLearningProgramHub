@@ -339,7 +339,7 @@ LLM 用 **function calls** 主动在两层之间移动数据：
 
 ### Khanmigo
 - [Khanmigo.ai 主页](https://www.khanmigo.ai/)
-- [CBS News · Sal Khan AI tutor in Indiana high school](https://www.cbsnews.com/news/how-khanmigo-works-in-school-classrooms-60-minutes/)
+- [CBS News · Sal Khan NeoLearning in Indiana high school](https://www.cbsnews.com/news/how-khanmigo-works-in-school-classrooms-60-minutes/)
 - [Khan Academy · Khanmigo for students](https://www.khanacademy.org/college-careers-more/khanmigo-for-students)
 
 ### RAG 防幻觉

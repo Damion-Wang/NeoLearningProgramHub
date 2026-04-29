@@ -1,7 +1,7 @@
 # Competitor GTM Analysis: China Corporate Training / Enterprise Learning Market
 
 **Date:** 2026-04-08
-**Purpose:** Inform AI Teacher (AI老师) go-to-market strategy
+**Purpose:** Inform AI Teacher (睿学) go-to-market strategy
 **Parent Company Advantage:** YXT/云学堂 has 1,700+ enterprise clients + 100-person sales team across 12 regional offices
 
 ---

@@ -96,8 +96,8 @@ last-updated: 2026-04-29
 ## 反向补充：品牌名统一
 
 - **主品牌名**：睿学（中文主视觉）
-- **英文副名**：AI TUTOR（所有 Topbar 版本号旁的小字）
-- **弃用**："AI 老师"（早期工作名，不再使用）
+- **英文副名**：NeoLearning（所有 Topbar 版本号旁的小字）
+- **弃用**："睿学"（早期工作名，不再使用）
 
 所有 Topbar 显示："睿学"+版本号（如 "睿学 · v0.4"）。
 
@@ -152,7 +152,7 @@ Chat Header 只显示：
 - AI 名字（Neo / Ora）
 
 **不显示**：
-- 副标题（如"AI TUTOR · Activity 内 · AOM 脚本"——内部术语）
+- 副标题（如"NeoLearning · Activity 内 · AOM 脚本"——内部术语）
 - 状态 chip（如"授课中""辅导中"）
 
 **Chat 消息**：不加业务标签（如 MENTOR·OPENING / 授课·SCO 06），只保留头像+气泡+时间戳。

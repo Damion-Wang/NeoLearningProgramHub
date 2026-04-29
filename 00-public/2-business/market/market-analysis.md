@@ -1,4 +1,4 @@
-# AI Teacher (AI老师) -- 市场综合分析报告
+# AI Teacher (睿学) -- 市场综合分析报告
 
 > **Phase:** 3 - Discovery Synthesis
 > **Project:** ai-teacher

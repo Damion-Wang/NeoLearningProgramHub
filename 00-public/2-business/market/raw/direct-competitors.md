@@ -1,4 +1,4 @@
-# AI Teacher (AI老师) — Direct Competitor Analysis
+# AI Teacher (睿学) — Direct Competitor Analysis
 
 **Date:** 2026-04-08
 **Confidence:** Medium (based on web research; pricing and revenue data often not publicly disclosed)
@@ -81,7 +81,7 @@ The China AI corporate training market is transitioning from "concept populariza
 
 **AI Features (AIGC产品矩阵, 8 products):**
 - AI陪练 (role-play practice)
-- AI导师 (AI tutor/mentor)
+- AI导师 (NeoLearning/mentor)
 - AI考试 (intelligent exam)
 - AI做课 (AI course creation)
 - AI运营 (AI-powered training operations)
@@ -191,7 +191,7 @@ The China AI corporate training market is transitioning from "concept populariza
 - Practice-based learning methodology aligns with AI Teacher vision
 - Strong VC backing (Tencent, Hillhouse)
 - Mobile-first design
-- AI feedback on practice is closest to "AI tutoring" among competitors
+- AI feedback on practice is closest to "NeoLearninging" among competitors
 
 **Weaknesses:**
 - China revenue is minority (~40%) — may not be fully optimized for China market needs
@@ -317,7 +317,7 @@ The China AI corporate training market is transitioning from "concept populariza
 - AI Q&A tutoring within OMO classroom
 - AI-powered knowledge management and retrieval
 - Intelligent Q&A
-- OMO classroom (offline + online with AI tutoring, exams)
+- OMO classroom (offline + online with NeoLearninging, exams)
 
 **Pricing Model:** SaaS, enterprise WeChat integration; likely lower price point targeting SMEs and mid-market. Estimated RMB 20K-200K/year [Estimate]
 

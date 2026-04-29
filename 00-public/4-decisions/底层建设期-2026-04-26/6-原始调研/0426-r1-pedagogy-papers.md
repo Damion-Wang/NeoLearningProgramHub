@@ -19,7 +19,7 @@
 6. **Hattie Visible Learning** → Feedback (d=0.73) / Teacher credibility (d=0.90) / Collective efficacy (d=1.57) 是顶级影响因子
 7. **Dweck Growth Mindset** → 表扬 effort 不表扬 ability（与 Neo Soul V2 "真实优先于温柔" 契合）
 8. **Carl Rogers** → unconditional positive regard / empathy / congruence——**与 Neo "老师要逼" 立场有冲突**（debate 种子）
-9. **Khanmigo** → AI tutor 用 Socratic method 引导（不给答案）
+9. **Khanmigo** → NeoLearning 用 Socratic method 引导（不给答案）
 
 ---
 
@@ -314,7 +314,7 @@ Rogers 是教育人本主义的核心，但 Neo 不是治疗师。
 
 ### 11.1 最新研究方向（待补深度调研）
 - AI tutoring 有效性
-- AI 老师 vs 真人对照
+- 睿学 vs 真人对照
 - LLM 在 K-12 / 高等教育 / 企业教育的差异
 
 ### 11.2 已知资源

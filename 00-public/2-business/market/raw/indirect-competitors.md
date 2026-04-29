@@ -1,5 +1,5 @@
 # Indirect Competitors, Substitutes & Alternative Approaches
-## AI Corporate Training in China — AI Teacher (AI老师) Competitive Landscape
+## AI Corporate Training in China — AI Teacher (睿学) Competitive Landscape
 
 **Research Date:** 2026-04-08
 **Sources:** Web search (April 2026), industry reports, platform official sites

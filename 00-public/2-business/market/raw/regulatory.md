@@ -1,4 +1,4 @@
-# AI Teacher (AI老师) - 中国监管合规研究报告
+# AI Teacher (睿学) - 中国监管合规研究报告
 
 > 研究日期: 2026-04-08
 > 产品: AI-native 企业培训平台 (LLM/AI Agent 驱动的自适应学习)

@@ -112,7 +112,7 @@
 
 ### 5.1 Khan Academy 公开样本
 - Khanmigo 1:1 tutoring 公开 demo（CBS 60 Minutes 报道含片段）
-- 适合作为 AI 老师的对照参考
+- 适合作为 睿学的对照参考
 
 ### 5.2 Coursera / LinkedIn Learning 公开片段
 - 不偏 1:1 辅导，偏录播课
@@ -166,7 +166,7 @@
 | 4 | Jean-Francois Cousin "overwhelmed client" | YouTube WBECS | 学员焦虑场景 | 30 min | ⭐⭐⭐⭐ |
 | 5 | BJ Levy PCC sample | YouTube ICF | Life coaching 范例 | 30 min | ⭐⭐⭐ |
 | 6 | Marshall Goldsmith 公开 session | YouTube / 公开演讲 | CEO 级辅导哲学 | 60 min | ⭐⭐⭐ |
-| 7 | Khanmigo CBS 60 Minutes 片段 | YouTube | AI 老师对照 | 15 min | ⭐⭐⭐ |
+| 7 | Khanmigo CBS 60 Minutes 片段 | YouTube | 睿学对照 | 15 min | ⭐⭐⭐ |
 | 8-10 | Coaching for Leaders 优秀单集 | Apple Podcasts | 教练访谈（非 1:1）| 40 min | ⭐⭐⭐ |
 
 → **推荐转写总量：~10-15 小时音频**
@@ -212,7 +212,7 @@
 | **教练修正自己提问** | 多源真人样本 | 启发 Neo "修正"机制 | P1 |
 | **学员防御识别 + 修复** | HBR / ICF | 启发 Neo 信号识别 | P1 |
 | **Marshall Goldsmith 反馈方法** | 公开 session | 启发 Neo 反馈策略 | P2 |
-| **Khanmigo AI 老师对照** | CBS / Khan Academy | 直接对标参考 | P0 |
+| **Khanmigo 睿学对照** | CBS / Khan Academy | 直接对标参考 | P0 |
 
 ---
 

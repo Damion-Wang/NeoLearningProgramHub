@@ -1,4 +1,4 @@
-# Distribution Channel Analysis: AI Teacher (AI老师)
+# Distribution Channel Analysis: AI Teacher (睿学)
 
 **Date:** 2026-04-08
 **Purpose:** Identify and rank viable distribution channels for AI Teacher targeting large Chinese enterprises (2000+ employees)

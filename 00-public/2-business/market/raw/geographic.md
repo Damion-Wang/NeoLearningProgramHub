@@ -1,4 +1,4 @@
-# AI Teacher (AI老师) — Geographic & Market Entry Analysis
+# AI Teacher (睿学) — Geographic & Market Entry Analysis
 
 **Date:** 2026-04-08
 **Confidence:** Medium (synthesis of web research, public enterprise data, and industry reports; some figures require triangulation)

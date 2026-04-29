@@ -56,7 +56,7 @@ ConvoLearn 给出的 6 维度：
 
 - 大学 AI 课 1,197 conversations
 - 用 dialogue act labeling schema 标注
-- → **真实学员对 AI 老师的反应模式**——HR 访谈不能完全替代的视角
+- → **真实学员对 睿学的反应模式**——HR 访谈不能完全替代的视角
 
 ---
 

@@ -1,4 +1,4 @@
-# AI老师 (AI Teacher) — 数据置信度仪表盘
+# 睿学 (AI Teacher) — 数据置信度仪表盘
 
 > **Phase:** 3 — Discovery 数据质量审计
 > **Date:** 2026-04-08

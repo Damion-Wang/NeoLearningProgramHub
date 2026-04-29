@@ -1,4 +1,4 @@
-# AI 老师 — Brainstorm
+# 睿学 — Brainstorm
 
 **Phase:** Phase 2: Brainstorm
 **Project:** ai-teacher

@@ -1,4 +1,4 @@
-# 睿学（AI TUTOR）· MVP 成功标准与北极星指标
+# 睿学（NeoLearning）· MVP 成功标准与北极星指标
 
 > **来源**：抽取自 mvp-definition.md §6（2026-04-09，已归档至 `4-decisions/历史/spec-archive/mvp-definition-2026-04-09.md`）
 > **抽取日期**：2026-04-27

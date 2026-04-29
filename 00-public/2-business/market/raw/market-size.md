@@ -1,4 +1,4 @@
-# AI Teacher (AI老师) — Market Sizing Research Report
+# AI Teacher (睿学) — Market Sizing Research Report
 
 **Date:** 2026-04-08
 **Confidence:** Medium-High (based on web research from multiple sources; some figures require triangulation)
