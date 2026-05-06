@@ -4,13 +4,18 @@
 
 ## 项目状态
 
-**V-0.2.0 / D-5.0 spec 推进期**
+**V-0.2.0 / D-5.0 spec 拆分 + 全文件审阅完成（2026-05-06）**
 
 - D-4.0 已审阅 spec 冻结（2026-04-22 完成 v0.4.0 全部 16 模块审阅）
 - 原型 v1.1 交付（2026-04-23）
 - 底层建设期 know-how 库完成（2026-04-26）—— 50 题 PM 决策 + Neo Soul final + 三大底层原则
-- D-5.0 全文 §1-§9 完成 + 4 维审查 + 53 任务全量修复（2026-04-29）
-- §10 管理端待写
+- D-5.0 §1-§10 全文完成 + 4 维审查 + 53 任务全量修复（2026-04-29 ~ 05-04）
+- D-5.0 全局审查 + 5 角色 Debate + DM 反向讨论 + 修订执行（2026-05-04）
+- ✅ **D-5.0 spec 拆分**：6822 行 03-full → `spec/` 6 板块 17 文件（2026-05-05）
+- ✅ **全文件单文件审阅 + 全部标记【已审阅】**：学员端 6/6 + 管理端 5/5 + foundation/lifecycle/global 全部（2026-05-06）
+- ✅ **关键术语校准**：Activity 完成事件 / 完成事件层 / 综合报告 / 学员端各场域统一布局 / 互动次数 等
+- ✅ **5 场域 × 5 卡片矩阵全局重做**（Truth Source = § 9.4.4.2 / lecture/practice/recap 三场域口径一致）
+- ⏳ **下一步**：D-5.0 freeze + 进入 D-6.0 / 研发对接
 
 关键数字：6 月 MVP、30-40 人/项目、项目周期可配（典型 6 个月）。
 
@@ -41,13 +46,20 @@
 - Neo Soul final（5 文件结构 + Teacher Credibility 顶级 + 不当舔狗）
 - Memory 设计原则 + 数据集与样本（含 HBR 91 集）
 
-### 2. D-5.0 在写 spec（v0.5.0 全文）
+### 2. D-5.0 spec（拆分后 / 主体）
 
-[`00-public/product-V-0.2.0-D-5.0/plan/03-v0.5.0-full.md`](00-public/product-V-0.2.0-D-5.0/plan/03-v0.5.0-full.md) — v0.5.0 主体文档（§1-§9 完成，§10 待写）
+[`00-public/product-V-0.2.0-D-5.0/spec/`](00-public/product-V-0.2.0-D-5.0/spec/) — **6 板块 17 文件 / 全部【已审阅】**
 
-配套：
-- [`04-v0.5.0-backlog.md`](00-public/product-V-0.2.0-D-5.0/plan/04-v0.5.0-backlog.md) — 实施 backlog
-- [`02-v0.5.0-outline.md`](00-public/product-V-0.2.0-D-5.0/plan/02-v0.5.0-outline.md) — 1500 字大纲
+| 板块 | 文件 |
+|---|---|
+| 01-vision | 愿景 |
+| 02-foundation | personas / methodology / roles-and-ports / data-model |
+| 03-lifecycle | pre-learning / learning / completion |
+| 04-global | user-global / platform-global |
+| 05-learner | overview / hub / lecture / practice / recap / cross-context |
+| 06-management | overview / home / report-center / program-config / message |
+
+源文件：[`plan/03-v0.5.0-full.md`](00-public/product-V-0.2.0-D-5.0/plan/03-v0.5.0-full.md) — § 1-§ 10 单体（与 spec/ 同步）
 
 ### 3. D-4.0 已审阅 spec（v0.4.0 冻结基线）
 

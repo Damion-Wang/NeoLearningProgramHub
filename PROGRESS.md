@@ -256,17 +256,150 @@ v0.5.0 全文完成 + 拆分到 spec/design/ 后进入研发对接：
 
 ---
 
+---
+
+## Phase 15 · § 10 管理端全章 + backlog 清理（2026-05-04）
+
+**§ 10 管理端 5 模块 + Ora Truth Source 全部完成**：
+
+- § 10.1 管理端总览（含 § 10.1.6 Ora 双实例 + 4 类卡片 Truth Source）
+- § 10.2 首页 Home（看板区 3 维度 + Home Ora 区 + 系统约束 + GUI 布局）
+- § 10.3 报告中心 Report Center（报告库 + 报告编辑 + Report Ora + ChatBI 6 类图表 + 模板生成样例）
+- § 10.4 项目配置 Program Config（双态切换 + 6 配置板块 + 系统约束 + GUI 布局）
+- § 10.5 消息中心 Message（消息管理 + 消息编辑 + 草稿 + 定时发送 + 8 项审查修复）
+
+**所有 § 10 子节均经 10 题 PM 审查 + 修复闭环**（每模块 10 题确认 / 决议落地）。
+
+**红线校准**（影响 § 3.4.4 + § 9.3.3）：
+- 完成态 recap raw → 管理端可读 / 非完成态不读
+- 6 维画像可见性同步：管理端独立 widget = § 10.2.2.2 (4) 个体详情面板内的快照
+
+**backlog + section 清理**（2026-05-04 / 按 CLAUDE.md "三层文档定位"原则）：
+- backlog 从 835 行 → 删除（D 板块 6 题嵌入 § 10.4.4 / § 4.2 4 场域调整嵌入 § 4.2 章末）
+- section 从 750+ 行 → 删除（全部已合并到 03-full）
+- 03-full 现 6829 行 / **唯一持久 spec**
+- full 中 10 处反向引用全部清理（无残留 backlog 链接）
+
+**关键产出**：
+- 03-v0.5.0-full.md（6829 行 / § 1-§ 10 全部完成）
+- 备份：claude-workspace/backup/03-v0.5.0-full.backup-2026-05-04-pre-10.X-merge.md（5 个）+ pre-cleanup 备份
+- plan/ 目录精简到 4 文件：README + 01-元规划 + 02-outline + 03-full
+
+---
+
+---
+
+## Phase 16 · 03-full 全局审查 + Debate + 临时文件归档（2026-05-04）
+
+**4 维 fan-out 审查**（4 Agent 并行）：
+- A · PM 功能合理性（8 问题 / 7 冗余 / 5 缺失）
+- B · Tech Lead 研发可理解度（10 问题 / 5 概念模糊 / 5 接口不清）
+- C · New Reader 可读性（10 卡点 / 282 处跨章引用 / 10 修订建议）
+- D · Doc Architect 丛书拆分（推荐方案 1 · 按角色端口拆 3 册 · A 总册 + B 学员端 + C 管理端）
+
+**5 角色 Debate**（创始 PM / 资深研发 / 新手研发 / 客户 HR / 文档架构师）针对 7 核心争议议题。
+
+**DM 反向讨论**（基于 CLAUDE.md 11 条 + memory + session 风格）挑战 Debate 结论 / 4 项反转：
+- 议题 2 recap 双层 + milestone 保留（DM 反 Debate 砍议）
+- 议题 4 管理端 Home Ora 区保留（Debate 把 Home 误读为学员端）
+- 议题 5 Report Ora 4 路 拒绝盲砍 / 先做 5 路 × HR 工作流映射表
+- 议题 6 技术对接附录留 03-full 附录（DM 反 Debate 拆议）
+
+**修订执行**：
+- Q4 § 6.1.2 + § 6.1.3 阶段命名合并 + 统一后续标题
+- Q5 § 2.3 banner forward refs 删
+- Q8 跨章引用减少 18 处（6 dead refs 修 + 12 forward refs 删）
+- 03-full 6829 → 6822 行
+
+**临时文件清理**：
+- 04-backlog + 05-section（先期清理 / 备份在 `claude-workspace/backup/`）
+- 01 元规划 + 02 大纲 归档（plan/ 仅留 03-full + README）
+
+**审查报告**：`claude-workspace/audit-report-2026-05-04.md`（全审查 + Debate + DM 反向 + 修订执行清单）
+
+---
+
+---
+
+## Phase 17 · D-5.0 spec 拆分 + 全文件审阅 + 全局术语校准（2026-05-05 ~ 05-06）
+
+**spec 拆分到 6 板块 17 文件**（2026-05-05）：
+
+- 03-full（6822 行单体）→ 拆为 `spec/` 目录树：
+  - `01-vision【已审阅】.md`
+  - `02-foundation/`（01-personas / 02-methodology / 03-roles-and-ports / 04-data-model 4 个）
+  - `03-lifecycle/`（01-pre-learning / 02-learning / 03-completion 3 个）
+  - `04-global/`（01-user-global / 02-platform-global 2 个）
+  - `05-learner/`（01-overview / 02-hub / 03-lecture / 04-practice / 05-recap / 06-cross-context 6 个）
+  - `06-management/`（01-overview / 02-home / 03-report-center / 04-program-config / 05-message 5 个）
+- 每个文件加 frontmatter（version + product-version + doc-version + source + source-range + source-section）
+
+**全文件单文件审阅 + 全部标记【已审阅】**（2026-05-05 ~ 05-06）：
+
+学员端 6/6 + 管理端 5/5 + 02/03/04 板块全部已审阅。每个文件 review 流程：
+- Agent 单文件审查（4-7 维：术语 / 章节编号 / 跨文件引用 / 一致性 / 结构 / 等）
+- DM 拍板必修 + 建议 + 提示议题
+- 执行修复 + 自检 + rename 标记
+
+**关键术语校准**（DM 多轮决议 / 全 spec 同步）：
+
+- **AOM 完成事件命名**：`recap milestone` → `Course 完成事件`（2026-05-05）→ `Activity 完成事件`（2026-05-06 因歧义校准）
+- **报告内容层命名**：`首聊层` / `首聊报告` → `完成事件层`（2026-05-06）/ `首聊回顾`（学员可见标题）→ `首次回顾`
+- **报告体系双层命名**：`综合汇报` → `综合报告`（平台模板名） vs `结项报告`（业务环节名）
+- **场域口径**：`4 场域` 旧口径 → `学习核心层 3 场域 + 大厅`
+- **token / 互动量**：统一为 `互动次数`
+- **不分子态** → `不再细分`
+- 同步 glossary（claude-workspace/spec-review-2026-05-05/）+ 03-full 源文件
+
+**5 场域 × 5 卡片矩阵全局重做**（2026-05-06 / Truth Source = § 9.4.4.2）：
+
+DM 多次决议综合 → lecture/practice/recap 三场域卡片产出口径全局一致：
+
+| 场域 \ 卡片 | askUQ | 课程 | 高光 | 任务 | 知识 |
+|---|:--:|:--:|:--:|:--:|:--:|
+| 大厅 Hall | ★ | ★ | ✓ | ★ | ★ |
+| lecture | — | — | ★ | ✓ | — |
+| practice | ✓ | — | ★ | — | ✓ |
+| recap | ✓ | — | ✓ | ★ | ✓ |
+
+各场域 spec 内同步加 4 阶段/4 状态卡片矩阵子表（lecture § 9.3.1.4.5 / practice § 9.3.2.7.3 / recap § 9.3.3.9.2 后）。
+
+**关键 spec 改动**（按文件）：
+
+- **05-recap**：多版本/打标范畴外移 / Activity 完成事件全文 56 处 / 完成事件层重命名 / 4 状态卡片矩阵
+- **06-cross-context**：5×5 卡片矩阵全局重做 + 备注重写 / 跨文件引用错位 2 处
+- **04-practice**：4 阶段卡片矩阵新增 / 知识卡 — → ✓（复盘+报告）/ practice 多版本+打标范畴外移
+- **02-hub**：line 160 三类卡片仅大厅推 → 仅课程卡仅大厅推
+- **03-report-center**：综合汇报→综合报告 9 处 / 4 类卡片补"卡" / milestone vs Activity 完成事件 区分 / 模板选择字段提前到第 2 项
+- **04-program-config**：人员名单变更精细化（总数锁 + 未登录可换 + 已登录不可换 / 沿用 § 6.6.5 SOP）/ 沿用→详见 / Q25-Q30 删 / admin/HR 表述统一 / 品牌色明确"本期不开放"
+- **05-message**：投递状态统一 / CTA 编号校齐 / § 10.1.6.1 引用校齐 / P7+P8 优化
+- **03-lifecycle/02-learning**：§ 6.6.6 删品牌色（与 § 10.4 解决冲突）
+
+**全局同步影响**：
+
+- **plan/03-v0.5.0-full.md**（源文件）反向同步全部上述改动
+- **claude-workspace/spec-review-2026-05-05/glossary.md** 决议表更新
+- **plan/README.md** 综合汇报 → 综合报告
+
+**关键产出**：
+
+- spec/ 目录树 17 文件全部【已审阅】（学员端 6 / 管理端 5 / foundation 4 / lifecycle 3 / global 2 / vision 1）
+- claude-workspace/spec-review-2026-05-05/ 决议表 + 各文件 review log
+- claude-workspace/backup/ 多份 pre-merge / pre-split 备份
+
+---
+
 ## Next Steps · 下一阶段
 
-进行中 · Phase 13 余下：
-- § 10 管理端（plan/05 草稿,待 PM 决议后合并 03-full）
-- 修复完成后再次跑 4 维审查 skill diff 模式验证（可选）
+**待启动**：
+- D-5.0 freeze 后 → 03-full 拆分丛书（拆分方案待 DM 出 / Doc Architect 推荐按角色端口拆 3 册）
+- 进入 D-6.0 / V-0.2.1-D-1.0 研发对接
 
-待 DM 操作：
+**待 DM 操作**：
 - GitLab 后台改名 `AI_TUTOR_PROJECT` → `NeoLearningProgramPRD`
 - 改完给新 URL，Claude 执行 `git remote set-url origin <new>` + push
 
-待启动 · Phase 15 · 平台 / Agent 构建：
+**待启动 · Phase 16 · 平台 / Agent 构建**：
 - 按 v0.5.0 spec + 底层建设期 know-how 输出工程接口文档
 - 选定开发栈
 - 试点客户 onboarding（60 家天使用户中 3-5 家先行）
