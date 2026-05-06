@@ -1,8 +1,12 @@
 ---
-purpose: spec 修复阶段术语决议参考表（single source of truth）
-status: DM 已决议（2026-05-06 v2）
-version: v2
+version: V-0.2.0-D-5.0
+product-version: V-0.2.0
+doc-version: D-5.0
+glossary-version: v2
+status: reviewed
 last-updated: 2026-05-06
+purpose: D-5.0 spec 术语决议参考表 (single source of truth)
+numbering: per-file-independent
 ---
 
 # 术语决议表 · 2026-05-06 (v2)

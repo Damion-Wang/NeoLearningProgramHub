@@ -5,8 +5,6 @@ doc-version: D-5.0
 status: draft
 last-updated: 2026-05-06
 numbering: per-file-independent
-source: plan/03-v0.5.0-full.md
-source-range: lines 1538-1662
 source-section: § 6.6
 ---
 

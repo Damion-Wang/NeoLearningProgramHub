@@ -4,8 +4,6 @@ product-version: V-0.2.0
 doc-version: D-5.0
 status: draft
 last-updated: 2026-05-06
-source: plan/03-v0.5.0-full.md
-source-range: lines 2838-3306
 source-section: § 9.3.1
 numbering: per-file-independent
 ---

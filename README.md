@@ -1,21 +1,23 @@
 # 20260408睿学program版产品规划 — NeoLearningProgramPRD
 
-> 睿学（NeoLearning）是面向企业培训场景的 AI-Native 学习陪伴系统，通过"大厅 + 四间场域"的空间模型，让 30-40 名基层管理者在项目周期内（典型 6 个月）获得 1v1 老师 Neo 的持续陪伴、结构化课程的自适应学习、沉浸式对练的行为训练，最终产出可举证的行为改变报告。本期交付 = **睿学培训项目（NeoLearningProgram）**。
+> 睿学（NeoLearning）是面向企业培训场景的 AI-Native 学习陪伴系统，通过"大厅 + 3 学习场域"的空间模型，让 30-40 名基层管理者在项目周期内（典型 6 个月）获得 1v1 老师 Neo 的持续陪伴、结构化课程的自适应学习、沉浸式对练的行为训练，最终产出可举证的行为改变报告。本期交付 = **睿学培训项目（NeoLearningProgram）**。
 
 ## 项目状态
 
-**V-0.2.0 / D-5.0 spec 拆分 + 全文件审阅完成（2026-05-06）**
+**V-0.2.0 / D-5.0 spec 已交付（2026-05-06）** ✅
 
 - D-4.0 已审阅 spec 冻结（2026-04-22 完成 v0.4.0 全部 16 模块审阅）
 - 原型 v1.1 交付（2026-04-23）
 - 底层建设期 know-how 库完成（2026-04-26）—— 50 题 PM 决策 + Neo Soul final + 三大底层原则
 - D-5.0 §1-§10 全文完成 + 4 维审查 + 53 任务全量修复（2026-04-29 ~ 05-04）
 - D-5.0 全局审查 + 5 角色 Debate + DM 反向讨论 + 修订执行（2026-05-04）
-- ✅ **D-5.0 spec 拆分**：6822 行 03-full → `spec/` 6 板块 17 文件（2026-05-05）
-- ✅ **全文件单文件审阅 + 全部标记【已审阅】**：学员端 6/6 + 管理端 5/5 + foundation/lifecycle/global 全部（2026-05-06）
-- ✅ **关键术语校准**：Activity 完成事件 / 完成事件层 / 综合报告 / 学员端各场域统一布局 / 互动次数 等
-- ✅ **5 场域 × 5 卡片矩阵全局重做**（Truth Source = [05-learner/06-cross-context § 4.4.2] / lecture/practice/recap 三场域口径一致）
-- ⏳ **下一步**：D-5.0 freeze + 进入 D-6.0 / 研发对接
+- D-5.0 spec 拆分（6 板块 17 文件）+ 全文件审阅 + 术语校准（2026-05-05）
+- ✅ **D-5.0 全量术语校准 + 编号重建 + 引用替换**（2026-05-06）
+  - 术语 v2 决议表（162 新增 / 27 校准 / 8 议题决议 / + § 15 管理端架构）
+  - 21 章节文件**独立编号**（每文件 § 1 起 / 393 章节标题重写）
+  - 622 引用按 `[文件名 § X.Y]` 格式跨文件 / `§ X.Y` 自引用
+  - **03-full 退场** + claude-workspace 过程档清理
+- ⏳ **下一步**：等 DM 启动 D-6.0 / 研发对接
 
 关键数字：6 月 MVP、30-40 人/项目、项目周期可配（典型 6 个月）。
 
@@ -25,14 +27,14 @@
 
 | 角色 | 位置 | 职责 |
 |------|------|------|
-| **Neo** | 大厅 + 四间场域（学员端唯一）| 1v1 老师 —— **按场域差异化**调用 7 动作（讲授/解惑/讨论/考研/练习/追问/反思） |
+| **Neo** | 大厅 + 3 学习场域（学员端唯一）| 1v1 老师 —— **按场域差异化**调用 7 动作（讲授/解惑/讨论/考核/练习/追问/反思） |
 | **Actor**（演员） | 对练场域 | 剧本驱动的角色扮演对象 |
-| **导演** | 对练场域（后台） | 剧本驱动，指挥 Actor |
+| **Director**（导演） | 对练场域（后台） | 剧本驱动，指挥 Actor |
 | **Ora** | 管理端 | 数据解读、报告辅助、证据追溯 |
 
 ⚠️ **2026-04-26 起 Leo 完全取消**——学员端只有 Neo。Neo 在大厅展现 Coach 能力（陪伴/Bloom引导/情绪感知），进入场域展现 Tutor 能力（结构化教学/AOM 脚本）。
 
-四间场域：**授课(Lecture)** / **对练(Practice)** / **调研(Inquiry)** / **报告(Report)**
+学员端布局 = **大厅（中枢层 / 不算场域）+ 3 学习场域**（lecture / practice / recap）；未来场域 inquiry 等留口。
 
 ---
 
@@ -46,12 +48,13 @@
 - Neo Soul final（5 文件结构 + Teacher Credibility 顶级 + 不当舔狗）
 - Memory 设计原则 + 数据集与样本（含 HBR 91 集）
 
-### 2. D-5.0 spec（拆分后 / 主体）
+### 2. D-5.0 spec（最终交付 ★）
 
-[`00-public/product-V-0.2.0-D-5.0/spec/`](00-public/product-V-0.2.0-D-5.0/spec/) — **6 板块 17 文件 / 全部【已审阅】**
+[`00-public/product-V-0.2.0-D-5.0/spec/`](00-public/product-V-0.2.0-D-5.0/spec/) — **22 文件 / 全部【已审阅】 / 每文件独立编号**
 
 | 板块 | 文件 |
 |---|---|
+| **00-glossary** | 术语决议表 v2（15 节 / ~250 术语 / 含 § 15 管理端架构）|
 | 01-vision | 愿景 |
 | 02-foundation | personas / methodology / roles-and-ports / data-model |
 | 03-lifecycle | pre-learning / learning / completion |
@@ -59,7 +62,7 @@
 | 05-learner | overview / hub / lecture / practice / recap / cross-context |
 | 06-management | overview / home / report-center / program-config / message |
 
-源文件：[`plan/03-v0.5.0-full.md`](00-public/product-V-0.2.0-D-5.0/plan/03-v0.5.0-full.md) — § 1-§ 10 单体（与 spec/ 同步）
+跨文件引用格式：`[05-learner/05-recap § 1.2.3]`；自引用格式：`§ 1.2.3`。
 
 ### 3. D-4.0 已审阅 spec（v0.4.0 冻结基线）
 
@@ -117,8 +120,8 @@
 │   │   ├── prototype/                     (11 HTML + assets)
 │   │   ├── README.md
 │   │   └── VERSION.md
-│   ├── product-V-0.2.0-D-5.0/             ★ D-5.0 在写 spec（草稿）
-│   │   ├── plan/                          (6 文件：01-元规划 + 02-大纲 + 03-全文 + 04-backlog + 05-section-7-9 + README)
+│   ├── product-V-0.2.0-D-5.0/             ★ D-5.0 已交付 spec
+│   │   ├── spec/                          (22 文件 / 含 00-glossary 术语决议表)
 │   │   ├── README.md
 │   │   └── VERSION.md
 │   ├── 2-business/                        商业分析（含 brand/ai-brand.md）
@@ -128,7 +131,6 @@
 │   └── 6-content/                         课程内容（FLM 17 份 + GROW 12 份）
 ├── 01-ref/                                外部参考（coaching-skills 项目 / demo 录屏）
 ├── 02-temp/                               DM 临时区（DM 自己的临时改动、会议笔记、产品思考）
-├── claude-workspace/                      Claude 临时区（行动规划、gap 报告、备份、审查产出）
 ├── .claude/                               Claude Code 配置 + 5 个项目级 Skill
 ├── CLAUDE.md                              项目协作宪法
 ├── PROGRESS.md                            阶段性进展
@@ -144,4 +146,3 @@
 - **设计过程** → [00-public/5-process/](00-public/5-process/)
 - **使用手册** → [使用手册.md](使用手册.md)
 - **AI 协作约定** → [CLAUDE.md](CLAUDE.md)
-- **审查与修复历史** → [claude-workspace/review/03-full/](claude-workspace/review/03-full/)

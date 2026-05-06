@@ -4,8 +4,6 @@ product-version: V-0.2.0
 doc-version: D-5.0
 status: draft
 last-updated: 2026-05-06
-source: plan/03-v0.5.0-full.md
-source-range: lines 2811-2837 + lines 4966-5119
 source-section: § 9.3 章首 + § 9.3.0 + § 9.3.4 + § 9.4
 numbering: per-file-independent
 ---
