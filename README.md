@@ -14,7 +14,7 @@
 - ✅ **D-5.0 spec 拆分**：6822 行 03-full → `spec/` 6 板块 17 文件（2026-05-05）
 - ✅ **全文件单文件审阅 + 全部标记【已审阅】**：学员端 6/6 + 管理端 5/5 + foundation/lifecycle/global 全部（2026-05-06）
 - ✅ **关键术语校准**：Activity 完成事件 / 完成事件层 / 综合报告 / 学员端各场域统一布局 / 互动次数 等
-- ✅ **5 场域 × 5 卡片矩阵全局重做**（Truth Source = § 9.4.4.2 / lecture/practice/recap 三场域口径一致）
+- ✅ **5 场域 × 5 卡片矩阵全局重做**（Truth Source = [05-learner/06-cross-context § 4.4.2] / lecture/practice/recap 三场域口径一致）
 - ⏳ **下一步**：D-5.0 freeze + 进入 D-6.0 / 研发对接
 
 关键数字：6 月 MVP、30-40 人/项目、项目周期可配（典型 6 个月）。

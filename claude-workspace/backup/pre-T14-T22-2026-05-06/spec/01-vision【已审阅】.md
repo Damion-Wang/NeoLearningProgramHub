@@ -3,18 +3,17 @@ version: V-0.2.0-D-5.0
 product-version: V-0.2.0
 doc-version: D-5.0
 status: draft
-last-updated: 2026-05-06
+last-updated: 2026-05-05
 source: plan/03-v0.5.0-full.md
 source-range: lines 9-90
 source-section: § 1 愿景
-numbering: per-file-independent
 ---
 
 ## 1 · 愿景
 
 > 本章定义产品愿景——一句话定位 / 解决什么问题 / 三方价值 / 关键设计承诺 / 是什么不是什么 / 当前不做 / 内容示例约定。
 
-> **术语速查**（本章高频术语 / 完整术语列表见 [02-foundation/04-data-model § 1.2.1]）：
+> **术语速查**（本章高频术语 / 完整术语列表见 § 5.2.1）：
 > - **睿学 / NeoLearning**：产品名 / 面向企业的 AI-Native 培训交付平台
 > - **睿学培训项目 / NeoLearningProgram**：本期交付项目
 > - **Neo**：学员端唯一 AI（1v1 老师 AI 孪生）
@@ -54,15 +53,15 @@ numbering: per-file-independent
 
 > **关于"三方价值"**：
 > - **HR 与项目运营 = 同一组人**（共用管理端 / 协同工作）—— 上表保留三方独立的"价值视角"区分（HR 看战略价值 / 项目运营看运营效率）；实际人员组织上是一体，冲突时以 HR 视角为准
-> - **项目运营 vs 产品运营**：项目运营 = 派到具体项目的运营角色（客户侧 / 与 HR 协作）；产品运营 = 睿学平台侧的产品级运营（供应商侧）/ 详见 [02-foundation/03-roles-and-ports § 1.4]
+> - **项目运营 vs 产品运营**：项目运营 = 派到具体项目的运营角色（客户侧 / 与 HR 协作）；产品运营 = 睿学平台侧的产品级运营（供应商侧）/ 详见 § 4.4
 
 ### 1.4 关键设计承诺
 
-睿学不是 e-Learning + ChatBot 的简单组合——它由三个底层原则支撑（详见 [02-foundation/02-methodology § 1]、[02-foundation/01-personas § 1]）：
+睿学不是 e-Learning + ChatBot 的简单组合——它由三个底层原则支撑（详见 § 2、§ 3）：
 
-- **第一性原理** · Neo = 1v1 老师的 AI 孪生，不是聊天伙伴 / 不是百科全书 / 不是应声虫 → [02-foundation/02-methodology § 1]
-- **懂你** · Neo 越用越懂学员，跨场域 / 跨课程 / 跨会话 都记得，不重置 → [02-foundation/01-personas § 1.4.1]
-- **像人** · 每个 Agent 有自己的画像 + 立场 + voice，绝不无理由表扬，错时直接指出 → [02-foundation/01-personas § 1.4.2]
+- **第一性原理** · Neo = 1v1 老师的 AI 孪生，不是聊天伙伴 / 不是百科全书 / 不是应声虫 → § 2
+- **懂你** · Neo 越用越懂学员，跨场域 / 跨课程 / 跨会话 都记得，不重置 → § 3.4.1
+- **像人** · 每个 Agent 有自己的画像 + 立场 + voice，绝不无理由表扬，错时直接指出 → § 3.4.2
 
 ### 1.5 是什么 · 不是什么
 
@@ -83,7 +82,7 @@ numbering: per-file-independent
 
 ### 1.7 内容示例约定（基层管理为例）
 
-本文后续涉及具体内容主题的章节（如 [02-foundation/04-data-model § 1.5] Course 清单 / [03-lifecycle/01-pre-learning § 1.3] 试运行体验 / [03-lifecycle/01-pre-learning § 1.5]-[03-lifecycle/02-learning § 1] 学习期描述等），统一以**基层管理者能力发展**作为示例 Course Pack，便于上下文一致、读者建立具体场景感。
+本文后续涉及具体内容主题的章节（如 § 5.5 Course 清单 / § 6.3 试运行体验 / § 6.5-§ 6.6 学习期描述等），统一以**基层管理者能力发展**作为示例 Course Pack，便于上下文一致、读者建立具体场景感。
 
 需要明确：
 - 这是**首个试点项目**的内容选择（demo + 早期客户试运行使用）
