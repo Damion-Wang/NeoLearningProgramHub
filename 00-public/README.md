@@ -7,7 +7,8 @@
 | 目录 | 说明 | 当前状态 |
 |------|------|---------|
 | [product-V-0.2.0-D-4.0/](product-V-0.2.0-D-4.0/) | ★ D-4.0 已审阅 spec + feature-tree + 原型 | 冻结快照 |
-| [product-V-0.2.0-D-5.0/](product-V-0.2.0-D-5.0/) | ★ D-5.0 v0.5.0 全文 + backlog + 元规划 | §1-§9 完成 / §10 待写 |
+| [product-V-0.2.0-D-5.0/](product-V-0.2.0-D-5.0/) | ★ D-5.0 spec 22 文件（含 00-glossary）+ CHANGELOG | 已交付（2026-05-06）|
+| [product-V-0.2.0-D-5.1/](product-V-0.2.0-D-5.1/) | ★ D-5.1 recap 单文件迭代（替代 D-5.0/spec/05-learner/05-recap）| draft（2026-05-08）|
 | [2-business/](2-business/) | 商业分析（市场调研、战略、财务、验证、品牌）| 已基于 v0.3.3 更新 |
 | [3-tech/](3-tech/) | 技术分析与设计（现有技术栈、coaching-skills 项目）| 分析完成 |
 | [4-decisions/](4-decisions/) | ADR + 主题决策包 | 6 ADR + 1 底层建设期决策包（2026-04-26） |
@@ -16,6 +17,7 @@
 
 ## 核心文件
 
+- **D-5.1 recap（最新增量）**：[product-V-0.2.0-D-5.1/05-recap.md](product-V-0.2.0-D-5.1/05-recap.md) — 替代 D-5.0/spec/05-learner/05-recap（其他 21 文件仍以 D-5.0 为准）
 - **D-5.0 主体 spec**：[product-V-0.2.0-D-5.0/spec/](product-V-0.2.0-D-5.0/spec/) — 22 文件（21 章节 + 00-glossary 术语表 / 全部【已审阅】 / 每文件独立编号）
 - **D-4.0 总纲**：[product-V-0.2.0-D-4.0/spec/requirements-v0.4.0.md](product-V-0.2.0-D-4.0/spec/requirements-v0.4.0.md) — v0.4.0 总纲（已冻结）
 - **D-4.0 功能树**：[product-V-0.2.0-D-4.0/feature-tree/](product-V-0.2.0-D-4.0/feature-tree/) — 10 份功能树（v0.4.0 对齐版）
@@ -40,6 +42,7 @@ spec v0.4.0（已完成 2026-04-22）→ 原型 v1.1（已完成 2026-04-23）
 
 ## 历史变更
 
+- **2026-05-08**：D-5.1 recap 单文件增量交付（替代 D-5.0/spec/05-learner/05-recap）—— 报告 5 章 → 6 章 / 第 3-4 章定位重排（学得=能力提升 / 表现=上课状态）/ Neo 双层语气 / 行动建议便签化
 - **2026-05-06**：D-5.0 全量术语校准 + 编号重建 + 引用替换 + 03-full 退场 + claude-workspace 过程档清理（spec/ 22 文件最终交付）
 - **2026-04-29**：V-0.2.0 目录归集（D-4.0 + D-5.0）+ 退出底层建设期
 - **2026-04-26**：底层建设期决策包建立（50 题 PM 决策 + 12 份 know-how 文档）

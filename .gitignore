@@ -1,4 +1,5 @@
 .claude/rules/sdd/
+.claude/settings.local.json
 
 # Playwright MCP cache and root-level screenshots
 .playwright-mcp/
