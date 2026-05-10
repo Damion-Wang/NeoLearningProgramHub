@@ -13,3 +13,6 @@
 00-public/4-decisions/底层建设期-2026-04-26/5-数据集与样本/HBR-audio/audio/
 *.mp3
 00-public/4-decisions/底层建设期-2026-04-26/5-数据集与样本/HBR-audio/download.log
+
+# 视频参考资料（GitHub 100MB 单文件硬限制 + 50MB 推荐）
+01-ref/demo/*.mp4
