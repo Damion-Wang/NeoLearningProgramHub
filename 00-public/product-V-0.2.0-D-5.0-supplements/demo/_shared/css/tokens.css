@@ -1,0 +1,119 @@
+/* ============================================================
+   _shared/css/tokens.css · 全局设计变量
+   双模式（亮米白橙 / 暗 D 浅紫炭）· 6 页统一引入
+   v1.3 抽取来源：hall.html 78 vars + proconfig 独有 --bg-glow-4
+   ============================================================ */
+
+:root,
+[data-theme="light"] {
+  /* === Light · 米白橙 === */
+  --bg-app:        #FAF7F2;
+  --bg-cream:      #FAF7F2;
+  --bg-card:       #FFFFFF;
+  --bg-card-solid: #FFFFFF;
+  --glass-card:    rgba(255,255,255,0.62);
+  --bg-soft:       #F5F1EA;
+  --bg-glow-1:     rgba(217,119,87,0.22);
+  --bg-glow-2:     rgba(184,95,56,0.16);
+  --bg-glow-3:     rgba(245,184,149,0.14);
+
+  --ink-1:         #1F1A17;
+  --ink-2:         #5C544E;
+  --ink-3:         #8E867F;
+  --ink-4:         #C4BCB4;
+  --ink-5:         #E5DFD7;
+
+  --accent:        #D97757;
+  --accent-rgb:    217,119,87;
+  --accent-hover:  #C8694B;
+  --accent-soft:   #F5E5DC;
+  --accent-2:      #B85F38;
+  --accent-2-rgb:  184,95,56;
+
+  --emerald:       #10B981;
+  --info:          #4A7C9D;
+  --warn:          #D89B3B;
+  --error:         #C0392B;
+  --error-soft:    #FBEAE7;
+  --success:       #4F8B5C;
+
+  --grad-brand:    linear-gradient(135deg, #D97757 0%, #B85F38 100%);
+  --grad-cta:      linear-gradient(135deg, #D97757 0%, #B85F38 100%);
+  --drawer-bg:     #FFFFFF;
+
+  --hairline:      rgba(31,26,23,0.08);
+  --hairline-2:    rgba(31,26,23,0.14);
+  --hairline-top:  rgba(255,255,255,0.85);
+
+  --shadow-card:   0 1px 2px rgba(31,26,23,0.04), 0 4px 16px rgba(31,26,23,0.04);
+  --shadow-pop:    0 4px 12px rgba(31,26,23,0.06), 0 16px 48px rgba(31,26,23,0.08);
+
+  --inset-highlight: rgba(255,255,255,0.6);
+  --glow-accent:   0 0 24px rgba(var(--accent-rgb),0.18);
+  --glow-accent-2: 0 0 24px rgba(var(--accent-2-rgb),0.16);
+
+  /* heatmap 5 段调色板（亮模式：橙降饱和） */
+  --heat-0:        #F8EDE0;
+  --heat-1:        #EFD3B5;
+  --heat-2:        #DEAE83;
+  --heat-3:        #C28455;
+  --heat-4:        #99613A;
+
+  --radius:        12px;
+  --topbar-h:      56px;
+  --sidenav-w:     64px;
+}
+
+[data-theme="dark"] {
+  /* === Dark · D 浅紫炭（取自 logo 紫叶） === */
+  --bg-app:        #221C2D;
+  --bg-cream:      #221C2D;
+  --bg-card:       #2B2438;
+  --bg-card-solid: #2B2438;
+  --glass-card:    rgba(255,255,255,0.05);
+  --bg-soft:       #322940;
+  --bg-glow-1:     rgba(167,139,250,0.32);
+  --bg-glow-2:     rgba(139,92,246,0.24);
+  --bg-glow-3:     rgba(196,181,253,0.16);
+  --bg-glow-4:     rgba(91,46,205,0.20);   /* 深紫底层过渡 · 仅 dark 用 */
+
+  --ink-1:         rgba(243,239,250,0.96);
+  --ink-2:         rgba(243,239,250,0.72);
+  --ink-3:         rgba(243,239,250,0.46);
+  --ink-4:         rgba(243,239,250,0.28);
+  --ink-5:         rgba(243,239,250,0.16);
+
+  --accent:        #C4B5FD;
+  --accent-rgb:    196,181,253;
+  --accent-hover:  #DDD6FE;
+  --accent-soft:   rgba(196,181,253,0.14);
+  --accent-2:      #A78BFA;
+  --accent-2-rgb:  167,139,250;
+
+  --error:         #F87171;
+  --warn:          #FBBF24;
+  --success:       #34D399;
+  --info:          #60A5FA;
+
+  --grad-brand:    linear-gradient(135deg, #C4B5FD 0%, #A78BFA 100%);
+  --grad-cta:      linear-gradient(135deg, #A78BFA 0%, #7C3AED 100%);
+  --drawer-bg:     #2B2438;
+
+  --hairline:      rgba(255,255,255,0.08);
+  --hairline-2:    rgba(255,255,255,0.14);
+  --hairline-top:  rgba(255,255,255,0.16);
+
+  --shadow-card:   0 8px 32px rgba(0,0,0,0.40);
+  --shadow-pop:    0 24px 60px rgba(0,0,0,0.55), 0 0 0 1px rgba(0,0,0,0.30);
+
+  --inset-highlight: rgba(255,255,255,0.06);
+  --glow-accent:   0 0 24px rgba(var(--accent-rgb),0.30);
+  --glow-accent-2: 0 0 24px rgba(var(--accent-2-rgb),0.24);
+
+  /* heatmap 5 段调色板（暗模式：violet 透明度递增） */
+  --heat-0:        rgba(255,255,255,0.04);
+  --heat-1:        rgba(167,139,250,0.20);
+  --heat-2:        rgba(167,139,250,0.40);
+  --heat-3:        rgba(196,181,253,0.65);
+  --heat-4:        rgba(196,181,253,0.95);
+}

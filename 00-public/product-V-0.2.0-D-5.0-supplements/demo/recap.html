@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1440, initial-scale=1" />
+  <title>小结 recap · 睿学 NeoLearning</title>
+  <link rel="icon" href="assets/logo.png" type="image/png" />
+  <script>
+    (function(){try{var s=localStorage.getItem('rx-theme')||'light';document.documentElement.setAttribute('data-theme',s);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();
+  </script>
+  <!-- v1.4 · 0 远程依赖（删 Google Fonts · 用本地 inter.css）-->
+  <script src="_shared/js/demo-reset.js?v=18"></script>
+  <link rel="stylesheet" href="_shared/fonts/inter.css" />
+  <link rel="stylesheet" href="_shared/css/tokens.css?v=14" />
+  <link rel="stylesheet" href="_shared/css/topbar.css?v=15" />
+  <style>
+    /* v1.4 · Tokens 已抽至 _shared/css/tokens.css · 仅留页特有规则 */
+    *{box-sizing:border-box;font-family:'Inter','PingFang SC',system-ui,-apple-system,sans-serif;}
+    html,body{margin:0;padding:0;height:100%;}
+    body{
+      background:radial-gradient(ellipse 1100px 800px at 8% 6%,var(--bg-glow-1),transparent 55%),
+        radial-gradient(ellipse 1000px 700px at 95% 90%,var(--bg-glow-2),transparent 55%),
+        radial-gradient(ellipse 600px 400px at 50% 30%,var(--bg-glow-3),transparent 60%),var(--bg-cream);
+      background-attachment:fixed; color:var(--ink-1);
+      font-size:14px; line-height:1.5;
+      min-width:1280px; overflow-x:auto; overflow-y:hidden;
+    }
+    .stage{display:grid;grid-template-rows:56px 1fr;height:100vh;width:100%;}
+    .lecture-col{display:grid;grid-template-rows:56px 1fr;min-height:0;min-width:0;}
+    /* === Topbar === */
+    /* v1.4.1 FIX-11 · topbar 5 元素跟 hall 模板对齐 · grid 4 列（含 port-chip）*/
+    .topbar{display:grid;grid-template-columns:64px auto 1fr auto;align-items:center;background:transparent;border-bottom:1px solid var(--hairline);padding-right:16px;}
+    .port-chip{display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;letter-spacing:0.02em;margin-left:8px;flex-shrink:0;border:1px solid currentColor;background:transparent;}
+    .port-chip-learner{color:var(--accent);}
+    [data-theme="dark"] .port-chip-learner{color:var(--accent);}
+    .topbar-brand{display:flex;align-items:center;justify-content:center;padding:0 14px;cursor:pointer;}
+    .topbar-brand img{width:28px;height:28px;object-fit:contain;filter:drop-shadow(0 0 12px rgba(var(--accent-rgb),0.25));}
+    .topbar-project{display:flex;align-items:center;gap:10px;padding-left:8px;}
+    .topbar-project-name{font-size:14px;font-weight:600;color:var(--ink-1);}
+    .topbar-project-meta{font-size:12px;color:var(--ink-3);}
+    .topbar-actions{display:flex;align-items:center;gap:4px;}
+    /* === Subbar === */
+    .subbar{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;padding:0 16px 0 8px;background:var(--bg-soft);border-bottom:1px solid var(--hairline);}
+    .subbar-left{display:flex;align-items:center;gap:12px;min-width:0;}
+    .subbar-drawer-btn{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;cursor:pointer;color:var(--ink-2);transition:all .15s ease;border:none;background:transparent;}
+    .subbar-drawer-btn:hover{background:var(--bg-card);color:var(--ink-1);}
+    .subbar-activity{font-size:13px;font-weight:600;color:var(--ink-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .subbar-activity-meta{font-size:11px;color:var(--ink-3);margin-left:4px;}
+    .subbar-mode-chip{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:rgba(167,139,250,0.20);border-radius:4px;font-size:10px;font-weight:600;color:#7C3AED;letter-spacing:.4px;}
+    [data-theme="dark"] .subbar-mode-chip{color:var(--accent);}
+    .subbar-timer{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-2);font-feature-settings:'tnum';padding:4px 10px;background:var(--bg-card);border:1px solid var(--hairline);border-radius:999px;}
+    .subbar-timer-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:timerPulse 1.6s ease-in-out infinite;}
+    @keyframes timerPulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+    /* === Main row === */
+    .main-row{display:grid;grid-template-columns:minmax(0,1fr) var(--neo-w,380px);min-height:0;}
+    .lecture-content{position:relative;overflow:hidden;padding:18px 24px;display:flex;align-items:stretch;justify-content:stretch;min-height:0;}
+    .lecture-stage{position:relative;width:100%;height:100%;background:var(--bg-card);border:1px solid var(--hairline);border-radius:14px;box-shadow:var(--shadow-card);overflow:hidden;display:flex;flex-direction:column;}
+    [data-theme="dark"] .lecture-stage{background:var(--bg-card-solid);}
+
+    /* === md-pane (含 callout / 报告头部 / 5 块 / 自由复习层) === */
+    .md-pane{flex:1;overflow-y:auto;padding:36px 60px 60px 60px;color:var(--ink-1);font-size:14px;line-height:1.75;}
+    .md-pane::-webkit-scrollbar{width:6px;}
+    .md-pane::-webkit-scrollbar-thumb{background:var(--ink-5);border-radius:3px;}
+    .md-pane h1{font-size:22px;font-weight:700;margin:0 0 18px 0;color:var(--ink-1);letter-spacing:-.01em;}
+    .md-pane h2{font-size:15px;font-weight:600;margin:28px 0 12px 0;color:var(--ink-1);display:flex;align-items:center;gap:8px;scroll-margin-top:24px;}
+    .md-pane h2::before{content:"";display:inline-block;width:3px;height:14px;background:var(--accent);border-radius:2px;}
+    .md-pane h3{font-size:13px;font-weight:600;margin:14px 0 8px 0;color:var(--ink-2);}
+    .md-pane p{margin:8px 0;color:var(--ink-1);}
+    .md-pane ul,.md-pane ol{margin:8px 0 8px 18px;padding:0;}
+    .md-pane li{margin:6px 0;color:var(--ink-1);line-height:1.65;}
+    .md-pane strong{color:var(--ink-1);font-weight:600;}
+    .md-pane em{color:var(--accent);font-style:normal;font-weight:500;}
+    .md-pane code{background:var(--bg-soft);padding:1px 6px;border-radius:4px;font-size:12px;color:var(--accent-2);}
+    [data-theme="dark"] .md-pane code{color:var(--accent);}
+    .md-pane blockquote{margin:10px 0;padding:10px 14px;background:var(--bg-soft);border-left:3px solid var(--accent);border-radius:6px;color:var(--ink-2);font-size:13px;line-height:1.65;}
+    .md-pane blockquote p{margin:4px 0;color:var(--ink-2);}
+
+    /* === Recap 报告头部 callout box === */
+    .recap-header-callout{padding:14px 18px;border-radius:10px;background:var(--accent-soft);border-left:4px solid var(--accent);font-size:12px;color:var(--ink-2);line-height:1.7;margin:0 0 28px 0;display:flex;flex-direction:column;gap:4px;}
+    .recap-header-callout-line{display:flex;align-items:flex-start;gap:8px;}
+    .recap-header-callout-icon{flex-shrink:0;font-size:14px;}
+    .recap-header-callout-text{flex:1;}
+    .recap-header-callout strong{color:var(--ink-1);}
+    /* 部分态警告 / 有更新红点 */
+    .recap-header-warn{background:rgba(216,155,59,0.10);border-left-color:var(--warn);}
+    .recap-header-warn strong{color:var(--warn);}
+    .recap-header-update{background:rgba(196,181,253,0.10);border-left-color:#7C3AED;}
+    [data-theme="dark"] .recap-header-update{border-left-color:var(--accent);}
+
+    /* === 块标题 highlight 当前 walkstep === */
+    .md-pane h2.walk-current{background:var(--accent-soft);padding:6px 10px;margin-left:-10px;border-radius:8px;transition:background .25s ease;}
+    .md-pane h2.walk-done::after{content:"✓";color:var(--success);font-size:12px;font-weight:700;margin-left:auto;}
+
+    /* === 图 1 互动行为对比柱图 === */
+    .recap-chart{margin:14px 0 18px 0;padding:14px 16px;background:var(--bg-soft);border-radius:10px;border:1px solid var(--hairline);}
+    .recap-chart-label{font-size:11px;color:var(--ink-3);font-weight:600;letter-spacing:.4px;text-transform:uppercase;margin-bottom:10px;}
+    .recap-bar-row{display:grid;grid-template-columns:160px 1fr 40px;align-items:center;gap:10px;font-size:12px;margin:6px 0;}
+    .recap-bar-label{color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .recap-bar-track{height:14px;background:var(--ink-5);border-radius:3px;position:relative;overflow:hidden;}
+    .recap-bar-fill{position:absolute;left:0;top:0;bottom:0;background:var(--accent);border-radius:3px;transition:width .8s cubic-bezier(.4,0,.2,1);}
+    [data-theme="dark"] .recap-bar-fill{background:var(--accent-2);}
+    .recap-bar-value{font-feature-settings:'tnum';color:var(--ink-1);font-weight:600;text-align:right;}
+
+    /* === 图 2 · 6 维画像雷达图（替代旧版进度条 / 整体形态展示） === */
+    .recap-radar{margin:14px 0 18px 0;padding:18px 16px;background:var(--bg-soft);border-radius:10px;border:1px solid var(--hairline);display:flex;align-items:center;gap:24px;}
+    .recap-radar-svg{width:280px;height:280px;flex-shrink:0;}
+    .recap-radar-legend{flex:1;display:flex;flex-direction:column;gap:6px;font-size:12px;}
+    .recap-radar-legend-row{display:flex;align-items:center;gap:8px;color:var(--ink-2);}
+    .recap-radar-legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+    .recap-radar-legend-dot.prev{background:rgba(var(--accent-rgb),0.18);border:1px solid rgba(var(--accent-rgb),0.40);}
+    .recap-radar-legend-dot.curr{background:rgba(var(--accent-rgb),0.55);border:1px solid var(--accent);}
+    .recap-radar-meta{font-size:11px;color:var(--ink-3);margin-top:8px;line-height:1.6;}
+
+    /* === ⑤ 待办任务 · 列表（报告里列出来）+ chat 平行提示 === */
+    .recap-tasks-list{margin:12px 0 14px 0;padding:0 0 0 22px;list-style:decimal;}
+    .recap-tasks-list li{font-size:13px;color:var(--ink-1);line-height:1.75;margin:10px 0;padding-left:6px;}
+    .recap-tasks-list li strong{font-weight:600;}
+    .recap-tasks-list li em{color:var(--accent);font-style:italic;font-weight:500;}
+    .recap-task-tag{display:inline-block;padding:1px 8px;background:var(--accent-soft);color:var(--accent);font-size:10px;font-weight:600;border-radius:4px;margin-right:6px;letter-spacing:.3px;vertical-align:middle;}
+    .recap-task-chat-note{margin:12px 0 6px 0;padding:10px 14px;background:var(--bg-soft);border-left:3px solid var(--ink-3);border-radius:6px;font-size:12px;color:var(--ink-2);line-height:1.65;}
+    .recap-task-chat-note strong{color:var(--ink-1);}
+    /* 旧版 hint 样式保留作 legacy（已被 list 替换 · 防遗留 dom 触发） */
+    .recap-task-hint{padding:12px 14px;background:var(--accent-soft);border-left:3px solid var(--accent);border-radius:6px;font-size:13px;color:var(--ink-1);line-height:1.65;}
+
+    /* === ① 一根线 callout（spec 之外的微调）=== */
+    .recap-pin-summary{margin:14px 0 8px 0;padding:10px 14px;background:rgba(var(--accent-rgb),0.08);border-left:3px solid var(--accent);border-radius:6px;font-size:13px;color:var(--ink-1);line-height:1.65;font-style:italic;}
+    .recap-pin-summary strong{color:var(--accent);font-style:normal;}
+
+    /* === ③ 6 维画像 · 3 段叙事观察（那一刻 + 以前 + 对你的意义）=== */
+    .recap-observations{margin:18px 0 14px 0;display:flex;flex-direction:column;gap:14px;}
+    .recap-observation{padding:14px 16px;background:var(--bg-soft);border-radius:10px;border:1px solid var(--hairline);border-left:3px solid var(--accent);}
+    .recap-observation-dim{font-size:13px;font-weight:600;color:var(--ink-1);margin-bottom:10px;}
+    .recap-observation-dim em{color:var(--accent);font-style:normal;}
+    .recap-observation-row{display:grid;grid-template-columns:80px 1fr;align-items:start;gap:10px;font-size:12.5px;line-height:1.7;padding:5px 0;color:var(--ink-2);}
+    .recap-observation-label{flex-shrink:0;font-size:11px;font-weight:600;color:var(--ink-3);padding-top:2px;}
+    .recap-observation-row.meaning{padding-top:8px;border-top:1px dashed var(--hairline);margin-top:4px;color:var(--ink-1);}
+    .recap-observation-row.meaning .recap-observation-label{color:var(--accent);}
+    .recap-observation-row.meaning .recap-observation-text{color:var(--ink-1);}
+    .recap-observation-text{flex:1;}
+    .recap-observation-text em{color:var(--ink-1);font-style:italic;font-weight:500;}
+    .recap-observation-text strong{font-weight:600;}
+    .recap-unchanged-note{margin:14px 0 6px 0;padding:12px 14px;background:var(--bg-soft);border-left:3px solid var(--ink-4);border-radius:6px;font-size:12.5px;color:var(--ink-2);line-height:1.7;}
+    .recap-unchanged-note strong{color:var(--ink-1);}
+
+    /* [legacy] · ③ v1 attribution 已替换 · 保留 CSS 防遗留 dom 触发 */
+    .recap-attribution{margin:14px 0 8px 0;padding:14px 16px;background:var(--bg-soft);border-radius:10px;border:1px solid var(--hairline);}
+    .recap-attribution-label{font-size:12px;font-weight:600;color:var(--ink-2);margin-bottom:8px;}
+    .recap-attribution-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:12.5px;line-height:1.7;color:var(--ink-2);padding:3px 0;}
+    .recap-attribution-dim{flex-shrink:0;font-weight:600;color:var(--ink-1);min-width:80px;}
+    .recap-attribution-arrow{color:var(--ink-4);font-weight:600;}
+    .recap-attribution-source{color:var(--accent);font-weight:500;}
+    .recap-attribution-note{color:var(--ink-3);font-size:12px;}
+
+    /* === ④ 课前/现在 对照 === */
+    .recap-contrast{margin:16px 0;padding:14px 16px;background:var(--bg-soft);border-radius:10px;border:1px solid var(--hairline);}
+    .recap-contrast-topic{font-size:13px;font-weight:600;color:var(--ink-1);margin-bottom:10px;}
+    .recap-contrast-row{display:grid;grid-template-columns:60px 16px 1fr;align-items:start;gap:8px;font-size:12.5px;line-height:1.7;padding:6px 0;}
+    .recap-contrast-row.before{color:var(--ink-3);}
+    .recap-contrast-row.after{color:var(--ink-1);}
+    .recap-contrast-label{flex-shrink:0;font-weight:600;font-size:11px;padding:2px 0;}
+    .recap-contrast-row.before .recap-contrast-label{color:var(--ink-4);}
+    .recap-contrast-row.after .recap-contrast-label{color:var(--accent);}
+    .recap-contrast-arrow{color:var(--ink-4);font-weight:600;text-align:center;}
+    .recap-contrast-text{flex:1;}
+    .recap-contrast-text em{color:var(--ink-1);font-style:italic;font-weight:500;}
+    .recap-contrast-row.after .recap-contrast-text em{color:var(--accent);font-style:italic;}
+    .recap-contrast-summary{margin:14px 0 6px 0;padding:12px 14px;background:rgba(216,155,59,0.08);border-left:3px solid var(--warn);border-radius:6px;font-size:12.5px;color:var(--ink-1);line-height:1.7;}
+
+    /* === ④ 关键证据 blockquote 嵌套 === */
+    .recap-evidence{margin:14px 0;padding:0 0 0 14px;border-left:3px solid var(--accent);background:var(--bg-soft);border-radius:0 8px 8px 0;padding:12px 14px;}
+    .recap-evidence.warn{border-left-color:var(--warn);background:rgba(216,155,59,0.08);}
+    .recap-evidence-title{font-size:13px;font-weight:600;color:var(--ink-1);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+    .recap-evidence.warn .recap-evidence-title{color:var(--warn);}
+    [data-theme="dark"] .recap-evidence.warn .recap-evidence-title{color:#FBBF24;}
+    .recap-evidence-quote{font-size:13px;color:var(--ink-2);line-height:1.65;font-style:italic;padding-left:12px;border-left:2px solid var(--ink-5);white-space:pre-wrap;}
+
+    /* === ② 走过的轨迹 · 场景应用迁移（v3 · 学员主战场 · 3 个工具卡）=== */
+    .recap-skill-card{margin:18px 0;padding:18px 20px;background:var(--bg-soft);border-radius:12px;border:1px solid var(--hairline);border-left:4px solid var(--accent);}
+    .recap-skill-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+    .recap-skill-icon{font-size:18px;flex-shrink:0;}
+    .recap-skill-name{font-size:15px;font-weight:700;color:var(--ink-1);}
+    .recap-skill-formula{font-size:12px;color:var(--accent);font-weight:500;font-family:'SF Mono',Consolas,monospace;background:var(--accent-soft);padding:3px 10px;border-radius:4px;}
+    .recap-skill-row{display:grid;grid-template-columns:74px 1fr;align-items:start;gap:12px;font-size:13px;line-height:1.75;padding:8px 0;border-top:1px dashed var(--hairline);}
+    .recap-skill-row:first-of-type{border-top:none;padding-top:0;}
+    .recap-skill-row.contrast{background:rgba(var(--accent-rgb),0.05);margin:8px -10px 0 -10px;padding:10px;border-radius:6px;border-top:none;}
+    .recap-skill-label{flex-shrink:0;font-size:11px;font-weight:600;color:var(--ink-3);padding-top:3px;letter-spacing:.3px;}
+    .recap-skill-row.contrast .recap-skill-label{color:var(--accent);}
+    .recap-skill-text{flex:1;color:var(--ink-1);}
+    .recap-skill-text > div{margin:3px 0;}
+    .recap-skill-text strong{font-weight:600;}
+    .recap-skill-text em{color:var(--accent);font-style:italic;font-weight:500;}
+    .recap-skill-source{margin-top:10px;padding-top:8px;border-top:1px dashed var(--hairline);font-size:11px;color:var(--ink-3);font-style:italic;}
+    .recap-skill-source strong{color:var(--ink-2);}
+    .recap-skill-closing{margin:18px 0 6px 0;padding:14px 16px;background:rgba(var(--accent-rgb),0.08);border-left:3px solid var(--accent);border-radius:6px;font-size:13px;color:var(--ink-1);line-height:1.75;}
+
+    /* === ③ 6 维画像 · 简化（v2 · 仅图 + 一句简短）=== */
+    .recap-portrait-brief-intro{margin:8px 0 12px 0;font-size:12px;color:var(--ink-3);font-style:italic;line-height:1.7;padding:8px 12px;background:var(--bg-soft);border-radius:6px;}
+    .recap-portrait-brief-intro strong{color:var(--ink-2);}
+    .recap-portrait-brief-summary{margin:14px 0 6px 0;font-size:12.5px;color:var(--ink-2);line-height:1.7;}
+    .recap-portrait-brief-summary strong{color:var(--ink-1);}
+
+    /* === [legacy] ② v2 问题解决程度评估（已替换为 ② v3 场景应用 · 保留 CSS 防遗留） === */
+    .recap-progress-section{margin:16px 0 14px 0;padding:14px 16px;background:var(--bg-soft);border-radius:10px;border:1px solid var(--hairline);}
+    .recap-progress-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:13px;font-weight:600;}
+    .recap-progress-header-ok{color:var(--success);}
+    .recap-progress-header-warn{color:var(--warn);}
+    .recap-progress-icon{font-size:14px;}
+    .recap-progress-title{color:var(--ink-1);}
+    .recap-progress-header-ok .recap-progress-title{color:var(--success);}
+    .recap-progress-header-warn .recap-progress-title{color:var(--warn);}
+    .recap-progress-list{margin:6px 0 0 0;padding:0 0 0 18px;list-style:none;}
+    .recap-progress-list li{font-size:12.5px;color:var(--ink-2);line-height:1.7;margin:6px 0;position:relative;padding-left:6px;}
+    .recap-progress-list li::before{content:"•";position:absolute;left:-8px;color:var(--ink-4);}
+    .recap-progress-list li strong{color:var(--ink-1);}
+    .recap-progress-list li em{color:var(--accent);font-style:italic;font-weight:500;}
+    .recap-progress-takeaway{margin:18px 0 6px 0;padding:14px 16px;background:rgba(var(--accent-rgb),0.08);border-left:3px solid var(--accent);border-radius:6px;font-size:13px;color:var(--ink-1);line-height:1.7;}
+    .recap-progress-takeaway strong{color:var(--accent);font-weight:600;}
+    .recap-progress-takeaway em{color:var(--ink-1);font-style:italic;}
+
+    /* === [legacy] ② v1 各 Activity 实战学习事件（已废弃但保留 CSS 防遗留 dom 触发） === */
+    .recap-activity-review{margin:14px 0;padding:14px 16px;background:var(--bg-soft);border-radius:10px;border:1px solid var(--hairline);border-left:3px solid var(--accent-2);}
+    .recap-activity-review.highlight{border-left-color:var(--accent);background:var(--accent-soft);}
+    .recap-activity-review-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px;}
+    .recap-activity-review-name{font-size:13px;font-weight:600;color:var(--ink-1);}
+    .recap-activity-review-type{font-size:11px;font-weight:400;color:var(--ink-3);}
+    .recap-activity-review-meta{font-size:11px;color:var(--ink-3);font-feature-settings:'tnum';}
+    .recap-activity-review-mastery{display:inline-block;padding:2px 8px;background:var(--bg-card);border:1px solid var(--hairline);border-radius:4px;font-size:11px;color:var(--ink-2);margin-bottom:6px;}
+    .recap-activity-review.highlight .recap-activity-review-mastery{border-color:var(--accent);color:var(--accent);font-weight:500;}
+    .recap-activity-events{margin:8px 0 10px 0;padding:0 0 0 18px;list-style:none;}
+    .recap-activity-events li{font-size:12px;color:var(--ink-2);line-height:1.7;margin:4px 0;position:relative;padding-left:6px;}
+    .recap-activity-events li::before{content:"·";position:absolute;left:-8px;color:var(--ink-4);font-weight:700;}
+    .recap-activity-events li strong{color:var(--ink-1);font-weight:600;}
+    .recap-activity-events li em{color:var(--accent);font-style:normal;font-weight:500;}
+    .recap-activity-review-body{font-size:12.5px;line-height:1.7;color:var(--ink-2);padding-top:8px;border-top:1px dashed var(--hairline);margin-top:8px;}
+    .recap-activity-review-body strong{color:var(--ink-1);}
+    .recap-activity-review.highlight .recap-activity-review-body{border-top-color:var(--accent);}
+
+    /* === Neo Chat (复用 lecture / practice) === */
+    .neo-chat{background:var(--glass-card);border-left:1px solid var(--hairline);backdrop-filter:blur(20px) saturate(150%);-webkit-backdrop-filter:blur(20px) saturate(150%);display:flex;flex-direction:column;min-height:0;position:relative;}
+    .neo-resize-handle{position:absolute;left:-3px;top:0;bottom:0;width:6px;cursor:ew-resize;z-index:60;transition:background .15s ease;}
+    .neo-resize-handle:hover{background:var(--accent-soft);}
+    .neo-resize-handle.dragging{background:var(--accent);}
+    /* v1.4.1 · neo-bar 跟 mgthome ora-bar 完全一致 */
+    .neo-bar{display:flex;align-items:center;justify-content:center;padding:9px 0 11px 0;border-bottom:1px solid var(--hairline);background:var(--bg-card-solid);flex-shrink:0;}
+    .neo-bar-text{color:var(--ink-1);font-size:13px;font-weight:600;}
+    .neo-hero{position:relative;padding:12px 12px 14px 12px;border-bottom:1px solid var(--hairline);background:var(--bg-card-solid);overflow:hidden;flex-shrink:0;transition:padding .28s ease,background .2s ease;}
+    .neo-hero-img{width:100%;height:200px;border-radius:14px;object-fit:cover;object-position:center top;display:block;background:var(--bg-soft);transition:max-height .28s ease,opacity .2s ease,margin .28s ease,transform .4s ease;max-height:240px;animation:none;transform-origin:center center;}
+    @keyframes neoBreathe{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(var(--accent-rgb),0);}50%{transform:scale(1.012);box-shadow:0 0 14px 2px rgba(var(--accent-rgb),0.55);}}
+    .neo-chat.speaking .neo-hero-img{animation:neoBreathe 2.4s ease-in-out infinite;}
+    .neo-chat.collapsed .neo-hero-img{animation:none;max-height:0;opacity:0;margin-bottom:0;}
+    .neo-hero-name{position:absolute;left:28px;bottom:30px;color:#fff;font-size:18px;font-weight:600;text-shadow:0 2px 8px rgba(0,0,0,0.5);transition:all .28s ease;pointer-events:none;}
+    .neo-chat.collapsed .neo-hero{padding:0 12px;}
+    .neo-chat.collapsed .neo-hero-name{position:relative;left:auto;bottom:auto;color:var(--ink-1);text-shadow:none;font-size:13px;font-weight:600;padding:9px 0 11px 0;display:block;text-align:center;pointer-events:auto;}
+    .neo-collapse-btn{align-self:center;width:44px;height:22px;border-radius:11px;background:var(--bg-card-solid);border:1px solid var(--hairline-2);border-top-color:var(--hairline-top);color:var(--ink-2);cursor:pointer;display:grid;place-items:center;z-index:12;box-shadow:0 2px 8px rgba(0,0,0,0.06);transition:all .2s ease;margin:-11px 0 0 0;flex-shrink:0;}
+    .neo-collapse-btn:hover{background:var(--bg-soft);color:var(--ink-1);border-color:var(--accent);}
+    .neo-collapse-btn svg{transition:transform .28s ease;}
+    .neo-chat.collapsed .neo-collapse-btn svg{transform:rotate(180deg);}
+    .neo-stream{overflow-y:auto;padding:24px 16px 8px 16px;display:flex;flex-direction:column;gap:12px;flex:1;min-height:0;}
+    .neo-stream::-webkit-scrollbar{width:6px;}
+    .neo-stream::-webkit-scrollbar-thumb{background:var(--ink-5);border-radius:3px;}
+    .msg{display:flex;gap:8px;max-width:100%;}
+    .msg.neo{align-self:flex-start;}
+    .msg.user{flex-direction:row-reverse;align-self:flex-end;}
+    .msg-avatar{flex-shrink:0;width:28px;height:28px;border-radius:50%;overflow:hidden;}
+    .msg-avatar img{width:100%;height:100%;object-fit:cover;}
+    .msg-avatar.user-letter{display:grid;place-items:center;color:#fff;font-size:12px;font-weight:600;}
+    .msg-body{display:flex;flex-direction:column;gap:6px;}
+    .msg.user .msg-body{align-items:flex-end;}
+    .msg-bubble{padding:10px 12px;border-radius:12px;font-size:13px;line-height:1.5;max-width:280px;word-wrap:break-word;}
+    .msg.neo .msg-bubble{background:var(--bg-soft);color:var(--ink-1);border-top-left-radius:4px;}
+    .msg.user .msg-bubble{background:var(--accent);color:#fff;border-top-right-radius:4px;}
+    [data-theme="dark"] .msg.user .msg-bubble{background:var(--grad-cta);color:#fff;}
+    .msg-actions{display:flex;gap:4px;margin-top:0;}
+    .msg-action{width:24px;height:24px;display:grid;place-items:center;color:var(--ink-4);cursor:pointer;border-radius:6px;background:transparent;border:none;transition:all .15s ease;}
+    .msg-action:hover{color:var(--ink-2);background:var(--bg-soft);}
+    .msg-action.active{color:var(--accent);}
+    /* Neo Card 卡片 · 任务卡 */
+    .neo-card{align-self:flex-start;background:var(--bg-card);border:1px solid var(--accent-soft);border-radius:12px;padding:12px;margin-left:36px;max-width:300px;width:100%;box-shadow:var(--shadow-card);}
+    .neo-card-tag{display:inline-block;padding:2px 8px;background:var(--accent-soft);color:var(--accent);font-size:10px;font-weight:600;border-radius:4px;margin-bottom:8px;}
+    .neo-card-title{font-size:13px;font-weight:600;color:var(--ink-1);margin-bottom:4px;}
+    .neo-card-body{font-size:12px;color:var(--ink-2);line-height:1.5;margin-bottom:8px;}
+    .neo-card-meta{font-size:10px;color:var(--ink-4);margin-bottom:10px;letter-spacing:.3px;}
+    .neo-card.task-card{border-color:rgba(167,139,250,0.40);}
+    [data-theme="dark"] .neo-card.task-card{border-color:rgba(196,181,253,0.40);}
+    /* 知识卡 · 学员问"再讲一遍 X" 时 Neo 推 */
+    .neo-card.knowledge-card{border-color:rgba(74,124,157,0.40);}
+    .neo-card.knowledge-card .neo-card-tag{background:rgba(74,124,157,0.15);color:var(--info);}
+    /* 高光卡 · 自由复习回访态推 */
+    .neo-card.highlight-card{border-color:rgba(216,155,59,0.40);}
+    .neo-card.highlight-card .neo-card-tag{background:rgba(216,155,59,0.18);color:var(--warn);}
+    .neo-card-quote{padding:8px 12px;background:var(--bg-soft);border-left:2px solid var(--accent);border-radius:4px;font-size:12px;font-style:italic;color:var(--ink-1);margin:8px 0;}
+    .neo-card-neo-note{font-size:11px;color:var(--ink-3);line-height:1.55;margin-bottom:10px;}
+    .neo-card-neo-note::before{content:"Neo · ";color:var(--accent);font-weight:600;}
+    .neo-card.collected{opacity:.55;transition:opacity .3s ease;}
+    .neo-card.collected .neo-card-actions{display:none;}
+    .neo-card.collected::after{content:"✓ 已加入大厅高光区";display:block;margin-top:4px;font-size:11px;color:var(--success);font-weight:500;}
+    .neo-card-actions{display:flex;gap:8px;}
+    .neo-card-btn{flex:1;padding:6px 10px;border-radius:8px;font-size:12px;cursor:pointer;border:1px solid var(--hairline);background:var(--bg-cream);color:var(--ink-2);transition:all .15s ease;}
+    .neo-card-btn:hover{background:var(--bg-soft);}
+    .neo-card-btn.primary{background:var(--grad-cta);color:#fff;border-color:transparent;box-shadow:var(--glow-accent-2);}
+    .neo-card-btn.primary:hover{filter:brightness(1.08);}
+    .neo-card.collected{opacity:.55;transition:opacity .3s ease;}
+    .neo-card.collected .neo-card-actions{display:none;}
+    .neo-card.collected::after{content:"✓ 已加入大厅待办";display:block;margin-top:4px;font-size:11px;color:var(--success);font-weight:500;}
+    /* 飞向 Topbar 头像动画 */
+    .task-flying{position:fixed;z-index:999;pointer-events:none;transition:all .65s cubic-bezier(.55,0,.55,1);}
+
+    /* Neo input row */
+    .neo-input-row{padding:12px 16px 16px 16px;border-top:1px solid var(--hairline);background:var(--bg-card);}
+    .neo-input-wrap{display:flex;gap:8px;align-items:flex-end;background:var(--bg-soft);border:1px solid var(--hairline);border-radius:12px;padding:8px 8px 8px 12px;transition:border-color .15s ease;}
+    .neo-input-wrap:focus-within{border-color:var(--accent);}
+    .neo-input{flex:1;resize:none;border:none;background:transparent;font-size:13px;color:var(--ink-1);outline:none;max-height:140px;min-height:44px;line-height:1.55;padding:4px 0;font-family:inherit;}
+    .neo-input::placeholder{color:var(--ink-4);}
+    .neo-btn-icon{width:32px;height:32px;border-radius:8px;border:none;background:transparent;color:var(--ink-3);cursor:pointer;display:grid;place-items:center;}
+    .neo-btn-icon:hover{background:var(--bg-cream);color:var(--ink-1);}
+    .neo-btn-send{background:var(--grad-cta);color:#fff;box-shadow:var(--glow-accent-2);}
+    .neo-btn-send:hover{filter:brightness(1.08);color:#fff;}
+    .ai-safety-note{display:flex;align-items:center;gap:6px;padding:8px 4px 0 4px;font-size:11px;color:var(--ink-3);opacity:.65;}
+    .ai-safety-note svg{stroke:currentColor;flex-shrink:0;}
+
+    /* === Topbar dropdowns (复用 lecture/practice) === */
+    .icon-btn{position:relative;width:36px;height:36px;border-radius:10px;display:grid;place-items:center;cursor:pointer;color:var(--ink-2);transition:background .15s ease;border:none;background:transparent;}
+    .icon-btn:hover{background:var(--bg-soft);color:var(--ink-1);}
+    .badge{position:absolute;top:6px;right:6px;min-width:16px;height:16px;padding:0 4px;background:var(--error);color:#fff;border-radius:8px;border:2px solid var(--bg-cream);font-size:9px;font-weight:700;line-height:12px;text-align:center;}
+    .dropdown{position:absolute;top:calc(100% + 6px);right:0;background:var(--drawer-bg);border:1px solid var(--hairline-2);border-top-color:var(--hairline-top);border-radius:14px;box-shadow:var(--shadow-pop);z-index:130;display:none;opacity:1;transform-origin:top right;}
+    .dropdown.open{display:block;}
+    .bell-dropdown{width:380px;max-height:440px;overflow:hidden;}
+    .dropdown.open.bell-dropdown{display:flex;flex-direction:column;}
+    .dropdown-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--hairline);}
+    .dropdown-title{font-size:14px;font-weight:600;color:var(--ink-1);}
+    .dropdown-action{font-size:12px;color:var(--ink-3);cursor:pointer;}
+    .dropdown-action:hover{color:var(--accent);}
+    .msg-list{overflow-y:auto;flex:1;}
+    .msg-list::-webkit-scrollbar{width:6px;}
+    .msg-list::-webkit-scrollbar-thumb{background:var(--ink-5);border-radius:3px;}
+    .msg-row{padding:10px 14px;border-bottom:1px solid var(--hairline);cursor:pointer;transition:background .15s ease;display:flex;gap:10px;}
+    .msg-row:hover{background:var(--bg-soft);}
+    .msg-row:last-child{border-bottom:none;}
+    .msg-avatar-wrap{width:32px;height:32px;flex-shrink:0;border-radius:50%;display:grid;place-items:center;overflow:hidden;}
+    .msg-avatar-wrap.platform{background:var(--bg-soft);padding:4px;}
+    .msg-avatar-wrap.platform img{width:100%;height:100%;object-fit:contain;}
+    .msg-avatar-wrap.system{background:rgba(74,124,157,0.12);color:var(--info);}
+    .msg-avatar-wrap.user{color:#fff;font-size:12px;font-weight:600;}
+    .msg-content{flex:1;min-width:0;}
+    .msg-head{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+    .msg-text{font-size:13px;font-weight:500;color:var(--ink-1);flex:1;min-width:0;}
+    .msg-dot-unread{display:inline-block;width:6px;height:6px;background:var(--accent);border-radius:50%;flex-shrink:0;}
+    .msg-desc{font-size:11px;color:var(--ink-3);line-height:1.6;max-height:0;overflow:hidden;transition:max-height .25s ease,margin .25s ease;}
+    .msg-row.expanded .msg-desc{max-height:200px;margin-top:6px;}
+    .msg-time{font-size:10px;color:var(--ink-4);margin-top:4px;font-feature-settings:'tnum';}
+    .msg-sender{font-size:11px;color:var(--ink-3);}
+    .avatar-btn{display:flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;border-radius:999px;cursor:pointer;border:1px solid var(--hairline);background:var(--bg-card);transition:background .15s ease;}
+    .avatar-btn:hover{background:var(--bg-soft);}
+    .avatar-circle{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:12px;font-weight:600;}
+    .avatar-name{font-size:13px;color:var(--ink-1);}
+    .avatar-dropdown{width:240px;padding:8px;}
+    .ad-head{padding:10px 12px 12px 12px;border-bottom:1px solid var(--hairline);margin-bottom:8px;}
+    .ad-name{font-size:14px;font-weight:600;color:var(--ink-1);}
+    .ad-role{font-size:11px;color:var(--ink-3);margin-top:2px;}
+    .ad-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--ink-1);transition:background .15s ease;}
+    .ad-item:hover{background:var(--bg-soft);}
+    .ad-item-left{display:flex;align-items:center;gap:10px;}
+    .ad-divider{height:1px;background:var(--hairline);margin:6px 0;}
+    .ad-item.danger{color:var(--error);}
+
+    /* === Settings drawer === */
+    .drawer-mask{position:fixed;inset:0;background:rgba(31,26,23,0.32);z-index:100;display:none;animation:fadeIn .2s ease;}
+    [data-theme="dark"] .drawer-mask{background:rgba(0,0,0,0.55);}
+    .drawer-mask.open{display:block;}
+    @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+    .drawer-right{position:fixed;top:0;right:0;bottom:0;width:420px;background:var(--drawer-bg);box-shadow:var(--shadow-pop);z-index:110;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s ease;}
+    .drawer-mask.open + .drawer-right,.drawer-right.open{transform:translateX(0);}
+    .drawer-close{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:8px;border:none;background:transparent;color:var(--ink-3);cursor:pointer;font-size:18px;line-height:1;}
+    .drawer-close:hover{background:var(--bg-soft);color:var(--ink-1);}
+    .drawer-head{padding:18px 20px;border-bottom:1px solid var(--hairline);}
+    .drawer-title{font-size:16px;font-weight:600;color:var(--ink-1);}
+    .drawer-sub{font-size:11px;color:var(--ink-3);margin-top:2px;}
+    .drawer-body{flex:1;overflow-y:auto;padding:18px 20px;}
+    .settings-section{margin-bottom:22px;}
+    .settings-section-title{font-size:12px;font-weight:600;color:var(--ink-2);margin-bottom:10px;letter-spacing:.4px;text-transform:uppercase;}
+    .settings-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;}
+    .settings-label{font-size:13px;color:var(--ink-1);}
+    .settings-options{display:flex;gap:6px;}
+    .opt-btn{padding:5px 12px;background:var(--bg-soft);border:1px solid var(--hairline);border-radius:8px;font-size:12px;color:var(--ink-2);cursor:pointer;transition:all .15s ease;}
+    .opt-btn:hover{background:var(--bg-card);}
+    .opt-btn.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:500;}
+
+    /* === Lecture drawer (左侧覆盖式) === */
+    .lecture-drawer-mask{position:fixed;top:112px;left:0;right:var(--neo-w,380px);bottom:0;background:rgba(31,26,23,0.32);z-index:100;display:none;animation:fadeIn .2s ease;}
+    [data-theme="dark"] .lecture-drawer-mask{background:rgba(0,0,0,0.55);}
+    .lecture-drawer-mask.open{display:block;}
+    .lecture-drawer{position:fixed;top:112px;left:0;bottom:0;width:300px;background:rgba(255,255,255,0.78);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);box-shadow:var(--shadow-pop);z-index:110;display:flex;flex-direction:column;transform:translateX(-100%);transition:transform .25s ease;border-top:1px solid var(--hairline);border-right:1px solid var(--hairline);}
+    [data-theme="dark"] .lecture-drawer{background:rgba(43,36,56,0.78);}
+    .lecture-drawer.open{transform:translateX(0);}
+    /* recap 抽屉仅 1 个 panel · 不需要 tabs · 用 head 行替代 */
+    .lecture-drawer-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--hairline);position:relative;}
+    .ld-head-title{font-size:13px;font-weight:600;color:var(--ink-1);}
+    .lecture-drawer-close{width:28px;height:28px;border-radius:8px;border:none;background:transparent;color:var(--ink-3);cursor:pointer;display:grid;place-items:center;font-size:18px;line-height:1;}
+    .lecture-drawer-close:hover{background:rgba(0,0,0,0.06);color:var(--ink-1);}
+    [data-theme="dark"] .lecture-drawer-close:hover{background:rgba(255,255,255,0.08);}
+    .ld-panel{flex:1;overflow-y:auto;padding:12px 8px;display:none;}
+    .ld-panel.active{display:block;}
+    .ld-panel::-webkit-scrollbar{width:5px;}
+    .ld-panel::-webkit-scrollbar-thumb{background:var(--ink-5);border-radius:3px;}
+    /* Tab1 · 报告 5 块锚点 */
+    .ld-anchor-list{display:flex;flex-direction:column;gap:4px;padding:6px 4px;}
+    .ld-anchor-item{padding:10px 14px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .15s ease;border:1px solid transparent;}
+    .ld-anchor-item:hover{background:var(--bg-soft);border-color:var(--hairline);}
+    .ld-anchor-item.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:500;}
+    .ld-anchor-item.done{color:var(--ink-2);}
+    .ld-anchor-num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--ink-5);color:var(--ink-3);font-size:11px;font-weight:600;display:grid;place-items:center;}
+    .ld-anchor-item.active .ld-anchor-num{background:var(--accent);color:#fff;}
+    .ld-anchor-item.done .ld-anchor-num{background:rgba(79,139,92,0.18);color:var(--success);}
+    .ld-anchor-item.done .ld-anchor-num::before{content:"✓";font-size:12px;}
+    .ld-anchor-text{flex:1;font-size:12.5px;}
+    /* Tab2 · Project 目录 */
+    .ld-course{margin-bottom:6px;}
+    .ld-course-head{padding:8px 12px;border-radius:8px;font-size:12px;font-weight:600;color:var(--ink-2);display:flex;align-items:center;gap:6px;cursor:pointer;transition:all .15s ease;}
+    .ld-course-head:hover{background:var(--bg-soft);}
+    .ld-course-head.locked{color:var(--ink-4);cursor:default;}
+    .ld-course-head.locked:hover{background:transparent;}
+    .ld-course-head svg.chev{transition:transform .2s ease;}
+    .ld-course.collapsed .ld-course-head svg.chev{transform:rotate(-90deg);}
+    .ld-course-list{padding-left:14px;display:flex;flex-direction:column;gap:2px;}
+    .ld-course.collapsed .ld-course-list{display:none;}
+    .ld-activity{padding:6px 10px;border-radius:6px;font-size:12px;color:var(--ink-1);display:flex;align-items:center;gap:6px;cursor:pointer;transition:all .15s ease;}
+    .ld-activity:hover{background:var(--bg-soft);}
+    .ld-activity.disabled{color:var(--ink-4);cursor:not-allowed;}
+    .ld-activity.disabled:hover{background:transparent;}
+    .ld-activity.current{background:var(--accent-soft);color:var(--accent);font-weight:500;}
+    .ld-status-icon{flex-shrink:0;width:14px;height:14px;display:grid;place-items:center;}
+
+    /* === Note float === */
+    .note-float{position:fixed;left:24px;bottom:24px;width:56px;height:56px;border-radius:50%;background:var(--grad-cta);color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:var(--glow-accent-2),0 4px 16px rgba(var(--accent-rgb),0.30),0 8px 32px rgba(0,0,0,0.20);z-index:90;transition:transform .15s ease,box-shadow .15s ease;user-select:none;}
+    .note-float:hover{transform:translateY(-2px);box-shadow:0 0 36px rgba(var(--accent-rgb),0.45),0 12px 28px rgba(var(--accent-rgb),0.30);}
+    .note-panel{position:fixed;width:480px;max-height:70vh;background:var(--drawer-bg);border:1px solid var(--hairline-2);border-top-color:var(--hairline-top);border-radius:16px;box-shadow:var(--shadow-pop);display:none;flex-direction:column;z-index:95;animation:panelIn .18s ease;}
+    @keyframes panelIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+    .note-panel.open{display:flex;}
+    .note-meta{padding:12px 16px;border-bottom:1px solid var(--hairline);font-size:11px;color:var(--ink-3);display:flex;align-items:center;justify-content:space-between;}
+    .note-meta-tag{padding:1px 6px;background:var(--bg-soft);border-radius:4px;color:var(--ink-2);}
+    .note-body{flex:1;padding:14px 16px;font-size:14px;color:var(--ink-1);outline:none;overflow-y:auto;min-height:200px;}
+    .note-body[contenteditable]:empty:before{content:attr(data-placeholder);color:var(--ink-4);}
+    .note-foot{padding:10px 12px;border-top:1px solid var(--hairline);display:flex;align-items:center;justify-content:space-between;}
+    .note-counter{font-size:11px;color:var(--ink-3);margin-right:8px;}
+    .note-archive{padding:6px 14px;border-radius:8px;background:var(--grad-cta);color:#fff;border:none;cursor:pointer;font-size:12px;font-weight:500;box-shadow:var(--glow-accent-2);}
+    .note-archive:hover{filter:brightness(1.08);}
+
+    /* === Modal + Toast === */
+    .modal-mask{position:fixed;inset:0;background:rgba(31,26,23,0.42);z-index:200;display:none;align-items:center;justify-content:center;animation:fadeIn .2s ease;}
+    [data-theme="dark"] .modal-mask{background:rgba(0,0,0,0.65);}
+    .modal-mask.open{display:flex;}
+    .modal-card{background:var(--bg-card);border:1px solid var(--hairline-2);border-top-color:var(--hairline-top);border-radius:16px;padding:24px 28px;max-width:480px;width:90%;box-shadow:var(--shadow-pop);animation:panelIn .2s ease;}
+    /* v1.5.1 · 通用 modal 子样式（之前漏 · 导致切管理端 modal 样式碎+按钮不可点）*/
+    .modal-title{font-size:18px;font-weight:600;color:var(--ink-1);margin-bottom:8px;}
+    .modal-body{font-size:13px;color:var(--ink-2);line-height:1.7;margin-bottom:20px;}
+    .modal-actions{display:flex;gap:10px;justify-content:flex-end;}
+    .modal-btn{padding:8px 18px;border-radius:10px;border:1px solid var(--hairline);background:var(--bg-card);color:var(--ink-2);font-size:13px;cursor:pointer;transition:all .15s ease;}
+    .modal-btn:hover{background:var(--bg-soft);}
+    .modal-btn.primary{background:var(--grad-cta);color:#fff;border-color:transparent;box-shadow:var(--glow-accent-2);}
+    .modal-btn.primary:hover{filter:brightness(1.08);}
+    .toast{position:fixed;left:50%;top:80px;transform:translateX(-50%) translateY(-20px);padding:10px 18px;background:var(--ink-1);color:var(--bg-card);border-radius:10px;font-size:13px;opacity:0;transition:all .25s ease;z-index:300;pointer-events:none;box-shadow:var(--shadow-pop);}
+    .toast.show{opacity:.95;transform:translateX(-50%) translateY(0);}
+    .completion-icon{width:64px;height:64px;margin:0 auto 16px auto;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;}
+    .completion-title{font-size:22px;font-weight:600;color:var(--ink-1);margin-bottom:6px;text-align:center;}
+    .completion-sub{font-size:13px;color:var(--ink-3);margin-bottom:14px;text-align:center;}
+    .completion-applied{font-size:12px;color:var(--accent);text-align:center;margin-bottom:18px;padding:8px 12px;background:var(--accent-soft);border-radius:8px;}
+    .completion-stats{display:flex;justify-content:center;gap:28px;margin-bottom:24px;font-size:12px;}
+    .completion-stat-label{color:var(--ink-3);}
+    .completion-stat-value{color:var(--ink-1);font-weight:600;font-size:14px;display:block;margin-top:2px;}
+    .completion-actions{display:flex;flex-direction:column;gap:8px;}
+    .completion-btn{padding:10px 16px;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s ease;border:1px solid var(--hairline-2);background:var(--bg-card);color:var(--ink-1);}
+    .completion-btn:hover{background:var(--bg-soft);border-color:var(--accent);}
+    .completion-btn.primary{background:var(--grad-cta);color:#fff;border-color:transparent;box-shadow:var(--glow-accent-2);}
+    .completion-btn.primary:hover{filter:brightness(1.08);}
+    .completion-btn:disabled,.completion-btn[disabled]{cursor:not-allowed;opacity:.45;background:var(--bg-soft);color:var(--ink-4);border-color:var(--hairline);box-shadow:none;}
+    .completion-btn:disabled:hover,.completion-btn[disabled]:hover{background:var(--bg-soft);border-color:var(--hairline);filter:none;}
+    /* === Idle modal (沿用 lecture/practice) === */
+    .idle-icon{width:56px;height:56px;margin:0 auto 14px auto;border-radius:50%;background:var(--bg-soft);display:grid;place-items:center;color:var(--ink-2);}
+    .idle-title{font-size:17px;font-weight:600;color:var(--ink-1);margin-bottom:6px;text-align:center;}
+    .idle-sub{font-size:13px;color:var(--ink-3);margin-bottom:20px;line-height:1.6;text-align:center;}
+    .idle-actions{display:flex;gap:8px;justify-content:center;}
+    .idle-btn{padding:8px 22px;border-radius:10px;font-size:13px;cursor:pointer;border:1px solid var(--hairline-2);background:var(--bg-card);color:var(--ink-1);}
+    .idle-btn.primary{background:var(--grad-cta);color:#fff;border-color:transparent;box-shadow:var(--glow-accent-2);}
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <header class="topbar">
+      <div class="topbar-brand" style="cursor:pointer" title="返回大厅" onclick="Router.go('hall')"><img src="assets/logo.png" alt="睿学 NeoLearning · 点击返回大厅" /></div>
+      <span class="port-chip port-chip-learner" style="cursor:pointer" title="返回大厅" onclick="Router.go('hall')">学员端</span>
+      <div class="topbar-project" style="cursor:pointer" title="返回大厅" onclick="Router.go('hall')">
+        <span class="topbar-project-name">基层管理者培训项目</span>
+        <span class="topbar-project-meta">· W6 / 26 · 第 6 周</span>
+      </div>
+      <div class="topbar-actions">
+        <!-- bell -->
+        <div style="position:relative">
+          <button class="icon-btn" id="bellBtn" aria-label="消息提醒">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 003.4 0"/></svg>
+            <span class="badge" id="bellBadge">3</span>
+          </button>
+          <div class="dropdown bell-dropdown" id="bellDropdown">
+            <div class="dropdown-head">
+              <span class="dropdown-title">消息提醒</span>
+              <span class="dropdown-action" id="markAllRead">全部已读</span>
+            </div>
+            <div class="msg-list" id="msgList"></div>
+          </div>
+        </div>
+        <!-- avatar -->
+        <div style="position:relative">
+          <button class="avatar-btn" id="avatarBtn">
+            <span class="avatar-circle" id="avatarCircle">赵</span>
+            <span class="avatar-name" id="avatarName">赵工</span>
+          </button>
+          <div class="dropdown avatar-dropdown" id="avatarDropdown">
+            <div class="ad-head">
+              <div class="ad-name" id="adName">赵工</div>
+              <div class="ad-role">区域销售主管 · 学员</div>
+            </div>
+            <div class="ad-item" id="openSettings">
+              <span class="ad-item-left">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                设置
+              </span>
+            </div>
+            <div class="ad-item" id="openHelp">
+              <span class="ad-item-left">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                帮助
+              </span>
+            </div>
+            <div class="ad-item" id="switchPort">
+              <span class="ad-item-left">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+                切换到管理端
+              </span>
+              <span style="font-size:10px;color:var(--ink-4)">多角色</span>
+            </div>
+            <div class="ad-divider"></div>
+            <div class="ad-item danger" id="logoutBtn">
+              <span class="ad-item-left">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                退出登录
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <!-- MAIN ROW · 复用 lecture/practice 两栏 -->
+    <div class="main-row">
+      <div class="lecture-col">
+        <header class="subbar">
+          <div class="subbar-left">
+            <button class="subbar-drawer-btn" id="lectureDrawerBtn" aria-label="打开课程目录">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+            <span class="subbar-activity" id="subbarActivity">辅导型管理 · 小结</span>
+            <span class="subbar-activity-meta" id="subbarActivityMeta">· Course 个人小结</span>
+          </div>
+          <div></div>
+          <div class="subbar-timer" id="subbarTimer">
+            <span class="subbar-timer-dot"></span>
+            <span id="subbarTimerText">00:00</span>
+          </div>
+        </header>
+        <main class="lecture-content" id="lectureContent">
+          <div class="lecture-stage" id="lectureStage">
+            <!-- v1.4.1 FIX-9 · 删 disclaimer banner（recap mock 已重写为「角色认知」剧本 · 不需警示） -->
+            <!-- 单一 view = 报告 markdown 渲染区 -->
+            <div class="md-pane" id="reportPane"></div>
+          </div>
+        </main>
+      </div><!-- /lecture-col -->
+      <aside class="neo-chat" id="neoChat">
+        <div class="neo-resize-handle" id="neoResize" title="拖拽调整宽度"></div>
+        <!-- v1.5.1 · 恢复 neo-hero 头像（PM: recap 保留头像） -->
+        <div class="neo-hero">
+          <img src="assets/neo-male.png" alt="Neo" class="neo-hero-img" id="neoAvatar" />
+          <div class="neo-hero-name" id="neoBarText">Neo</div>
+        </div>
+        <button class="neo-collapse-btn" id="neoCollapse" title="收起 / 展开">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+        </button>
+        <div class="neo-stream" id="neoStream"></div>
+        <div class="neo-input-row">
+          <div class="neo-input-wrap">
+            <textarea class="neo-input" id="neoInput" placeholder="和 Neo 聊聊小结……" rows="2"></textarea>
+            <button class="neo-btn-icon" title="语音输入"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 00-3 3v7a3 3 0 006 0V5a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
+            <button class="neo-btn-icon neo-btn-send" title="发送" id="neoSend"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+          </div>
+          <div class="ai-safety-note"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>以上内容由 NeoLearning AI 生成，仅供参考</span></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+  <!-- 抽屉：单 panel · Project 目录（recap 没有 SCO · 不放 Activity 目录 Tab） -->
+  <div class="lecture-drawer-mask" id="lectureDrawerMask"></div>
+  <aside class="lecture-drawer" id="lectureDrawer">
+    <div class="lecture-drawer-head">
+      <div class="ld-head-title">Project 目录</div>
+      <button class="lecture-drawer-close" id="lectureDrawerClose">×</button>
+    </div>
+    <div class="ld-panel active" id="ldPanelProject"></div>
+  </aside>
+  <div class="note-float" id="noteFloat"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+  <div class="note-panel" id="notePanel">
+    <div class="note-meta"><div style="display:flex;gap:6px;align-items:center"><span class="note-meta-tag" id="noteTag">📍 小结 · 辅导型管理</span><span style="font-size:11px">2026-05-07 09:10</span></div><span style="cursor:pointer;color:var(--ink-3);font-size:18px;line-height:1" id="noteClose">×</span></div>
+    <div class="note-body" id="noteBody" contenteditable="true" data-placeholder="此刻想到什么，随手记下..."></div>
+    <div class="note-foot"><div></div><div style="display:flex;align-items:center"><span class="note-counter" id="noteCounter">0 / 500</span><button class="note-archive" id="noteArchive">归档到笔记库</button></div></div>
+  </div>
+  <div class="modal-mask" id="modalMask"><div class="modal-card" id="modalCard"></div></div>
+  <div class="drawer-mask" id="settingsDrawerMask"><aside class="drawer-right" id="settingsDrawer">
+    <button class="drawer-close" id="settingsClose">×</button>
+    <div class="drawer-head"><div class="drawer-title">设置</div><div class="drawer-sub">个人偏好</div></div>
+    <div class="drawer-body">
+      <div class="settings-section"><div class="settings-section-title"><span class="brand-neo">Neo</span> 形象</div><div class="settings-row"><span class="settings-label">数字人形象</span><div class="settings-options"><button class="opt-btn active" data-persona="male">男 <span class="brand-neo">Neo</span></button><button class="opt-btn" data-persona="female">女 <span class="brand-neo">Neo</span></button></div></div></div>
+      <div class="settings-section"><div class="settings-section-title">主题</div><div class="settings-row"><span class="settings-label">外观</span><div class="settings-options"><button class="opt-btn active" data-theme="light">日间</button><button class="opt-btn" data-theme="dark">夜间</button></div></div></div>
+      <div class="settings-section"><div class="settings-section-title">AI 语速</div><div class="settings-row"><span class="settings-label">朗读 / 流式速度</span><div class="settings-options"><button class="opt-btn" data-speed="slow">慢</button><button class="opt-btn active" data-speed="normal">中</button><button class="opt-btn" data-speed="fast">快</button></div></div></div>
+    </div>
+  </aside></div>
+  <div class="toast" id="toast"></div>
+  <!-- v1.4 · _shared 共享层（必须先 admin → project → branding → milestones） -->
+  <script src="_shared/mock/admin.js?v=15"></script>
+  <script src="_shared/mock/project.js?v=14"></script>
+  <script src="_shared/mock/branding.js?v=18"></script>
+  <script src="_shared/mock/coursepack.js?v=15"></script>
+  <script src="_shared/mock/milestones.js?v=15"></script>
+  <script src="_shared/mock/messages.js?v=14"></script>
+  <script src="_shared/mock/progress.js?v=14"></script>
+  <script src="_shared/mock/todos.js?v=14"></script>
+  <script src="_shared/mock/highlights.js?v=14"></script>
+  <script src="_shared/mock/notes.js?v=14"></script>
+  <script src="_shared/js/avatar-color.js?v=16"></script>
+  <script src="_shared/js/neo-speak.js?v=18"></script>
+  <script src="_shared/js/session.js?v=15"></script>
+  <script src="_shared/js/router.js?v=14"></script>
+  <script src="_shared/js/ux-logger.js?v=14"></script>
+  <script src="_shared/js/jumper.js?v=14"></script>
+  <script>
+    if (!Session.isLoggedIn()) {
+      location.replace('00-睿学Demo-双击启动.html');
+    }
+  </script>
+  <script src="assets/recap-mock.js?v=22"></script>
+  <script src="assets/recap-app.js?v=22"></script>
+</body>
+</html>

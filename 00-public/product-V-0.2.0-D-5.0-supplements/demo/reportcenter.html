@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1440, initial-scale=1" />
+  <title>管理端 · 报告中心 · 睿学 NeoLearning</title>
+  <script>
+    (function() {
+      try {
+        var saved = localStorage.getItem('rx-theme') || 'light';
+        document.documentElement.setAttribute('data-theme', saved);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+  <!-- v1.4 · 0 远程依赖（删 Google Fonts · 用本地 inter.css）-->
+  <script src="_shared/js/demo-reset.js?v=18"></script>
+  <link rel="stylesheet" href="_shared/fonts/inter.css" />
+  <link rel="stylesheet" href="_shared/css/tokens.css?v=14" />
+  <link rel="stylesheet" href="_shared/css/topbar.css?v=15" />
+  <style>
+    /* ============================================================
+       Tokens · 双模式（沿用 mgthome / hall 全套 token）
+       ============================================================ */
+    /* v1.4 · Tokens 已抽至 _shared/css/tokens.css · 仅留页特有规则 */
+    * { box-sizing: border-box; font-family: 'Inter', 'PingFang SC', system-ui, -apple-system, sans-serif; }
+    html, body { margin: 0; padding: 0; height: 100%; }
+    body {
+      background:
+        radial-gradient(ellipse 1100px 800px at 8% 6%, var(--bg-glow-1), transparent 55%),
+        radial-gradient(ellipse 1000px 700px at 95% 90%, var(--bg-glow-2), transparent 55%),
+        radial-gradient(ellipse 600px 400px at 50% 30%, var(--bg-glow-3), transparent 60%),
+        var(--bg-cream);
+      background-attachment: fixed;
+      color: var(--ink-1);
+      font-size: 14px; line-height: 1.5;
+      min-width: 1280px;
+      overflow-x: auto; overflow-y: hidden;
+    }
+
+    /* ============================================================
+       Layout · stage / topbar / main-row（沿用 mgthome）
+       ============================================================ */
+    .stage { display: grid; grid-template-rows: 56px 1fr; height: 100vh; width: 100%; }
+    /* v1.4.1 · topbar 5 元素跟 mgthome 一致 · grid 4 列含 port-chip */
+    .topbar {
+      display: grid; grid-template-columns: 64px auto 1fr auto;
+      align-items: center; background: transparent;
+      border-bottom: 1px solid var(--hairline);
+      padding-right: 16px;
+    }
+    .port-chip { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; letter-spacing: 0.02em; margin-left: 8px; flex-shrink: 0; border: 1px solid currentColor; background: transparent; }
+    .port-chip-admin { color: #10B981; }
+    [data-theme="dark"] .port-chip-admin { color: #6EE7B7; }
+    .topbar-brand { display: flex; align-items: center; justify-content: center; }
+    .topbar-brand img { width: 28px; height: 28px; object-fit: contain; filter: drop-shadow(0 0 12px rgba(var(--accent-rgb),0.25)); }
+    .topbar-project { display: flex; align-items: center; gap: 10px; padding-left: 8px; }
+    .topbar-project-name { font-size: 14px; font-weight: 600; color: var(--ink-1); }
+    .topbar-project-meta { font-size: 12px; color: var(--ink-3); }
+    .topbar-actions { display: flex; align-items: center; gap: 4px; }
+
+    .main-row { display: grid; grid-template-columns: 56px minmax(0, 1fr) var(--ora-w, 380px); min-height: 0; transition: grid-template-columns 0.28s ease; }
+
+    /* ============================================================
+       View 状态：library 时 Ora 完全隐藏 + 主体撑满
+       editor 时 Ora 滑入
+       ============================================================ */
+    body.view-library .main-row { grid-template-columns: 56px minmax(0, 1fr) 0px; }
+    body.view-library .ora-chat { display: none; }
+    body.view-editor .ora-chat {
+      animation: oraSlideIn 0.32s ease both;
+    }
+    @keyframes oraSlideIn {
+      from { opacity: 0; transform: translateX(40px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ============================================================
+       Editor 顶部 loading bar (新建报告提交后 1.5s 等待)
+       ============================================================ */
+    .editor-loading {
+      position: relative;
+      margin: 0 0 14px 0;
+      padding: 14px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--accent);
+      border-radius: 12px;
+      display: none;
+      box-shadow: 0 0 0 4px rgba(var(--accent-rgb),0.10), var(--shadow-card);
+    }
+    .editor-loading.show { display: block; }
+    .editor-loading-row { display: flex; align-items: center; gap: 12px; }
+    .editor-loading-spin {
+      width: 18px; height: 18px;
+      border: 2px solid var(--accent-soft);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: oraSpin 0.8s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes oraSpin { to { transform: rotate(360deg); } }
+    .editor-loading-text { flex: 1; font-size: 13px; color: var(--ink-1); font-weight: 500; }
+    .editor-loading-progress {
+      margin-top: 10px;
+      height: 4px; border-radius: 2px;
+      background: var(--bg-soft);
+      overflow: hidden;
+    }
+    .editor-loading-progress-fill {
+      height: 100%;
+      background: var(--grad-cta);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* ============================================================
+       学员选择器（新建报告 modal 内嵌）
+       ============================================================ */
+    .lp-panel {
+      margin-top: 8px;
+      border: 1px solid var(--hairline);
+      border-radius: 10px;
+      background: var(--bg-card);
+      overflow: hidden;
+    }
+    .lp-search {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .lp-search input {
+      width: 100%; padding: 6px 10px;
+      border: 1px solid var(--hairline);
+      border-radius: 8px;
+      background: var(--bg-soft);
+      font-size: 12px; color: var(--ink-1);
+    }
+    .lp-search input:focus { outline: none; border-color: var(--accent); background: var(--bg-card); }
+    .lp-filter-row {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--hairline);
+      display: flex; flex-wrap: wrap; gap: 4px;
+    }
+    .lp-filter-row + .lp-filter-row { padding-top: 0; }
+    .lp-chip {
+      padding: 3px 9px; border-radius: 12px;
+      background: var(--bg-soft); color: var(--ink-2);
+      font-size: 11px; cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+    }
+    .lp-chip:hover { background: var(--accent-soft); color: var(--accent); }
+    .lp-chip.active { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); font-weight: 600; }
+    .lp-chip-count { color: var(--ink-3); margin-left: 2px; font-size: 10px; }
+    .lp-chip.active .lp-chip-count { color: var(--accent); }
+
+    .lp-list {
+      max-height: 320px; overflow-y: auto;
+      padding: 4px;
+    }
+    .lp-list::-webkit-scrollbar { width: 6px; }
+    .lp-list::-webkit-scrollbar-thumb { background: var(--ink-5); border-radius: 3px; }
+
+    .lp-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.12s ease;
+    }
+    .lp-item:hover { background: var(--bg-soft); }
+    .lp-item.checked { background: var(--accent-soft); }
+    .lp-checkbox {
+      width: 16px; height: 16px;
+      border: 1.5px solid var(--ink-4);
+      border-radius: 4px;
+      flex-shrink: 0;
+      display: grid; place-items: center;
+      background: var(--bg-card);
+    }
+    .lp-item.checked .lp-checkbox {
+      background: var(--grad-cta);
+      border-color: transparent;
+    }
+    .lp-item.checked .lp-checkbox::after {
+      content: '✓'; color: #fff; font-size: 10px; font-weight: 700;
+    }
+    .lp-avatar {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: var(--grad-brand);
+      color: #fff; font-size: 11px; font-weight: 600;
+      display: grid; place-items: center;
+      flex-shrink: 0;
+    }
+    .lp-avatar.silent { background: linear-gradient(135deg, #9CA3AF, #6B7280); }
+    .lp-avatar.risk   { background: linear-gradient(135deg, #F4A855, #D97706); }
+    .lp-name-row { flex: 1; min-width: 0; display: flex; align-items: center; gap: 6px; }
+    .lp-name { font-size: 13px; color: var(--ink-1); font-weight: 500; }
+    .lp-role { font-size: 11px; color: var(--ink-3); }
+    .lp-stage-chip {
+      font-size: 10px; padding: 1px 6px; border-radius: 4px;
+      background: var(--bg-soft); color: var(--ink-2);
+      flex-shrink: 0;
+    }
+    .lp-stage-chip.lead   { background: rgba(79,139,92,0.14);  color: var(--success); }
+    .lp-stage-chip.normal { background: var(--bg-soft); color: var(--ink-2); }
+    .lp-stage-chip.risk   { background: rgba(216,155,59,0.16); color: var(--warn); }
+    .lp-stage-chip.silent { background: rgba(156,163,175,0.20); color: var(--ink-3); }
+    .lp-completion { font-size: 11px; color: var(--accent); font-weight: 600; min-width: 38px; text-align: right; }
+
+    .lp-foot {
+      padding: 6px 10px;
+      border-top: 1px solid var(--hairline);
+      background: var(--bg-soft);
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 11px; color: var(--ink-3);
+    }
+    .lp-foot-left { display: flex; gap: 6px; }
+    .lp-foot-btn {
+      padding: 3px 8px; border-radius: 6px;
+      background: var(--bg-card); border: 1px solid var(--hairline);
+      color: var(--ink-2); font-size: 11px; cursor: pointer;
+    }
+    .lp-foot-btn:hover { color: var(--accent); border-color: var(--accent); }
+    .lp-foot-count { font-weight: 600; color: var(--accent); }
+
+    /* + 新建报告按钮 demo 引导 pulse */
+    @keyframes pulseGuide {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(var(--accent-rgb),0.45), var(--glow-accent-2); }
+      50%      { box-shadow: 0 0 0 8px rgba(var(--accent-rgb),0.0), var(--glow-accent-2); }
+    }
+    .btn-primary.pulse-guide {
+      animation: pulseGuide 1.6s ease-out infinite;
+    }
+
+    /* ============================================================
+       Left Nav (沿用 mgthome)
+       ============================================================ */
+    .left-nav { background: transparent; display: flex; align-items: center; justify-content: center; position: relative; }
+    /* 让 subbar 的 bg-soft 横向延伸到 left-nav 顶部（视觉上贯穿） */
+    .left-nav::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 53px;
+      background: var(--bg-soft);
+      border-bottom: 1px solid var(--hairline);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .left-nav .nav-pill { position: relative; z-index: 1; }
+    .nav-pill {
+      background: var(--bg-card-solid);
+      border: 1px solid var(--hairline);
+      border-radius: 18px; padding: 6px;
+      display: flex; flex-direction: column; gap: 4px;
+      box-shadow: 0 2px 6px rgba(31,26,23,0.04), 0 8px 24px rgba(31,26,23,0.04);
+    }
+    .nav-item {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      display: grid; place-items: center;
+      color: var(--ink-3); cursor: pointer;
+      transition: all 0.15s ease;
+      position: relative;
+    }
+    .nav-item:hover { background: var(--bg-soft); color: var(--ink-1); }
+    .nav-item.active {
+      background: var(--grad-cta); color: #fff;
+      box-shadow: var(--glow-accent-2), inset 0 1px 0 rgba(255,255,255,0.20);
+    }
+    .nav-tooltip {
+      position: absolute; left: 50px; top: 50%; transform: translateY(-50%);
+      background: var(--ink-1); color: #fff; padding: 4px 10px;
+      border-radius: 6px; font-size: 12px; white-space: nowrap;
+      opacity: 0; pointer-events: none; transition: opacity 0.15s ease;
+      z-index: 60;
+    }
+    .nav-item:hover .nav-tooltip { opacity: 1; }
+
+    /* ============================================================
+       Topbar buttons / dropdowns（精简版 · 仅 bell + avatar）
+       ============================================================ */
+    .icon-btn {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: transparent; border: 1px solid transparent;
+      display: grid; place-items: center; color: var(--ink-2);
+      cursor: pointer; position: relative;
+      transition: all 0.15s ease;
+    }
+    .icon-btn:hover { background: var(--bg-soft); color: var(--ink-1); border-color: var(--hairline); }
+    .badge {
+      position: absolute; top: 4px; right: 4px;
+      min-width: 16px; height: 16px; padding: 0 4px;
+      border-radius: 8px; background: var(--accent); color: #fff;
+      font-size: 10px; font-weight: 700;
+      display: grid; place-items: center; line-height: 1;
+    }
+    .avatar-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 4px 12px 4px 4px; height: 36px;
+      border-radius: 18px;
+      background: transparent; border: 1px solid transparent;
+      cursor: pointer; transition: all 0.15s ease;
+    }
+    .avatar-btn:hover { background: var(--bg-soft); border-color: var(--hairline); }
+    .avatar-circle {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--grad-cta); color: #fff;
+      display: grid; place-items: center;
+      font-size: 12px; font-weight: 600;
+    }
+    .avatar-name { font-size: 13px; color: var(--ink-1); }
+
+    /* ============================================================
+       Main column = Subbar + Main scroll（沿用 lecture 结构）
+       ============================================================ */
+    .main-col { display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+
+    .subbar {
+      display: grid; grid-template-columns: 1fr auto auto;
+      align-items: center; gap: 14px;
+      padding: 10px 16px 10px 8px;
+      background: var(--bg-soft);
+      border-bottom: 1px solid var(--hairline);
+      flex-shrink: 0;
+      min-height: 52px;
+    }
+    .subbar-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .subbar-mid { display: flex; align-items: center; gap: 8px; }
+    .subbar-right { display: flex; align-items: center; gap: 8px; }
+    .subbar-back-btn {
+      width: 32px; height: 32px; border-radius: 8px;
+      display: grid; place-items: center;
+      cursor: pointer; color: var(--ink-2);
+      border: none; background: transparent;
+      transition: all 0.15s ease; flex-shrink: 0;
+    }
+    .subbar-back-btn:hover { background: var(--bg-card); color: var(--accent); }
+    .subbar-title {
+      font-size: 14px; font-weight: 600; color: var(--ink-1);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .subbar-meta { font-size: 11px; color: var(--ink-3); margin-left: 4px; }
+    .subbar-tag {
+      display: inline-flex; align-items: center;
+      padding: 2px 8px; border-radius: 4px;
+      background: rgba(167,139,250,0.20);
+      color: #7C3AED; font-size: 10px; font-weight: 600; letter-spacing: 0.4px;
+    }
+    [data-theme="dark"] .subbar-tag { color: var(--accent); }
+    .subbar-title-input {
+      background: transparent; border: 1px solid transparent;
+      font-size: 14px; font-weight: 600; color: var(--ink-1);
+      padding: 4px 8px; border-radius: 6px;
+      max-width: 360px;
+    }
+    .subbar-title-input:hover { border-color: var(--hairline); }
+    .subbar-title-input:focus { outline: none; border-color: var(--accent); background: var(--bg-card); }
+
+    /* v1.5 P10 #28 · 滚动条吸右边修复 · 内容区域居中但 scrollbar 跟内容贴着（用 inner wrapper 替代 max-width）*/
+    .main-scroll {
+      overflow-y: auto; overflow-x: hidden;
+      flex: 1; min-height: 0;
+      padding: 16px 24px 80px 24px;
+      width: 100%;
+      scrollbar-gutter: stable;
+    }
+    .main-scroll > .view-panel { max-width: 1280px; margin: 0 auto; }
+    .main-scroll::-webkit-scrollbar { width: 8px; }
+    .main-scroll::-webkit-scrollbar-thumb { background: var(--ink-5); border-radius: 4px; }
+    .main-scroll::-webkit-scrollbar-thumb:hover { background: var(--ink-4); }
+
+    /* ============================================================
+       View Panels · library ↔ editor（v=display 切换）
+       ============================================================ */
+    .view-panel { display: none; }
+    .view-panel.active { display: block; }
+
+    /* ============================================================
+       Library (View 1) · 报告库
+       ============================================================ */
+    .lib-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .lib-title { font-size: 20px; font-weight: 700; color: var(--ink-1); letter-spacing: -0.4px; }
+    .lib-subtitle { font-size: 12px; color: var(--ink-3); margin-top: 4px; }
+
+    .lib-tabs {
+      display: flex; gap: 4px;
+      border-bottom: 1px solid var(--hairline);
+      margin-bottom: 16px;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+    .lib-tabs-left { display: flex; gap: 2px; }
+    .lib-tab {
+      padding: 10px 16px;
+      background: transparent; border: none;
+      font-size: 13px; font-weight: 500;
+      color: var(--ink-3); cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s ease;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .lib-tab:hover { color: var(--ink-1); }
+    .lib-tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+    .lib-tab-count {
+      background: var(--bg-soft); color: var(--ink-3);
+      padding: 1px 7px; border-radius: 10px;
+      font-size: 11px; font-weight: 600;
+    }
+    .lib-tab.active .lib-tab-count { background: var(--accent-soft); color: var(--accent); }
+
+    .btn-primary {
+      padding: 8px 16px; border: none;
+      background: var(--grad-cta); color: #fff;
+      border-radius: 10px; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s ease;
+      box-shadow: var(--glow-accent-2);
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(var(--accent-rgb),0.32); }
+    .btn-secondary {
+      padding: 8px 14px; border: 1px solid var(--hairline);
+      background: var(--bg-card); color: var(--ink-1);
+      border-radius: 10px; font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: all 0.15s ease;
+    }
+    .btn-secondary:hover { background: var(--bg-soft); border-color: var(--hairline-2); }
+    .btn-ghost {
+      padding: 6px 12px; border: 1px solid transparent;
+      background: transparent; color: var(--ink-2);
+      border-radius: 8px; font-size: 12px;
+      cursor: pointer; transition: all 0.15s ease;
+    }
+    .btn-ghost:hover { background: var(--bg-soft); color: var(--ink-1); }
+
+    .lib-search-row {
+      display: flex; gap: 12px; align-items: center;
+      margin-bottom: 16px;
+    }
+    .lib-search-input {
+      flex: 1; max-width: 480px;
+      padding: 9px 14px; border: 1px solid var(--hairline);
+      background: var(--bg-card); color: var(--ink-1);
+      border-radius: 10px; font-size: 13px;
+    }
+    .lib-search-input::placeholder { color: var(--ink-3); }
+    .lib-search-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(var(--accent-rgb),0.10); }
+    .lib-filter-btn {
+      padding: 8px 12px; border: 1px solid var(--hairline);
+      background: var(--bg-card); color: var(--ink-2);
+      border-radius: 10px; font-size: 12px;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .lib-filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ----- Tab1 表格 ----- */
+    .lib-table {
+      background: var(--bg-card);
+      border: 1px solid var(--hairline);
+      border-radius: 12px; overflow: hidden;
+      box-shadow: var(--shadow-card);
+    }
+    .lib-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1.8fr) 120px 160px 140px 60px;
+      gap: 16px; align-items: center;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--hairline);
+      cursor: pointer; transition: background 0.15s ease;
+      position: relative;
+    }
+    .lib-row:last-child { border-bottom: none; }
+    .lib-row:hover { background: var(--bg-soft); }
+    .lib-row.head {
+      background: var(--bg-soft); cursor: default;
+      font-size: 11px; color: var(--ink-3);
+      text-transform: uppercase; letter-spacing: 0.05em;
+      padding: 10px 18px;
+    }
+    .lib-row.head:hover { background: var(--bg-soft); }
+
+    .lib-cell-name {
+      display: flex; align-items: center; gap: 10px;
+      min-width: 0;
+    }
+    .lib-cell-name-icon {
+      flex-shrink: 0; width: 32px; height: 32px;
+      border-radius: 8px; background: var(--accent-soft);
+      display: grid; place-items: center; color: var(--accent);
+      font-size: 16px;
+    }
+    .lib-cell-name-text {
+      font-size: 14px; font-weight: 600; color: var(--ink-1);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .lib-cell-name-meta {
+      font-size: 11px; color: var(--ink-3); margin-top: 2px;
+    }
+    .lib-cell-time, .lib-cell-period, .lib-cell-scope {
+      font-size: 12px; color: var(--ink-2);
+    }
+    .lib-cell-period .period-tag {
+      display: inline-block; padding: 2px 8px;
+      background: var(--bg-soft); border-radius: 6px;
+      font-size: 11px; color: var(--ink-2);
+    }
+    .lib-cell-scope .scope-count { color: var(--accent); font-weight: 600; }
+
+    .lib-actions {
+      display: flex; gap: 4px; justify-content: flex-end;
+    }
+    .lib-action-btn {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: transparent; border: none;
+      display: grid; place-items: center;
+      color: var(--ink-3); cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .lib-action-btn:hover { background: var(--bg-card); color: var(--ink-1); border: 1px solid var(--hairline); }
+
+    .lib-actions-menu {
+      position: absolute; right: 18px; top: 100%;
+      min-width: 140px;
+      background: var(--bg-card); border: 1px solid var(--hairline);
+      border-radius: 10px; padding: 4px;
+      box-shadow: var(--shadow-pop);
+      z-index: 130;
+      display: none;
+    }
+    .lib-actions-menu.open { display: block; }
+    .lib-actions-menu-item {
+      padding: 8px 12px; border-radius: 6px;
+      font-size: 12px; color: var(--ink-1);
+      cursor: pointer;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .lib-actions-menu-item:hover { background: var(--bg-soft); }
+    .lib-actions-menu-item.danger { color: var(--error); }
+    .lib-actions-menu-item.danger:hover { background: rgba(192,57,43,0.08); }
+    [data-theme="dark"] .lib-actions-menu-item.danger:hover { background: rgba(248,113,113,0.10); }
+
+    /* ----- Tab2 学员分组 ----- */
+    .student-group {
+      background: var(--bg-card);
+      border: 1px solid var(--hairline);
+      border-radius: 12px; margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .student-head {
+      padding: 14px 18px;
+      display: flex; align-items: center; gap: 12px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .student-head:hover { background: var(--bg-soft); }
+    .student-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: grid; place-items: center;
+      color: #fff; font-weight: 600; font-size: 14px;
+      flex-shrink: 0;
+    }
+    .student-name { font-size: 14px; font-weight: 600; color: var(--ink-1); }
+    .student-role { font-size: 11px; color: var(--ink-3); margin-top: 2px; }
+    .student-counts {
+      margin-left: auto;
+      display: flex; gap: 8px; align-items: center;
+      font-size: 11px; color: var(--ink-3);
+    }
+    .student-count-chip {
+      padding: 2px 8px; border-radius: 6px;
+      background: var(--bg-soft);
+    }
+    .student-toggle {
+      width: 24px; height: 24px; border-radius: 6px;
+      display: grid; place-items: center;
+      color: var(--ink-3); transition: transform 0.2s ease;
+    }
+    .student-group.expanded .student-toggle { transform: rotate(90deg); color: var(--accent); }
+    .student-body {
+      display: none;
+      padding: 0 18px 14px 66px;
+      border-top: 1px solid var(--hairline);
+    }
+    .student-group.expanded .student-body { display: block; }
+    .student-section { margin-top: 12px; }
+    .student-section-title {
+      font-size: 11px; font-weight: 600; color: var(--ink-3);
+      text-transform: uppercase; letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+    .student-report-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 12px;
+      background: var(--bg-soft);
+      border-radius: 8px;
+      margin-bottom: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .student-report-row:hover { background: var(--accent-soft); }
+    .student-report-icon {
+      width: 24px; height: 24px; border-radius: 6px;
+      display: grid; place-items: center;
+      background: var(--bg-card); color: var(--accent);
+      font-size: 12px; flex-shrink: 0;
+    }
+    .student-report-name { font-size: 13px; color: var(--ink-1); flex: 1; min-width: 0; }
+    .student-report-date { font-size: 11px; color: var(--ink-3); flex-shrink: 0; }
+
+    /* ============================================================
+       Editor (View 2) · 报告编辑器
+       ============================================================ */
+    .editor-toolbar {
+      display: flex; flex-wrap: wrap; gap: 4px;
+      padding: 8px 16px;
+      background: var(--bg-card-solid);
+      border: 1px solid var(--hairline);
+      border-radius: 10px;
+      margin: 16px auto 12px auto;
+      max-width: 1280px;
+      align-items: center;
+      /* v2.0 sticky 吸顶 + 跟 editor-body-wrap 同宽居中 */
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 4px 12px rgba(31,26,23,0.06);
+    }
+    /* view-editor 时让主内容居中 1280 · toolbar / body-wrap 左右对齐 */
+    body.view-editor .main-scroll { padding: 0 24px 80px 24px; max-width: none; margin: 0; }
+    body.view-editor #viewEditor { padding: 0; }
+    body.view-editor .editor-loading { margin: 14px auto; max-width: 1280px; }
+    .tb-group { display: flex; gap: 2px; }
+    .tb-divider {
+      width: 1px; height: 20px;
+      background: var(--hairline);
+      margin: 0 6px;
+    }
+    .tb-btn {
+      min-width: 28px; height: 28px; padding: 0 8px;
+      border: 1px solid transparent;
+      background: transparent; color: var(--ink-2);
+      border-radius: 6px; font-size: 12px; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 4px;
+      transition: all 0.15s ease;
+    }
+    .tb-btn:hover { background: var(--bg-soft); color: var(--ink-1); }
+    .tb-btn.active { background: var(--accent-soft); color: var(--accent); border-color: var(--accent-soft); }
+    .tb-btn-export { margin-left: auto; }
+
+    .editor-body-wrap {
+      background: var(--bg-card);
+      border: 1px solid var(--hairline);
+      border-radius: 12px;
+      padding: 28px 36px;
+      min-height: 480px;
+      box-shadow: var(--shadow-card);
+      max-width: 1280px;
+      margin: 0 auto 12px auto;
+      width: 100%;
+    }
+    .editor-body {
+      outline: none;
+      color: var(--ink-1);
+      font-size: 14px;
+      line-height: 1.75;
+      max-width: 720px; margin: 0 auto;
+    }
+    .editor-body h1 { font-size: 24px; font-weight: 700; margin: 16px 0 12px; color: var(--ink-1); letter-spacing: -0.4px; }
+    .editor-body h2 { font-size: 18px; font-weight: 700; margin: 24px 0 8px; color: var(--ink-1); letter-spacing: -0.2px; padding-bottom: 6px; border-bottom: 1px solid var(--hairline); }
+    .editor-body h3 { font-size: 15px; font-weight: 600; margin: 18px 0 6px; color: var(--ink-2); }
+    .editor-body p { margin: 8px 0 12px; color: var(--ink-1); }
+    .editor-body ul, .editor-body ol { margin: 8px 0 12px; padding-left: 24px; }
+    .editor-body li { margin: 4px 0; color: var(--ink-1); }
+    .editor-body strong { font-weight: 700; color: var(--ink-1); }
+    .editor-body em { font-style: italic; color: var(--ink-2); }
+    .editor-body code {
+      background: var(--bg-soft); border-radius: 4px;
+      padding: 1px 6px; font-family: 'Menlo', 'Monaco', monospace;
+      font-size: 12.5px; color: var(--accent);
+    }
+    .editor-body .meta-line {
+      font-size: 12px; color: var(--ink-3);
+      padding: 8px 12px;
+      background: var(--bg-soft); border-radius: 8px;
+      margin: 8px 0 16px;
+    }
+
+    /* 嵌入图表 block */
+    .chart-block {
+      margin: 16px 0;
+      padding: 16px;
+      border: 1px solid var(--hairline);
+      border-radius: 12px;
+      background: var(--bg-card-solid);
+      position: relative;
+    }
+    .chart-block-title {
+      font-size: 13px; font-weight: 600; color: var(--ink-2);
+      margin-bottom: 12px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .chart-block-title-tag {
+      font-size: 10px; color: var(--ink-3);
+      padding: 1px 6px; border-radius: 4px;
+      background: var(--bg-soft);
+    }
+    .chart-block.placeholder {
+      border-style: dashed;
+      background: var(--bg-soft);
+      color: var(--ink-3);
+      text-align: center; padding: 32px;
+    }
+    .chart-block.pending {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(var(--accent-rgb),0.10);
+    }
+
+    /* 跨 Tab 引用 blockquote */
+    .editor-body blockquote.cross-quote {
+      margin: 16px 0;
+      padding: 12px 16px;
+      background: var(--bg-soft);
+      border-left: 3px solid var(--accent-2);
+      border-radius: 0 8px 8px 0;
+      font-style: italic;
+      color: var(--ink-2);
+    }
+    .cross-quote-source {
+      font-size: 11px; color: var(--ink-3);
+      margin-bottom: 6px;
+      display: flex; align-items: center; gap: 6px;
+      font-style: normal;
+    }
+
+    /* ============================================================
+       Right · Ora chat（沿用 mgthome ora-chat）
+       ============================================================ */
+    .ora-chat {
+      background: var(--bg-card-solid);
+      border-left: 1px solid var(--hairline);
+      display: flex; flex-direction: column;
+      min-height: 0; position: relative;
+    }
+    .ora-bar {
+      height: 44px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .ora-bar-text {
+      font-size: 13px; font-weight: 600;
+      background: var(--grad-brand);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 0.5px;
+    }
+    .ora-stream {
+      flex: 1; overflow-y: auto;
+      /* v1.8 滚动条贴 chat 右边缘（padding-right=0 让 scrollbar 紧贴 aside 右） */
+      padding: 16px 0 16px 14px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .ora-stream > * { padding-right: 14px; }
+    .ora-stream::-webkit-scrollbar { width: 6px; }
+    .ora-stream::-webkit-scrollbar-thumb { background: var(--ink-5); border-radius: 3px; }
+    .ora-stream::-webkit-scrollbar-track { background: transparent; }
+
+    .ora-msg { display: flex; gap: 8px; }
+    .ora-msg.user { flex-direction: row-reverse; }
+    .ora-msg-avatar {
+      width: 26px; height: 26px; border-radius: 50%;
+      flex-shrink: 0;
+      background: var(--grad-brand); color: #fff;
+      display: grid; place-items: center;
+      font-size: 11px; font-weight: 600;
+    }
+    .ora-msg.user .ora-msg-avatar { background: var(--bg-soft); color: var(--ink-2); }
+    .ora-msg-bubble {
+      max-width: 78%;
+      padding: 8px 12px; border-radius: 12px;
+      background: var(--bg-soft); color: var(--ink-1);
+      font-size: 13px; line-height: 1.55;
+    }
+    .ora-msg.user .ora-msg-bubble {
+      background: var(--accent-soft); color: var(--ink-1);
+      border-radius: 12px 12px 2px 12px;
+    }
+    /* 三按钮反馈（C2 · 与 hall/lecture/practice/recap/mgthome 一致） */
+    .msg-actions { display: flex; gap: 4px; margin-top: 6px; }
+    .msg-action {
+      width: 24px; height: 24px;
+      display: grid; place-items: center;
+      color: var(--ink-4);
+      cursor: pointer; border-radius: 6px;
+      background: transparent; border: none;
+      padding: 0;
+      transition: all .15s ease;
+    }
+    .msg-action:hover { color: var(--ink-2); background: var(--bg-soft); }
+    .msg-action.active { color: var(--accent); }
+
+    /* ============================================================
+       Ora 卡片 3 类（沿用 mgthome .neo-card · v1.4 改）
+       evidence / report-ref / learner-snapshot 都用此版式
+       ============================================================ */
+    .neo-card {
+      align-self: flex-start;
+      background: var(--bg-card);
+      border: 1px solid var(--accent-soft);
+      border-radius: 12px;
+      padding: 12px;
+      margin-left: 36px;
+      max-width: 300px; width: 100%;
+      box-shadow: var(--shadow-card);
+    }
+    .neo-card-tag {
+      display: inline-block; padding: 2px 8px;
+      background: var(--accent-soft); color: var(--accent);
+      font-size: 10px; font-weight: 600;
+      border-radius: 4px; margin-bottom: 8px;
+    }
+    .neo-card-title { font-size: 13px; font-weight: 600; color: var(--ink-1); margin-bottom: 4px; }
+    .neo-card-body { font-size: 12px; color: var(--ink-2); line-height: 1.5; margin-bottom: 10px; }
+    .neo-card-actions { display: flex; gap: 8px; }
+    .neo-card-btn {
+      flex: 1; padding: 6px 10px;
+      border-radius: 8px; font-size: 12px; cursor: pointer;
+      border: 1px solid var(--hairline);
+      background: var(--bg-cream); color: var(--ink-2);
+      transition: all 0.15s ease;
+    }
+    .neo-card-btn:hover { background: var(--bg-soft); }
+    .neo-card-btn.primary {
+      background: var(--grad-cta); color: #fff; border-color: transparent;
+      box-shadow: var(--glow-accent-2);
+    }
+    .neo-card-btn.primary:hover { filter: brightness(1.08); }
+
+    /* ============================================================
+       askUserQuestion popup（沿用 mgthome · 在 input 上方 max-height 长出）
+       ============================================================ */
+    .askq-popup {
+      position: relative;
+      margin: 0 12px 0 12px;
+      background: var(--bg-card-solid);
+      border: 1px solid var(--hairline-2);
+      border-top-color: var(--hairline-top);
+      border-radius: 14px;
+      padding: 0 14px;
+      max-height: 0; overflow: hidden;
+      box-shadow:
+        inset 0 1px 0 var(--inset-highlight),
+        0 -2px 8px rgba(var(--accent-rgb),0),
+        0 8px 20px rgba(0,0,0,0.06);
+      transform: translateY(8px); opacity: 0;
+      transition: max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+                  padding 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+                  transform 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity 0.20s ease, box-shadow 0.32s ease;
+    }
+    .askq-popup.open {
+      max-height: 320px;
+      padding: 14px 14px 14px 14px;
+      transform: translateY(0); opacity: 1;
+      box-shadow:
+        inset 0 1px 0 var(--inset-highlight),
+        0 -3px 12px rgba(var(--accent-rgb),0.18),
+        0 16px 32px rgba(0,0,0,0.10);
+    }
+    [data-theme="dark"] .askq-popup.open {
+      box-shadow:
+        inset 0 1px 0 var(--inset-highlight),
+        0 -4px 14px rgba(var(--accent-rgb),0.22),
+        0 16px 36px rgba(0,0,0,0.45);
+    }
+    .askq-meta {
+      font-size: 10px; font-weight: 600; color: var(--accent);
+      letter-spacing: 0.4px; text-transform: uppercase;
+      margin-bottom: 6px;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .askq-question {
+      font-size: 13px; color: var(--ink-1);
+      font-weight: 500; line-height: 1.5; margin-bottom: 10px;
+    }
+    .askq-options {
+      display: flex; flex-direction: column; gap: 4px;
+      margin-bottom: 6px;
+    }
+    .askq-option {
+      text-align: left;
+      padding: 7px 12px;
+      border-radius: 8px; border: 1px solid var(--hairline);
+      background: var(--bg-card); color: var(--ink-1);
+      font-size: 13px; cursor: pointer;
+      transition: all 0.1s ease;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .askq-option:hover { background: var(--bg-soft); }
+    .askq-option.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent-hover);
+    }
+    .askq-option .askq-num {
+      width: 18px; height: 18px;
+      background: var(--bg-soft); color: var(--ink-3);
+      border-radius: 4px;
+      font-size: 10px; font-weight: 600;
+      display: grid; place-items: center;
+      flex-shrink: 0;
+    }
+    .askq-option.active .askq-num { background: var(--accent); color: #fff; }
+    .askq-hint {
+      font-size: 10px; color: var(--ink-4);
+      display: flex; gap: 12px; align-items: center;
+    }
+
+    /* ============================================================
+       v2.0 inline diff 暂时高亮 + 浮 ✓✗（直接替换为新内容 · 高亮表示未确认）
+       ============================================================ */
+    .editor-body p.diff-pending,
+    .editor-body li.diff-pending,
+    .editor-body ul.diff-pending,
+    .editor-body ol.diff-pending {
+      background: rgba(var(--accent-rgb),0.14);
+      padding: 8px 14px 8px 22px;
+      border-radius: 0 8px 8px 0;
+      margin: 8px -14px;
+      position: relative;
+      box-shadow: inset 3px 0 0 var(--accent);
+      transition: background 0.3s ease;
+    }
+    .editor-body ul.diff-pending,
+    .editor-body ol.diff-pending {
+      padding-left: 36px;  /* 保留 list 项目编号空间 */
+    }
+    .diff-actions-floating {
+      position: absolute;
+      top: -14px; right: 10px;
+      display: inline-flex; gap: 4px;
+      background: var(--bg-card-solid);
+      border: 1px solid var(--hairline);
+      border-radius: 8px;
+      padding: 2px;
+      box-shadow: var(--shadow-pop);
+      z-index: 5;
+      user-select: none;
+    }
+    .diff-btn {
+      width: 26px; height: 26px;
+      border-radius: 6px;
+      border: none; cursor: pointer;
+      display: grid; place-items: center;
+      font-size: 14px; font-weight: 700;
+    }
+    .diff-btn.accept { background: var(--success); color: #fff; }
+    .diff-btn.accept:hover { background: #3D7048; }
+    .diff-btn.reject { background: rgba(192,57,43,0.12); color: var(--error); }
+    .diff-btn.reject:hover { background: rgba(192,57,43,0.22); }
+
+    /* Ora 输入区 */
+    .ora-input-row { padding: 10px 14px 14px; flex-shrink: 0; border-top: 1px solid var(--hairline); }
+    .ora-input-wrap {
+      display: flex; align-items: flex-end; gap: 6px;
+      padding: 6px;
+      background: var(--bg-soft);
+      border: 1px solid var(--hairline);
+      border-radius: 12px;
+    }
+    .ora-input-wrap:focus-within { border-color: var(--accent); }
+    .ora-input {
+      flex: 1; padding: 6px 8px;
+      background: transparent; border: none;
+      color: var(--ink-1); font-size: 13px;
+      resize: none; min-height: 36px; max-height: 120px;
+      outline: none;
+    }
+    .ora-input::placeholder { color: var(--ink-3); }
+    .ora-btn-icon {
+      width: 30px; height: 30px;
+      border: none; border-radius: 8px;
+      background: transparent; color: var(--ink-2);
+      cursor: pointer;
+      display: grid; place-items: center;
+    }
+    .ora-btn-icon:hover { background: var(--bg-card); color: var(--accent); }
+    .ora-btn-send { background: var(--grad-cta); color: #fff; }
+    .ora-btn-send:hover { background: var(--grad-cta); color: #fff; transform: scale(1.05); }
+    .ora-safety-note {
+      margin-top: 6px;
+      font-size: 10px; color: var(--ink-3);
+      display: flex; align-items: center; gap: 4px;
+    }
+
+    /* ============================================================
+       Modal / Toast
+       ============================================================ */
+    .modal-mask {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(31,26,23,0.5);
+      backdrop-filter: blur(2px);
+      display: none;
+      align-items: center; justify-content: center;
+    }
+    .modal-mask.open { display: flex; }
+    .modal-card {
+      background: var(--bg-card); color: var(--ink-1);
+      border: 1px solid var(--hairline);
+      border-radius: 16px;
+      box-shadow: var(--shadow-pop);
+      max-width: 540px; width: calc(100% - 48px);
+      max-height: 80vh; overflow: auto;
+    }
+    /* v1.5 P10 #25 · 学员报告预览大窗 · 与 hall 报告 modal 风格一致 */
+    .modal-card.wide { max-width: 760px; }
+    /* v1.5.2 B-EDITOR-DRAFT · editor 草稿占位斜体灰文 */
+    .editor-body p.editor-placeholder { color: var(--ink-3); font-style: italic; font-size: 13px; line-height: 1.7; margin: 6px 0; }
+    /* v1.5 P11 #33 · Ora 写入新增内容 · flash highlight 动画 · diff 轻量替代 */
+    @keyframes oraInsertFlash {
+      0% { background: var(--accent-soft); box-shadow: 0 0 0 4px var(--accent-soft); }
+      100% { background: transparent; box-shadow: none; }
+    }
+    .ora-insert-flash { animation: oraInsertFlash 1.8s ease-out; border-radius: 6px; }
+    .modal-head {
+      padding: 16px 20px; border-bottom: 1px solid var(--hairline);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-title { font-size: 15px; font-weight: 700; color: var(--ink-1); }
+    .modal-close {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: transparent; border: none;
+      color: var(--ink-3); font-size: 18px;
+      cursor: pointer;
+    }
+    .modal-close:hover { background: var(--bg-soft); color: var(--ink-1); }
+    .modal-body { padding: 18px 20px; }
+    .modal-footer {
+      padding: 12px 20px; border-top: 1px solid var(--hairline);
+      display: flex; justify-content: flex-end; gap: 8px;
+    }
+
+    /* New report modal · 5 字段 */
+    .nr-form-row { margin-bottom: 14px; }
+    .nr-form-label {
+      display: block; font-size: 12px; font-weight: 600;
+      color: var(--ink-2); margin-bottom: 6px;
+    }
+    .nr-form-label .req { color: var(--accent); margin-left: 2px; }
+    .nr-input, .nr-select, .nr-textarea {
+      width: 100%; padding: 8px 12px;
+      background: var(--bg-card); color: var(--ink-1);
+      border: 1px solid var(--hairline);
+      border-radius: 8px; font-size: 13px;
+    }
+    .nr-textarea { min-height: 80px; resize: vertical; font-family: inherit; }
+    .nr-input:focus, .nr-select:focus, .nr-textarea:focus { outline: none; border-color: var(--accent); }
+    .nr-radio-row {
+      display: flex; gap: 14px;
+      padding: 6px 0;
+    }
+    .nr-radio-item { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13px; color: var(--ink-1); }
+    .nr-period-quick {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 10px; border-radius: 6px;
+      background: var(--accent-soft); color: var(--accent);
+      font-size: 11px; cursor: pointer;
+      margin-left: 8px;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 32px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--ink-1); color: #fff;
+      padding: 10px 18px; border-radius: 10px;
+      font-size: 13px;
+      box-shadow: var(--shadow-pop);
+      opacity: 0; pointer-events: none;
+      transition: all 0.2s ease;
+      z-index: 300;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ============================================================
+       Dropdown 通用 (export 等)
+       ============================================================ */
+    .dropdown {
+      position: absolute;
+      background: var(--bg-card);
+      border: 1px solid var(--hairline);
+      border-radius: 10px;
+      box-shadow: var(--shadow-pop);
+      min-width: 140px;
+      padding: 4px;
+      z-index: 130;
+      display: none;
+      animation: dropdownIn 0.15s ease;
+      transform-origin: top right;
+    }
+    .dropdown.open { display: block; }
+    @keyframes dropdownIn { from { opacity: 0; transform: translateY(-6px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .dropdown-item {
+      padding: 8px 12px; border-radius: 6px;
+      font-size: 12px; color: var(--ink-1);
+      cursor: pointer;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .dropdown-item:hover { background: var(--bg-soft); }
+
+    /* ============================================================
+       Bell 消息中心 dropdown（沿用 mgthome）
+       ============================================================ */
+    .bell-dropdown { width: 380px; max-height: 440px; overflow: hidden; padding: 0; }
+    .dropdown.open.bell-dropdown { display: flex; flex-direction: column; }
+    .dropdown-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px; border-bottom: 1px solid var(--hairline);
+    }
+    .dropdown-title { font-size: 14px; font-weight: 600; color: var(--ink-1); }
+    .dropdown-action { font-size: 12px; color: var(--ink-3); cursor: pointer; }
+    .dropdown-action:hover { color: var(--accent); }
+    .msg-list { overflow-y: auto; flex: 1; }
+    .msg-list::-webkit-scrollbar { width: 6px; }
+    .msg-list::-webkit-scrollbar-thumb { background: var(--ink-5); border-radius: 3px; }
+    .msg-row {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--hairline);
+      cursor: pointer;
+      transition: background 0.15s ease;
+      display: flex; gap: 10px;
+    }
+    .msg-row:hover { background: var(--bg-soft); }
+    .msg-row:last-child { border-bottom: none; }
+    .msg-avatar-wrap {
+      width: 32px; height: 32px; flex-shrink: 0;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      overflow: hidden;
+    }
+    .msg-avatar-wrap.platform { background: var(--accent-soft); color: var(--accent); }
+    .msg-avatar-wrap.system { background: rgba(74,124,157,0.12); color: var(--info); }
+    .msg-avatar-wrap.user { color: #fff; font-size: 12px; font-weight: 600; }
+    .msg-content { flex: 1; min-width: 0; }
+    .msg-head { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .msg-text { font-size: 13px; font-weight: 500; color: var(--ink-1); flex: 1; min-width: 0; }
+    .msg-dot-unread {
+      display: inline-block; width: 6px; height: 6px;
+      background: var(--accent); border-radius: 50%; flex-shrink: 0;
+    }
+    .msg-desc {
+      font-size: 11px; color: var(--ink-3); line-height: 1.6;
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.25s ease, margin 0.25s ease;
+    }
+    .msg-row.expanded .msg-desc { max-height: 200px; margin-top: 6px; }
+    .msg-time { font-size: 10px; color: var(--ink-4); margin-top: 4px; font-feature-settings: 'tnum'; }
+    .msg-sender { font-size: 11px; color: var(--ink-3); }
+
+    /* ============================================================
+       Avatar 头像 dropdown
+       ============================================================ */
+    .avatar-dropdown { width: 240px; padding: 8px; }
+    .ad-head { padding: 10px 12px 12px 12px; border-bottom: 1px solid var(--hairline); margin-bottom: 8px; }
+    .ad-name { font-size: 14px; font-weight: 600; color: var(--ink-1); }
+    .ad-role { font-size: 11px; color: var(--ink-3); margin-top: 2px; }
+    .ad-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 12px; border-radius: 8px;
+      cursor: pointer; font-size: 13px; color: var(--ink-1);
+      transition: background 0.15s ease;
+    }
+    .ad-item:hover { background: var(--bg-soft); }
+    .ad-item-left { display: flex; align-items: center; gap: 10px; }
+    .ad-divider { height: 1px; background: var(--hairline); margin: 6px 0; }
+    .ad-item.danger { color: var(--error); }
+
+    /* ============================================================
+       Drawer 设置抽屉
+       ============================================================ */
+    .drawer-mask {
+      position: fixed; inset: 0;
+      background: rgba(31,26,23,0.32);
+      z-index: 100;
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
+    .drawer-mask.open { display: block; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .drawer-right {
+      position: fixed; top: 0; right: 0; bottom: 0;
+      width: 420px;
+      background: var(--drawer-bg);
+      box-shadow: var(--shadow-pop);
+      z-index: 110;
+      display: flex; flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.25s ease;
+    }
+    [data-theme="dark"] .drawer-right {
+      box-shadow: -8px 0 24px rgba(0,0,0,0.40), inset 1px 0 0 var(--hairline-top);
+    }
+    .drawer-mask.open .drawer-right { transform: translateX(0); }
+    .drawer-head { padding: 18px 24px; border-bottom: 1px solid var(--hairline); }
+    .drawer-title { font-size: 18px; font-weight: 600; color: var(--ink-1); margin-bottom: 4px; }
+    .drawer-sub { font-size: 12px; color: var(--ink-3); }
+    .drawer-close {
+      position: absolute; top: 16px; right: 16px;
+      width: 32px; height: 32px; border-radius: 8px;
+      cursor: pointer; display: grid; place-items: center;
+      color: var(--ink-3); background: transparent; border: none;
+      font-size: 20px;
+    }
+    .drawer-close:hover { background: var(--bg-soft); color: var(--ink-1); }
+    .drawer-body { padding: 16px 24px; overflow-y: auto; flex: 1; }
+    .settings-section { padding: 16px 0; border-bottom: 1px solid var(--hairline); }
+    .settings-section:last-child { border-bottom: none; }
+    .settings-section-title { font-size: 12px; font-weight: 600; color: var(--ink-3); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .settings-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 0;
+    }
+    .settings-label { font-size: 13px; color: var(--ink-1); }
+    .settings-options { display: flex; gap: 6px; }
+    .opt-btn {
+      padding: 6px 12px; font-size: 12px;
+      border-radius: 8px; cursor: pointer;
+      border: 1px solid var(--hairline);
+      background: var(--bg-card); color: var(--ink-2);
+    }
+    .opt-btn:hover { border-color: var(--accent); }
+    .opt-btn.active { background: var(--grad-cta); color: #fff; border-color: transparent; box-shadow: var(--glow-accent-2); }
+
+    /* ============================================================
+       Ora 附加：resize handle / hero breathe / collapse
+       ============================================================ */
+    .neo-resize-handle {
+      position: absolute; top: 0; bottom: 0; left: -3px; width: 6px;
+      cursor: ew-resize;
+      z-index: 50;
+      transition: background 0.15s ease;
+    }
+    .neo-resize-handle:hover { background: var(--accent-soft); }
+    .neo-resize-handle.dragging { background: var(--accent); }
+
+    /* （v1.8 删除 ora-hero / collapse-btn · 跟 mgthome chat 区精简形态对齐） */
+
+    /* ============================================================
+       划词 popover (selection menu)
+       ============================================================ */
+    .sel-popover {
+      position: absolute; z-index: 140;
+      background: var(--ink-1); color: #fff;
+      border-radius: 10px;
+      padding: 4px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      display: none; flex-direction: row;
+      gap: 2px;
+    }
+    .sel-popover.open { display: flex; }
+    .sel-popover-btn {
+      padding: 6px 10px; border-radius: 6px;
+      background: transparent; border: none; color: #fff;
+      font-size: 12px; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .sel-popover-btn:hover { background: rgba(255,255,255,0.12); }
+
+    /* ============================================================
+       Empty state
+       ============================================================ */
+    .empty {
+      text-align: center; padding: 60px 20px;
+      color: var(--ink-3); font-size: 13px;
+    }
+  </style>
+</head>
+<body class="view-library">
+  <div class="stage">
+
+    <!-- ============================================================
+         TOPBAR
+         ============================================================ -->
+    <header class="topbar">
+      <div class="topbar-brand" style="cursor:pointer" title="返回项目首页" onclick="Router.go('mgthome')">
+        <img src="assets/logo.png" alt="睿学 NeoLearning · 点击返回" />
+      </div>
+      <span class="port-chip port-chip-admin" style="cursor:pointer" title="返回项目首页" onclick="Router.go('mgthome')">管理端</span>
+      <div class="topbar-project" style="cursor:pointer" title="返回项目首页" onclick="Router.go('mgthome')">
+        <span class="topbar-project-name" id="tbProjectName">基层管理者培训项目</span>
+        <span class="topbar-project-meta" id="tbProjectMeta">· W6 / 26 · 第 6 周</span>
+      </div>
+      <div class="topbar-actions">
+        <!-- bell + dropdown -->
+        <div style="position:relative">
+          <button class="icon-btn" id="bellBtn" aria-label="消息">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 003.4 0"/></svg>
+            <span class="badge" id="bellBadge">3</span>
+          </button>
+          <div class="dropdown bell-dropdown" id="bellDropdown" style="right:0;top:calc(100% + 6px)">
+            <div class="dropdown-head">
+              <span class="dropdown-title">消息提醒</span>
+              <span class="dropdown-action" id="markAllRead">全部已读</span>
+            </div>
+            <div class="msg-list" id="msgList"></div>
+          </div>
+        </div>
+        <!-- avatar + dropdown -->
+        <div style="position:relative">
+          <button class="avatar-btn" id="avatarBtn">
+            <span class="avatar-circle" id="avatarCircle">赵</span>
+            <span class="avatar-name" id="avatarName">赵工</span>
+          </button>
+          <div class="dropdown avatar-dropdown" id="avatarDropdown" style="right:0;top:calc(100% + 6px)">
+            <div class="ad-head">
+              <div class="ad-name" id="adName">赵工</div>
+              <div class="ad-role" id="adRole">区域销售主管 · 学员 + HR + 项目运营</div>
+            </div>
+            <div class="ad-item" id="openSettings">
+              <span class="ad-item-left">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33h0a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51h0a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v0a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                设置
+              </span>
+            </div>
+            <div class="ad-item" onclick="showToast('帮助文档 · demo 占位');">
+              <span class="ad-item-left">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                帮助
+              </span>
+            </div>
+            <div class="ad-item" onclick="Router.go('hall')">
+              <span class="ad-item-left">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+                切换到学员端
+              </span>
+              <span style="font-size:10px;color:var(--ink-4)">多角色</span>
+            </div>
+            <div class="ad-divider"></div>
+            <div class="ad-item danger" onclick="Session.clear();Router.go('login')">
+              <span class="ad-item-left">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                退出登录
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ============================================================
+         MAIN ROW: left nav + main scroll + ora chat
+         ============================================================ -->
+    <div class="main-row">
+
+      <!-- ===== LEFT NAV ===== -->
+      <nav class="left-nav">
+        <div class="nav-pill">
+          <div class="nav-item" title="项目首页" onclick="Router.go('mgthome')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span class="nav-tooltip">项目首页</span>
+          </div>
+          <div class="nav-item active" title="报告中心">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <span class="nav-tooltip">报告中心</span>
+          </div>
+          <div class="nav-item" title="项目配置" onclick="Router.go('proconfig')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33h0a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51h0a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v0a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+            <span class="nav-tooltip">项目配置</span>
+          </div>
+          <div class="nav-item" title="消息中心" onclick="Router.go('massagemgt')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+            <span class="nav-tooltip">消息中心</span>
+          </div>
+        </div>
+      </nav>
+
+      <!-- ===== MAIN SCROLL (View 1 + View 2) ===== -->
+      <div class="main-col">
+        <!-- ============ Subbar · view 切换驱动内容 ============ -->
+        <header class="subbar" id="subbar">
+          <div class="subbar-left" id="subbarLeft">
+            <span class="subbar-title" id="subbarTitle">报告中心</span>
+            <span class="subbar-meta" id="subbarMeta">· 管理员产出 · 学员侧产生</span>
+          </div>
+          <div class="subbar-mid" id="subbarMid"></div>
+          <div class="subbar-right" id="subbarRight"></div>
+        </header>
+
+      <main class="main-scroll" id="mainScroll">
+
+        <!-- ============== VIEW 1 · 报告库 ============== -->
+        <section class="view-panel active" id="viewLibrary">
+          <div class="lib-tabs">
+            <div class="lib-tabs-left">
+              <button class="lib-tab active" data-tab="manager">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                管理员报告
+                <span class="lib-tab-count" id="tabManagerCount">0</span>
+              </button>
+              <button class="lib-tab" data-tab="student">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                学员报告
+                <span class="lib-tab-count" id="tabStudentCount">0</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="lib-search-row">
+            <input type="text" class="lib-search-input" id="libSearchInput" placeholder="搜索报告 / 关键词 ..." />
+            <button class="lib-filter-btn" onclick="showToast('时间筛选 · demo 简化')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+              时间筛选
+            </button>
+            <button class="lib-filter-btn" onclick="showToast('排序 · demo 简化')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 9 12 3 18"/><polyline points="21 6 15 12 21 18"/></svg>
+              排序
+            </button>
+          </div>
+
+          <!-- ----- Tab1 管理员报告 列表 ----- -->
+          <div id="managerReportPane">
+            <div class="lib-table" id="managerReportTable"></div>
+          </div>
+
+          <!-- ----- Tab2 学员报告 分组 ----- -->
+          <div id="studentReportPane" style="display:none">
+            <div id="studentReportGroups"></div>
+          </div>
+        </section>
+
+        <!-- ============== VIEW 2 · 编辑器 ============== -->
+        <section class="view-panel" id="viewEditor">
+          <!-- Loading bar (新建报告提交后 1.5s 等待) -->
+          <div class="editor-loading" id="editorLoading">
+            <div class="editor-loading-row">
+              <div class="editor-loading-spin"></div>
+              <div class="editor-loading-text" id="editorLoadingText">Ora 正在拉数据 · 生成初稿 ...</div>
+            </div>
+            <div class="editor-loading-progress"><div class="editor-loading-progress-fill" id="editorLoadingFill"></div></div>
+          </div>
+
+          <!-- 工具栏 -->
+          <div class="editor-toolbar" id="editorToolbar">
+            <div class="tb-group">
+              <button class="tb-btn" data-cmd="bold" title="加粗 (Ctrl+B)"><b>B</b></button>
+              <button class="tb-btn" data-cmd="italic" title="斜体 (Ctrl+I)"><i>I</i></button>
+              <button class="tb-btn" data-cmd="strikeThrough" title="删除线"><s>S</s></button>
+            </div>
+            <span class="tb-divider"></span>
+            <div class="tb-group">
+              <button class="tb-btn" data-cmd="formatBlock" data-arg="h1" title="标题 1">H1</button>
+              <button class="tb-btn" data-cmd="formatBlock" data-arg="h2" title="标题 2">H2</button>
+              <button class="tb-btn" data-cmd="formatBlock" data-arg="h3" title="标题 3">H3</button>
+            </div>
+            <span class="tb-divider"></span>
+            <div class="tb-group">
+              <button class="tb-btn" data-cmd="insertUnorderedList" title="无序列表">• 列表</button>
+              <button class="tb-btn" data-cmd="insertOrderedList" title="有序列表">1. 列表</button>
+            </div>
+            <span class="tb-divider"></span>
+            <div class="tb-group">
+              <button class="tb-btn" data-cmd="createLink" data-arg="https://example.com" title="插入链接（demo 用占位 URL）">🔗</button>
+              <button class="tb-btn" data-cmd="formatBlock" data-arg="pre" title="代码块">&lt;/&gt;</button>
+              <button class="tb-btn" id="btnInsertImage" title="插图">🖼️</button>
+            </div>
+            <span class="tb-divider"></span>
+            <div class="tb-group">
+              <button class="tb-btn" id="btnAddChart" title="加图表">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                加图表
+              </button>
+            </div>
+            <span class="tb-divider"></span>
+            <div class="tb-group">
+              <button class="tb-btn" data-cmd="undo" title="撤销 (Ctrl+Z)">↶</button>
+              <button class="tb-btn" data-cmd="redo" title="重做 (Ctrl+Y)">↷</button>
+            </div>
+          </div>
+
+          <!-- 编辑区 -->
+          <div class="editor-body-wrap">
+            <div class="editor-body" contenteditable="true" id="editorBody">
+              <!-- 内容由 report-app.js 渲染 -->
+            </div>
+          </div>
+        </section>
+      </main>
+      </div><!-- /.main-col -->
+
+      <!-- ===== ORA CHAT ===== -->
+      <aside class="ora-chat" id="oraChat">
+        <div class="neo-resize-handle" id="oraResize" title="拖拽调整宽度"></div>
+        <div class="ora-bar"><span class="ora-bar-text">Ora</span></div>
+        <div class="ora-stream" id="oraStream"></div>
+        <!-- askUserQuestion popup（input 上方 max-height 长出 · 沿用 mgthome） -->
+        <div class="askq-popup" id="askqPopup">
+          <div class="askq-meta">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span class="brand-ora">Ora</span> 想问你
+          </div>
+          <div class="askq-question" id="askqQuestion"></div>
+          <div class="askq-options" id="askqOptions"></div>
+        </div>
+        <div class="ora-input-row">
+          <div class="ora-input-wrap">
+            <textarea class="ora-input" id="oraInput" placeholder="问 Ora · 例：加一个 Course 完成率柱图" rows="2"></textarea>
+            <button class="ora-btn-icon" title="语音输入" onclick="showToast('语音输入 · demo 暂未实现')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 00-3 3v7a3 3 0 006 0V5a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            </button>
+            <button class="ora-btn-icon ora-btn-send" title="发送" id="oraSend">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+          <div class="ora-safety-note">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span id="oraSafetyNoteText">以上内容由 NeoLearning AI 生成，仅供参考</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       Modal · 通用容器（新建报告 / 删除确认 / 学员报告 view）
+       ============================================================ -->
+  <div class="modal-mask" id="modalMask">
+    <div class="modal-card" id="modalCard"></div>
+  </div>
+
+  <!-- Settings drawer -->
+  <div class="drawer-mask" id="settingsDrawer">
+    <aside class="drawer-right">
+      <button class="drawer-close" id="settingsClose">×</button>
+      <div class="drawer-head">
+        <div class="drawer-title">设置</div>
+        <div class="drawer-sub">个人偏好</div>
+      </div>
+      <div class="drawer-body">
+        <div class="settings-section">
+          <div class="settings-section-title">主题</div>
+          <div class="settings-row">
+            <span class="settings-label">外观</span>
+            <div class="settings-options">
+              <button class="opt-btn" data-theme="light">日间</button>
+              <button class="opt-btn" data-theme="dark">夜间</button>
+            </div>
+          </div>
+        </div>
+        <div class="settings-section">
+          <div class="settings-section-title">AI 语速</div>
+          <div class="settings-row">
+            <span class="settings-label">朗读 / 流式速度</span>
+            <div class="settings-options">
+              <button class="opt-btn" data-speed="slow">慢</button>
+              <button class="opt-btn active" data-speed="normal">中</button>
+              <button class="opt-btn" data-speed="fast">快</button>
+            </div>
+          </div>
+        </div>
+        <div class="settings-section">
+          <div class="settings-section-title">账号</div>
+          <div class="settings-row">
+            <span class="settings-label">头像</span>
+            <span style="font-size:12px;color:var(--ink-3)">按姓氏自动生成（不可改）</span>
+          </div>
+          <div class="settings-row">
+            <span class="settings-label">密码</span>
+            <span style="font-size:12px;color:var(--accent);cursor:pointer" onclick="showToast('修改密码 · demo 占位')">修改</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- 划词菜单 -->
+  <div class="sel-popover" id="selPopover">
+    <button class="sel-popover-btn" data-action="expand">✏️ 扩写</button>
+    <button class="sel-popover-btn" data-action="shorten">📦 缩写</button>
+    <button class="sel-popover-btn" data-action="custom">⚙️ 自定义</button>
+  </div>
+
+  <!-- v1.4 · _shared 共享层 -->
+  <script src="_shared/vendor/chart.umd.min.js"></script>
+  <script src="_shared/mock/admin.js?v=15"></script>
+  <script src="_shared/mock/project.js?v=14"></script>
+  <script src="_shared/mock/branding.js?v=18"></script>
+  <script src="_shared/mock/coursepack.js?v=15"></script>
+  <script src="_shared/mock/course-stats.js?v=14"></script>
+  <script src="_shared/mock/learning-stats.js?v=14"></script>
+  <script src="_shared/mock/milestones.js?v=15"></script>
+  <script src="_shared/mock/messages.js?v=14"></script>
+  <script src="_shared/js/avatar-color.js?v=16"></script>
+  <script src="_shared/js/session.js?v=15"></script>
+  <script src="_shared/js/router.js?v=14"></script>
+  <script src="_shared/js/ux-logger.js?v=14"></script>
+  <script>
+    if (!Session.isLoggedIn()) {
+      location.replace('00-睿学Demo-双击启动.html');
+    }
+  </script>
+  <!-- reportcenter 专有 mock + app -->
+  <script src="_shared/admin/report-mock.js?v=18"></script>
+  <script src="_shared/admin/report-app.js?v=18"></script>
+</body>
+</html>

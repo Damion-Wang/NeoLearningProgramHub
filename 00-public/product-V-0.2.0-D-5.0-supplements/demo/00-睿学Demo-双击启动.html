@@ -1,0 +1,522 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <script src="_shared/js/demo-reset.js?v=18"></script>
+  <link rel="stylesheet" href="_shared/fonts/inter.css" />
+  <link rel="stylesheet" href="_shared/css/tokens.css?v=14" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1440, initial-scale=1" />
+  <title>登录 · 睿学 NeoLearning</title><style>
+    :root {
+      --bg-cream: #FAF7F2;
+      --bg-card: #FFFFFF;
+      --ink-1: #1F1A17;
+      --ink-2: #5C544E;
+      --ink-3: #8E867F;
+      --ink-4: #C4BCB4;
+      --accent: #D97757;
+      --accent-hover: #C8694B;
+      --accent-soft: #F5E5DC;
+      --error: #C0392B;
+      --error-soft: #FBEAE7;
+      --success: #4F8B5C;
+      --hairline: rgba(31, 26, 23, 0.08);
+    }
+    * { box-sizing: border-box; font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, sans-serif; }
+    html, body { margin: 0; padding: 0; }
+    body { background: var(--bg-cream); color: var(--ink-1); }
+
+    /* Layout */
+    .stage { display: grid; grid-template-columns: 58% 42%; min-height: 100vh; }
+    .brand-side {
+      position: relative;
+      background: url('assets/login-bg.png') center/cover no-repeat, var(--bg-cream);
+      overflow: hidden;
+    }
+    .brand-overlay {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; justify-content: space-between;
+      padding: 56px 64px;
+    }
+    .brand-logo { display: flex; align-items: center; gap: 12px; }
+    .brand-mark {
+      width: 44px; height: 44px;
+      display: grid; place-items: center;
+    }
+    .brand-mark img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .brand-name { font-weight: 600; font-size: 18px; letter-spacing: -0.3px; color: var(--ink-1); }
+    .brand-name-sub { font-size: 13px; color: var(--ink-3); margin-top: 2px; }
+
+    .brand-slogan { max-width: 480px; }
+    .brand-slogan h1 {
+      font-size: 40px; font-weight: 600; line-height: 1.2;
+      color: var(--ink-1); letter-spacing: -1px;
+      margin: 0;
+    }
+    .brand-slogan p {
+      margin: 16px 0 0 0; font-size: 16px; line-height: 1.6;
+      color: var(--ink-2);
+    }
+
+    /* Login side */
+    .login-side {
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+      padding: 48px 64px;
+    }
+    .login-card { width: 100%; max-width: 380px; }
+    .project-header { text-align: center; margin-bottom: 36px; }
+    .project-logo {
+      width: 48px; height: 48px; border-radius: 12px; margin: 0 auto 16px;
+      background: linear-gradient(135deg, var(--accent) 0%, #E89B6E 100%);
+      color: #fff; display: grid; place-items: center;
+      font-weight: 700; font-size: 18px;
+    }
+    .project-name { font-size: 18px; font-weight: 600; color: var(--ink-1); margin-bottom: 4px; }
+    .welcome { font-size: 28px; font-weight: 600; color: var(--ink-1); letter-spacing: -0.5px; }
+    .welcome-sub { font-size: 14px; color: var(--ink-3); margin-top: 8px; }
+
+    /* Form */
+    .field { margin-bottom: 20px; }
+    .field-label {
+      display: block; font-size: 13px; font-weight: 500;
+      color: var(--ink-2); margin-bottom: 8px;
+    }
+    .field-input-wrap { position: relative; }
+    .field-input {
+      width: 100%; height: 44px; padding: 0 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--hairline);
+      border-radius: 10px;
+      font-size: 14px; color: var(--ink-1);
+      transition: all 0.15s ease;
+    }
+    .field-input::placeholder { color: var(--ink-4); }
+    .field-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(217, 119, 87, 0.12);
+    }
+    /* 隐藏浏览器默认的密码显示按钮（Edge / Chrome / IE）— 避免与自定义 .pwd-toggle 重复 */
+    input[type="password"]::-ms-reveal,
+    input[type="password"]::-ms-clear { display: none; }
+    input[type="password"]::-webkit-credentials-auto-fill-button,
+    input[type="password"]::-webkit-strong-password-auto-fill-button { display: none !important; visibility: hidden !important; pointer-events: none !important; }
+    .field-input:disabled { background: #F7F4EF; color: var(--ink-3); cursor: not-allowed; }
+    .field.error .field-input {
+      border-color: var(--error);
+      background: var(--error-soft);
+    }
+    .field.error .field-input:focus {
+      box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.12);
+    }
+    .field-error-msg {
+      display: none;
+      margin-top: 6px; font-size: 12px; color: var(--error);
+    }
+    .field.error .field-error-msg { display: block; }
+
+    .pwd-toggle {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      cursor: pointer; color: var(--ink-3); padding: 4px;
+      display: flex; align-items: center;
+    }
+    .pwd-toggle:hover { color: var(--ink-2); }
+
+    .row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .checkbox-wrap {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--ink-2);
+      cursor: pointer; user-select: none;
+    }
+    .checkbox-wrap input[type="checkbox"] {
+      width: 16px; height: 16px; accent-color: var(--accent);
+      cursor: pointer;
+    }
+    .link-forgot {
+      font-size: 13px; color: var(--accent);
+      text-decoration: none; transition: color 0.15s;
+      cursor: pointer;
+    }
+    .link-forgot:hover { color: var(--accent-hover); }
+
+    /* Form-level error banner */
+    .form-error {
+      display: none;
+      align-items: center; gap: 8px;
+      padding: 10px 14px; margin-bottom: 16px;
+      background: var(--error-soft); border-radius: 10px;
+      font-size: 13px; color: var(--error);
+    }
+    .form-error.show { display: flex; }
+
+    /* Submit button */
+    .submit-btn {
+      width: 100%; height: 44px;
+      background: var(--accent); color: #fff;
+      border: none; border-radius: 10px;
+      font-size: 14px; font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .submit-btn:hover:not(:disabled) { background: var(--accent-hover); }
+    .submit-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+    .submit-btn.success { background: var(--success); }
+
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Footer */
+    .footer {
+      text-align: center; margin-top: 32px;
+      font-size: 12px; color: var(--ink-4);
+      letter-spacing: 0.3px;
+    }
+
+    /* Success animation overlay */
+    .success-overlay {
+      position: absolute; inset: 0;
+      background: var(--bg-cream);
+      display: none;
+      align-items: center; justify-content: center;
+      flex-direction: column; gap: 20px;
+      animation: fadeIn 0.4s ease;
+    }
+    .success-overlay.show { display: flex; }
+    .success-circle {
+      width: 80px; height: 80px;
+      border: 3px solid var(--success);
+      border-radius: 50%;
+      display: grid; place-items: center;
+      animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .success-check {
+      width: 36px; height: 36px;
+      stroke: var(--success); stroke-width: 3;
+      stroke-dasharray: 50;
+      stroke-dashoffset: 50;
+      animation: drawCheck 0.4s 0.3s ease forwards;
+      fill: none;
+    }
+    .success-text {
+      font-size: 22px; font-weight: 600; color: var(--ink-1);
+    }
+    .success-hint {
+      font-size: 13px; color: var(--ink-3);
+      margin-top: 4px;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes scaleIn { from { transform: scale(0); } to { transform: scale(1); } }
+    @keyframes drawCheck { to { stroke-dashoffset: 0; } }
+
+    /* AI safety footer */
+    .ai-safety {
+      position: fixed; bottom: 16px; left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px; color: var(--ink-4);
+      letter-spacing: 0.3px;
+      pointer-events: none;
+    }
+
+    /* Toast (for forgot password) */
+    .toast {
+      position: fixed; top: 32px; left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: var(--ink-1); color: #fff;
+      padding: 10px 18px; border-radius: 10px;
+      font-size: 13px;
+      opacity: 0; transition: all 0.25s ease;
+      pointer-events: none; z-index: 100;
+    }
+    .toast.show {
+      opacity: 1; transform: translateX(-50%) translateY(0);
+    }
+  </style>
+  <!-- v1.3 · admin.js 必须先于 project.js（DEMO_ACCOUNTS 引用 AdminCtx） -->
+  <script src="_shared/mock/admin.js?v=15"></script>
+  <script src="_shared/mock/project.js?v=14"></script>
+  <script src="_shared/mock/branding.js?v=18"></script>
+  <script src="_shared/js/session.js?v=15"></script>
+  <script src="_shared/js/router.js?v=14"></script>
+  <script src="_shared/js/ux-logger.js?v=14"></script>
+</head>
+<body>
+  <div class="stage">
+    <!-- LEFT: Brand background -->
+    <aside class="brand-side">
+      <div class="brand-overlay">
+        <div class="brand-logo">
+          <div class="brand-mark">
+            <img src="assets/logo.png" alt="睿学 NeoLearning" />
+          </div>
+          <div>
+            <div class="brand-name">睿学 NeoLearning</div>
+            <div class="brand-name-sub">AI-Native 学习陪伴平台</div>
+          </div>
+        </div>
+        <div class="brand-slogan">
+          <h1>把"学了"变成"会了"。</h1>
+          <p>1v1 老师 Neo 跨大厅 + 3 学习场域陪伴 6 个月，让培训从出勤完课升级为行为改变。</p>
+        </div>
+        <div></div>
+      </div>
+    </aside>
+
+    <!-- RIGHT: Login form -->
+    <main class="login-side">
+      <div class="login-card" id="loginCard">
+        <div class="project-header">
+          <div class="welcome">欢迎回来</div>
+          <div class="welcome-sub">使用项目账号登录开始学习</div>
+        </div>
+
+        <form id="loginForm" novalidate>
+          <div class="form-error" id="formError">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r="0.5" fill="currentColor"/></svg>
+            <span id="formErrorMsg">账号或密码不正确</span>
+          </div>
+
+          <div class="field" id="fieldAccount">
+            <label class="field-label" for="account">账号 / 邮箱 / 手机</label>
+            <div class="field-input-wrap">
+              <input type="text" class="field-input" id="account" placeholder="请输入账号" autocomplete="username" />
+            </div>
+            <div class="field-error-msg" id="accountErrorMsg">账号格式不正确（邮箱 / 手机 / ID）</div>
+          </div>
+
+          <div class="field" id="fieldPassword">
+            <label class="field-label" for="password">密码</label>
+            <div class="field-input-wrap">
+              <input type="password" class="field-input" id="password" placeholder="请输入密码" autocomplete="current-password" style="padding-right:42px" />
+              <span class="pwd-toggle" id="pwdToggle" title="显示密码">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              </span>
+            </div>
+            <div class="field-error-msg" id="passwordErrorMsg">密码至少 6 位</div>
+          </div>
+
+          <div class="row">
+            <label class="checkbox-wrap">
+              <input type="checkbox" id="remember" />
+              <span>记住我</span>
+            </label>
+            <a class="link-forgot" id="forgotLink">忘记密码？</a>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submitBtn">
+            <span id="submitText">登录</span>
+          </button>
+        </form>
+
+        <div class="footer">powered by NeoLearning</div>
+      </div>
+
+      <!-- Success overlay (overlays the login card on success) -->
+      <div class="success-overlay" id="successOverlay">
+        <div class="success-circle">
+          <svg class="success-check" viewBox="0 0 24 24">
+            <path d="M5 12l5 5 9-11" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div style="text-align:center">
+          <div class="success-text" id="successText">登录成功 · 欢迎回来</div>
+          <div class="success-hint">刷新浏览器返回登录页</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ============================================================
+    // 预设账密 · 已抽到 _shared/mock/project.js → window.DEMO_ACCOUNTS
+    // ============================================================
+    // 启动时如已登录 → 自动跳目标页（避免重复登录）
+    if (Session.isLoggedIn()) {
+      const sess = Session.get();
+      // 优先按 target；若无 target 则按 role 推断
+      const tgt = sess.target || (sess.role === 'admin' ? 'mgthome' : 'hall');
+      Router.go(tgt);
+    }
+
+    // ============================================================
+    // 校验工具
+    // ============================================================
+    function isValidAccount(v) {
+      if (!v) return false;
+      const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+      const isPhone = /^1[3-9]\d{9}$/.test(v);
+      const isId    = /^[a-zA-Z0-9_.-]{3,}$/.test(v);
+      return isEmail || isPhone || isId;
+    }
+    function isValidPassword(v) {
+      return v && v.length >= 6;
+    }
+
+    // ============================================================
+    // DOM
+    // ============================================================
+    const $ = (id) => document.getElementById(id);
+    const form         = $('loginForm');
+    const accountEl    = $('account');
+    const passwordEl   = $('password');
+    const fieldAccount = $('fieldAccount');
+    const fieldPwd     = $('fieldPassword');
+    const formError    = $('formError');
+    const formErrorMsg = $('formErrorMsg');
+    const submitBtn    = $('submitBtn');
+    const submitText   = $('submitText');
+    const pwdToggle    = $('pwdToggle');
+    const overlay      = $('successOverlay');
+    const successText  = $('successText');
+    const toast        = $('toast');
+    const forgotLink   = $('forgotLink');
+    const rememberCk   = $('remember');
+
+    // ============================================================
+    // 字段级失焦校验
+    // ============================================================
+    accountEl.addEventListener('blur', () => {
+      const v = accountEl.value.trim();
+      if (v && !isValidAccount(v)) {
+        fieldAccount.classList.add('error');
+      } else {
+        fieldAccount.classList.remove('error');
+      }
+    });
+    accountEl.addEventListener('input', () => {
+      fieldAccount.classList.remove('error');
+      formError.classList.remove('show');
+    });
+
+    passwordEl.addEventListener('blur', () => {
+      const v = passwordEl.value;
+      if (v && !isValidPassword(v)) {
+        fieldPwd.classList.add('error');
+      } else {
+        fieldPwd.classList.remove('error');
+      }
+    });
+    passwordEl.addEventListener('input', () => {
+      fieldPwd.classList.remove('error');
+      formError.classList.remove('show');
+    });
+
+    // ============================================================
+    // 显示密码切换
+    // ============================================================
+    pwdToggle.addEventListener('click', () => {
+      const isPwd = passwordEl.type === 'password';
+      passwordEl.type = isPwd ? 'text' : 'password';
+      pwdToggle.title = isPwd ? '隐藏密码' : '显示密码';
+    });
+
+    // ============================================================
+    // 忘记密码
+    // ============================================================
+    forgotLink.addEventListener('click', () => {
+      showToast('请联系项目管理员');
+    });
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
+    // ============================================================
+    // 记住我 · 复用 Session.getRemember/setRemember
+    // ============================================================
+    (function loadRemembered() {
+      const saved = Session.getRemember();
+      if (saved) {
+        accountEl.value = saved;
+        rememberCk.checked = true;
+      }
+    })();
+
+    // ============================================================
+    // 登录提交
+    // ============================================================
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      formError.classList.remove('show');
+
+      const account  = accountEl.value.trim();
+      const password = passwordEl.value;
+
+      // 1. 字段格式校验
+      let formatOk = true;
+      if (!isValidAccount(account)) { fieldAccount.classList.add('error'); formatOk = false; }
+      if (!isValidPassword(password)) { fieldPwd.classList.add('error'); formatOk = false; }
+      if (!formatOk) return;
+
+      // 2. loading 态
+      submitBtn.disabled = true;
+      submitText.innerHTML = '<span class="spinner"></span> 登录中...';
+      accountEl.disabled = true;
+      passwordEl.disabled = true;
+
+      // 3. 模拟后端验证（800ms 延迟）
+      setTimeout(() => {
+        const matched = DEMO_ACCOUNTS.find(a => a.account === account && a.password === password);
+        const errTrigger = DEMO_ACCOUNTS.find(a => a.account === account && a.role === 'error-trigger');
+
+        if (matched && matched.role !== 'error-trigger') {
+          // 登录成功
+          if (rememberCk.checked) {
+            Session.setRemember(account);
+          } else {
+            Session.clearRemember();
+          }
+          // 写 session（v1.3 · 加 memberId · 下游靠 id 做 lookup）
+          Session.set({
+            account:  matched.account,
+            display:  matched.display,
+            role:     matched.role,
+            target:   matched.target,
+            memberId: matched.memberId || null
+          });
+          showSuccess(matched.display, matched.target);
+        } else if (errTrigger || matched && matched.role === 'error-trigger') {
+          showFailure('账号或密码不正确');
+        } else {
+          showFailure('账号或密码不正确');
+        }
+      }, 800);
+    });
+
+    function showSuccess(displayName, target) {
+      submitBtn.classList.add('success');
+      submitText.innerHTML = '✓ 登录成功';
+      setTimeout(() => {
+        successText.textContent = displayName ? `登录成功 · 欢迎回来，${displayName}` : '登录成功';
+        overlay.classList.add('show');
+        // 1.2s 后跳转目标页
+        setTimeout(() => { Router.go(target || 'hall'); }, 1200);
+      }, 350);
+    }
+
+    function showFailure(msg) {
+      submitBtn.disabled = false;
+      submitText.textContent = '登录';
+      accountEl.disabled = false;
+      passwordEl.disabled = false;
+      formErrorMsg.textContent = msg;
+      formError.classList.add('show');
+    }
+  </script>
+</body>
+</html>

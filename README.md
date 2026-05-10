@@ -4,21 +4,17 @@
 
 ## 项目状态
 
-**V-0.2.0 / D-5.1 recap 增量交付（2026-05-08）** ✅
+**V-0.2.0 / D-5.0 是当前基线（recap 已含 D-5.1 整合）+ D-5.0 supplements 持续迭代**
 
 - D-4.0 已审阅 spec 冻结（2026-04-22）
 - 原型 v1.1 交付（2026-04-23）
 - 底层建设期 know-how 库完成（2026-04-26）
 - D-5.0 spec 全量交付（2026-05-06 / 22 文件 / 每文件独立编号 / 术语 v2）
-- ✅ **D-5.1 recap 单文件迭代**（2026-05-07 ~ 08）
-  - 替代 D-5.0/spec/05-learner/05-recap（其他 21 文件仍以 D-5.0 为准）
-  - 报告结构 5 章 → **6 章**（自由复习独立成章）
-  - 章节定位重排（学了→学得→表现→接下来）+ 第 3/4 章重新分配（学得=能力提升 / 表现=上课状态）
-  - Neo 双层语气（报告客观 / 场域像人 1v1 老师）
-  - 行动建议便签化（近期/中期/长期 / 不带"立即"等强硬话术）
-  - 知识网络 if-then 应用关联文字化 / Neo 实时推导
-  - 低数据兜底机制 / 跨课程记忆每章引用规范
-- ⏳ **下一步**：等 DM 启动 D-6.0 / 研发对接
+- D-5.1 局部迭代（2026-05-07 起）—— recap 重写 / 16 项 PM 决议 / 报告 5→6 章 / 第 3-4 章重定位 / Neo 与报告双主体 / 行动建议便签化 / 关联 Activity 集合不含 recap / T0/T1 基线明确 / 6 维画像范围收紧
+- ✅ **2026-05-09**：D-5.1 recap **替换式整合**回 D-5.0（898 → 923 行 / D-5.1 副本删除）/ D-5.0 现是当前完整基线
+- ✅ **2026-05-09 后续**：D-5.1 目录改名 D-5.0-supplements / cross-spec-decisions + demo-vs-spec-diff 两文档**内容驱动合并**为综合决议文档（341 行 / 21 项决议）/ 过程辩论 log 搬到 02-temp
+- 🔄 **D-5.0 spec 补充区**（2026-05-09+）：装 D-5.0-spec-supplements 综合决议文档 + UI demo（24.63 MB / 9 HTML）
+- ⏳ **暂不进入 D-6.0** —— DM 决定何时整合补充内容 / 启动研发对接
 
 关键数字：6 月 MVP、30-40 人/项目、项目周期可配（典型 6 个月）。
 
@@ -49,23 +45,30 @@
 - Neo Soul final（5 文件结构 + Teacher Credibility 顶级 + 不当舔狗）
 - Memory 设计原则 + 数据集与样本（含 HBR 91 集）
 
-### 2. D-5.0 spec（最终交付 ★）
+### 2. D-5.0 spec 基线（22 文件 / 改 spec 读这个 ★）
 
 [`00-public/product-V-0.2.0-D-5.0/spec/`](00-public/product-V-0.2.0-D-5.0/spec/) — **22 文件 / 全部【已审阅】 / 每文件独立编号**
 
 | 板块 | 文件 |
 |---|---|
-| **00-glossary** | 术语决议表 v2（15 节 / ~250 术语 / 含 § 15 管理端架构）|
+| **00-glossary** | 术语决议表 v2（15 节 / ~250 术语 / 含 § 15 管理端架构 / **补充区不另起 glossary，术语回写到此**）|
 | 01-vision | 愿景 |
 | 02-foundation | personas / methodology / roles-and-ports / data-model |
 | 03-lifecycle | pre-learning / learning / completion |
 | 04-global | user-global / platform-global |
-| 05-learner | overview / hub / lecture / practice / recap / cross-context |
+| 05-learner | overview / hub / lecture / practice / **recap（已含 D-5.1 整合 2026-05-09 / 923 行）** / cross-context |
 | 06-management | overview / home / report-center / program-config / message |
 
 跨文件引用格式：`[05-learner/05-recap § 1.2.3]`；自引用格式：`§ 1.2.3`。
 
-### 3. D-4.0 已审阅 spec（v0.4.0 冻结基线）
+### 3. D-5.0 spec 补充区
+
+[`00-public/product-V-0.2.0-D-5.0-supplements/`](00-public/product-V-0.2.0-D-5.0-supplements/) — 装跨 spec 决议 + UI demo：
+
+- `D-5.0-spec-supplements-2026-05-09.md` — 综合决议文档（341 行 / 21 项决议 / 跨 spec 设计 + demo 偏差校准）
+- `demo/` — UI demo（24.63 MB / 9 HTML / 4 演示账号 / 双击启动）
+
+### 4. D-4.0 已审阅 spec（v0.4.0 冻结基线 / 历史快照）
 
 路径：[`00-public/product-V-0.2.0-D-4.0/spec/`](00-public/product-V-0.2.0-D-4.0/spec/)
 
@@ -104,7 +107,7 @@
 
 > 原 03-ai-brand.md 已迁到 [`00-public/2-business/brand/ai-brand.md`](00-public/2-business/brand/ai-brand.md)（属业务/品牌资产，非产品规格）
 
-### 4. 原型 v1.1（11 个 HTML）
+### 5. 原型 v1.1（11 个 HTML）
 
 [`00-public/product-V-0.2.0-D-4.0/prototype/build/`](00-public/product-V-0.2.0-D-4.0/prototype/build/) — 11 个独立 HTML，每页自包含。
 
@@ -121,10 +124,14 @@
 │   │   ├── prototype/                     (11 HTML + assets)
 │   │   ├── README.md
 │   │   └── VERSION.md
-│   ├── product-V-0.2.0-D-5.0/             ★ D-5.0 已交付 spec
+│   ├── product-V-0.2.0-D-5.0/             ★ D-5.0 spec 当前基线（recap 已含 D-5.1 整合 2026-05-09）
 │   │   ├── spec/                          (22 文件 / 含 00-glossary 术语决议表)
 │   │   ├── README.md
 │   │   └── VERSION.md
+│   ├── product-V-0.2.0-D-5.0-supplements/ ★ D-5.0 spec 补充区
+│   │   ├── D-5.0-spec-supplements-2026-05-09.md  (综合决议文档 / 21 项)
+│   │   ├── demo/                          (UI demo / 24.63 MB / 9 HTML)
+│   │   └── README.md
 │   ├── 2-business/                        商业分析（含 brand/ai-brand.md）
 │   ├── 3-tech/                            技术分析（含 coaching-skills 项目分析）
 │   ├── 4-decisions/                       ADR + 主题决策包（含 2026-04-26 底层建设期）

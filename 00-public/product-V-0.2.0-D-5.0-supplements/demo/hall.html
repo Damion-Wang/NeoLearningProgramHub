@@ -1,0 +1,4044 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <script src="_shared/js/demo-reset.js?v=18"></script>
+  <link rel="stylesheet" href="_shared/fonts/inter.css" />
+  <link rel="stylesheet" href="_shared/css/tokens.css?v=14" />
+  <link rel="stylesheet" href="_shared/css/topbar.css?v=15" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1440, initial-scale=1" />
+  <title>大厅 · 睿学 NeoLearning</title>
+  <!-- 主题初始化（先于样式 + JS，避免 light/dark 闪烁与 heatmap palette race） -->
+  <script>
+    (function() {
+      try {
+        var saved = localStorage.getItem('rx-theme') || 'light';
+        document.documentElement.setAttribute('data-theme', saved);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script><script src="_shared/vendor/chart.umd.min.js"></script>
+  <!-- v1.3 · admin.js 必须先于 project.js（DEMO_ACCOUNTS 引用 AdminCtx） -->
+  <script src="_shared/mock/admin.js?v=15"></script>
+  <script src="_shared/mock/project.js?v=14"></script>
+  <script src="_shared/mock/branding.js?v=18"></script>
+  <script src="_shared/mock/milestones.js?v=15"></script>
+  <script src="_shared/mock/messages.js?v=14"></script>
+  <!-- v1.5 P3 · COURSE_PACK 单 source（recap CTA 锁定逻辑也用）-->
+  <script src="_shared/mock/coursepack.js?v=15"></script>
+  <!-- v1.2.2 跨场域数据流 stores（工程纪律 N） -->
+  <script src="_shared/mock/progress.js?v=14"></script>
+  <script src="_shared/mock/todos.js?v=14"></script>
+  <script src="_shared/mock/highlights.js?v=14"></script>
+  <script src="_shared/mock/notes.js?v=14"></script>
+  <script src="_shared/js/avatar-color.js?v=16"></script>
+  <script src="_shared/js/session.js?v=15"></script>
+  <script src="_shared/js/router.js?v=14"></script>
+  <script src="_shared/js/ux-logger.js?v=14"></script>
+  <script src="_shared/js/jumper.js?v=14"></script>
+  <script>
+    // 启动校验：无 session → login
+    if (!Session.isLoggedIn()) {
+      location.replace('00-睿学Demo-双击启动.html');
+    }
+  </script>
+  <style>
+    /* ============================================================
+       Tokens · 双模式（亮米白橙 / 暗 D 浅紫炭）
+       ============================================================ */
+    /* v1.3 · :root + [data-theme="dark"] 变量定义已抽至 _shared/css/tokens.css */
+    * { box-sizing: border-box; font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, sans-serif; }
+    html, body { margin: 0; padding: 0; height: 100%; }
+    body {
+      background:
+        radial-gradient(ellipse 1100px 800px at 8% 6%, var(--bg-glow-1), transparent 55%),
+        radial-gradient(ellipse 1000px 700px at 95% 90%, var(--bg-glow-2), transparent 55%),
+        radial-gradient(ellipse 600px 400px at 50% 30%, var(--bg-glow-3), transparent 60%),
+        var(--bg-cream);
+      background-attachment: fixed;
+      color: var(--ink-1);
+      font-size: 14px; line-height: 1.5;
+      min-width: 1280px;            /* 最低支持 1280px：低于此值底部横向滚动 */
+      overflow-x: auto; overflow-y: hidden;
+    }
+
+    /* ===== Layout · Frame 贯穿屏幕 + main 内容 1280 居中 =====
+       · body min 1280 保护
+       · stage / topbar / main-row 全幅（topbar 一直顶通，nav 贴左，neo 贴右）
+       · 主内容区 .main-scroll 内部 max-width 1280 + margin auto 让卡片居中 */
+    .stage {
+      display: grid; grid-template-rows: 56px 1fr;
+      height: 100vh;
+      width: 100%;
+    }
+    .topbar {
+      display: grid; grid-template-columns: 64px auto 1fr auto;
+      align-items: center;
+      background: transparent;
+      border-bottom: 1px solid var(--hairline);
+      padding-right: 16px;
+    }
+    .topbar-brand { display: flex; align-items: center; justify-content: center; padding: 0 14px; }
+    .topbar-brand img {
+      width: 28px; height: 28px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 12px rgba(var(--accent-rgb),0.25));
+    }
+    /* I-18 端标识 chip */
+    .port-chip {
+      display: inline-flex; align-items: center;
+      padding: 2px 8px; border-radius: 999px;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
+      margin-left: 8px; flex-shrink: 0;
+      border: 1px solid currentColor; background: transparent;
+    }
+    .port-chip-learner { color: var(--accent); }
+    .port-chip-admin   { color: #10B981; }   /* emerald */
+    [data-theme="dark"] .port-chip-learner { color: var(--accent); }
+    [data-theme="dark"] .port-chip-admin   { color: #6EE7B7; }
+    .topbar-project { display: flex; align-items: center; gap: 10px; padding-left: 8px; }
+    .topbar-project-name { font-size: 14px; font-weight: 600; color: var(--ink-1); }
+    .topbar-project-meta { font-size: 12px; color: var(--ink-3); }
+    .topbar-actions { display: flex; align-items: center; gap: 4px; }
+
+    .main-row { display: grid; grid-template-columns: 64px minmax(0, 1fr) var(--neo-w, 380px); min-height: 0; }
+
+    /* ===== Left Nav (居中圆角长条 pill) ===== */
+    .left-nav {
+      background: transparent;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nav-pill {
+      background: var(--bg-card-solid);
+      border: 1px solid var(--hairline);
+      border-radius: 18px;
+      padding: 6px;
+      display: flex; flex-direction: column; gap: 4px;
+      box-shadow: 0 2px 6px rgba(31,26,23,0.04), 0 8px 24px rgba(31,26,23,0.04);
+    }
+    .nav-item {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      display: grid; place-items: center;
+      color: var(--ink-3); cursor: pointer;
+      transition: all 0.15s ease;
+      position: relative;
+    }
+    .nav-item:hover { background: var(--bg-soft); color: var(--ink-1); }
+    .nav-item.active {
+      background: var(--grad-cta);
+      color: #fff;
+      box-shadow: var(--glow-accent-2), inset 0 1px 0 rgba(255,255,255,0.20);
+    }
+    .nav-item.disabled { color: var(--ink-4); cursor: not-allowed; }
+    .nav-item.disabled:hover { background: transparent; color: var(--ink-4); }
+    .nav-tooltip {
+      position: absolute; left: 50px; top: 50%; transform: translateY(-50%);
+      background: var(--ink-1); color: #fff; padding: 4px 10px;
+      border-radius: 6px; font-size: 12px; white-space: nowrap;
+      opacity: 0; pointer-events: none; transition: opacity 0.15s ease;
+      z-index: 60;
+    }
+    .nav-item:hover .nav-tooltip { opacity: 1; }
+
+    /* ===== Main scroll area =====
+       I-01 修：取消 max-width 居中（让滚动条贴 grid 列右边即 chat 区左侧）；
+       内层 .main-inner 撑开内容居中 1280 */
+    .main-scroll {
+      overflow-y: auto; overflow-x: hidden;
+      width: 100%;
+    }
+    .main-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 16px 24px 80px 24px;
+    }
+    .main-scroll::-webkit-scrollbar { width: 8px; }
+    .main-scroll::-webkit-scrollbar-thumb { background: var(--ink-5); border-radius: 4px; }
+    .main-scroll::-webkit-scrollbar-thumb:hover { background: var(--ink-4); }
+
+    .section { margin-bottom: 28px; }
+    .section-head {
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .section-title { font-size: 16px; font-weight: 600; color: var(--ink-1); letter-spacing: -0.2px; }
+    .section-sub { font-size: 12px; color: var(--ink-3); }
+
+    /* ===== Project overview row (5 components) ===== */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 240px;
+      gap: 16px;
+      align-items: stretch;
+    }
+    .overview-left { display: flex; flex-direction: column; gap: 16px; }
+    .overview-right {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 16px;
+      min-height: 0;
+    }
+    .overview-right .card { min-height: 0; }
+    .overview-right .card.todo-card {
+      display: flex; flex-direction: column;
+      /* 占满 grid 1fr 单元格 + 内容超出 → list 内部滚动 */
+      height: 100%; min-height: 0;
+      overflow: hidden;
+    }
+    .overview-right .card.todo-card .todo-list {
+      flex: 1 1 0; min-height: 0;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .overview-right .card.todo-card .todo-list::-webkit-scrollbar { width: 5px; }
+    .overview-right .card.todo-card .todo-list::-webkit-scrollbar-thumb { background: var(--ink-5); border-radius: 3px; }
+
+    .card {
+      background: var(--glass-card);
+      border: 1px solid var(--hairline);
+      border-top-color: var(--hairline-top);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow:
+        inset 0 1px 0 var(--inset-highlight),
+        var(--shadow-card);
+      backdrop-filter: blur(20px) saturate(150%);
+      -webkit-backdrop-filter: blur(20px) saturate(150%);
+      position: relative;
+    }
+    /* 顶部光带（玻璃感关键细节） */
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      height: 1px; width: 50%;
+      background: linear-gradient(90deg,
+        transparent,
+        rgba(var(--accent-rgb),0.25),
+        transparent);
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    .card-title {
+      font-size: 13px; font-weight: 600; color: var(--ink-2);
+      margin-bottom: 12px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    /* A: Heatmap (传统圆角方形 + 单维度填充 + 双环细节在 hover 卡) */
+    .heatmap-outer { position: relative; }
+    .heatmap-wrap { overflow-x: auto; padding-bottom: 4px; padding-top: 24px; scroll-behavior: smooth; }
+    .heatmap-wrap::-webkit-scrollbar { height: 5px; }
+    .heatmap-wrap::-webkit-scrollbar-thumb { background: var(--ink-5); border-radius: 3px; }
+    .heatmap-wrap::-webkit-scrollbar-track { background: var(--bg-soft); border-radius: 3px; }
+    .hm-scroll-btn {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      border: 1px solid var(--hairline);
+      color: var(--ink-2);
+      cursor: pointer;
+      display: grid; place-items: center;
+      box-shadow: 0 2px 12px rgba(31,26,23,0.12);
+      z-index: 10;
+      opacity: 0.85;
+      transition: opacity 0.15s ease, background 0.15s ease, transform 0.15s ease;
+    }
+    .hm-scroll-btn:hover { opacity: 1; background: var(--accent); color: #fff; transform: translateY(-50%) scale(1.08); }
+    .hm-scroll-btn.left { left: -8px; }
+    .hm-scroll-btn.right { right: -8px; }
+    .hm-scroll-btn:disabled { opacity: 0; pointer-events: none; }
+    /* 渐变蒙版指示可滚动 */
+    .heatmap-outer::before, .heatmap-outer::after {
+      content: '';
+      position: absolute; top: 24px; bottom: 24px;
+      width: 24px; pointer-events: none; z-index: 5;
+      transition: opacity 0.2s ease;
+    }
+    .heatmap-outer::before { left: 0; background: linear-gradient(90deg, var(--bg-card-solid), transparent); opacity: var(--mask-l, 0); }
+    .heatmap-outer::after { right: 0; background: linear-gradient(-90deg, var(--bg-card-solid), transparent); opacity: var(--mask-r, 0); }
+    .heatmap-grid {
+      display: grid;
+      grid-template-columns: 24px repeat(var(--weeks, 26), 22px);
+      gap: 3px;
+      position: relative;
+    }
+    .hm-week-label {
+      grid-row: 1;
+      font-size: 10px; font-weight: 600; color: var(--ink-3);
+      text-align: center;
+      transform: translateY(-20px);
+      font-feature-settings: 'tnum';
+    }
+    .hm-day-label {
+      width: 24px; font-size: 10px; color: var(--ink-3);
+      display: flex; align-items: center; justify-content: flex-end;
+      padding-right: 4px;
+    }
+    /* Apple Watch 风：双圆环嵌套 + 同色系 + 中间缝
+       结构（从外往内）：
+       - 0-3px  外环（学习时长，深橙系）
+       - 3-6px  缝（米白）
+       - 6-9px  内环（Neo 互动，浅橙系 / 同色系微差）
+       - 9px-中 中心空心（米白）
+    */
+    .heatmap-cell {
+      width: 22px; height: 22px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.15s ease, filter 0.15s ease;
+      box-sizing: border-box;
+      background: var(--cell-fill, var(--bg-cream));
+      box-shadow:
+        inset 0 1px 1px var(--inset-highlight),
+        0 1px 3px rgba(var(--accent-rgb),0.16),
+        0 0 0 1px rgba(var(--accent-rgb),0.06),
+        0 0 10px rgba(var(--accent-rgb),0.10);
+    }
+    .heatmap-cell:not(.empty):not(.zero):hover {
+      transform: scale(1.22); z-index: 5;
+      box-shadow:
+        inset 0 1px 2px var(--inset-highlight),
+        0 4px 12px rgba(var(--accent-rgb),0.32),
+        0 0 0 1px rgba(var(--accent-rgb),0.22),
+        0 0 16px rgba(var(--accent-rgb),0.20);
+    }
+    /* 未学习：日子已过但 0 学习时长 → 浅灰填充 */
+    .heatmap-cell.zero { cursor: default; background: var(--bg-soft); box-shadow: none; }
+    [data-theme="dark"] .heatmap-cell.zero { background: rgba(255,255,255,0.04); }
+    /* 未开始：未来日子 → 更淡灰填充 */
+    .heatmap-cell.empty { cursor: default; background: var(--bg-soft); box-shadow: none; opacity: 0.5; }
+    [data-theme="dark"] .heatmap-cell.empty { background: rgba(255,255,255,0.025); opacity: 1; }
+    .heatmap-cell:not(.empty):not(.zero):hover { transform: scale(1.12); z-index: 5; }
+    .heatmap-cell { position: relative; }
+    /* 里程碑标记：cell 右上角小红点（跟图例一致） */
+    .heatmap-cell { position: relative; }
+    .heatmap-cell .hm-dot {
+      position: absolute;
+      top: -2px; right: -2px;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #F43F5E;  /* 里程碑红点（rose-500）*/
+      border: 1.5px solid var(--bg-cream);
+      box-sizing: border-box;
+      z-index: 3;
+    }
+    .heatmap-legend {
+      display: flex; align-items: center; gap: 16px;
+      margin-top: 14px; font-size: 11px; color: var(--ink-3);
+      flex-wrap: wrap;
+    }
+    .legend-group { display: flex; align-items: center; gap: 6px; }
+    .legend-scale { display: flex; align-items: center; gap: 4px; }
+    .legend-scale span {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      box-sizing: border-box;
+    }
+    /* 移除 ::after 双层 brightness：让 legend 圆点和 cell 实际配色一致（单色无 border/fill 撞色）*/
+    .legend-ring-mark {
+      width: 18px; height: 18px;
+      border-radius: 5px;
+      position: relative;
+      background: var(--bg-soft);
+    }
+    .legend-ring-mark::after {
+      content: '';
+      position: absolute; inset: 3px;
+      border-radius: 2px;
+      background: var(--bg-cream);
+    }
+    .legend-dot {
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .legend-dot span:first-child {
+      width: 18px; height: 18px;
+      border-radius: 5px;
+      background: var(--bg-soft);
+      position: relative;
+    }
+    .legend-dot span:first-child::after {
+      content: '';
+      position: absolute; inset: 3px;
+      border-radius: 2px;
+      background: var(--bg-cream);
+    }
+    .legend-dot span:first-child::before {
+      content: '';
+      position: absolute;
+      width: 5px; height: 5px;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: #F43F5E;  /* 与 cell hm-dot 同色 */
+      z-index: 2;
+    }
+
+    /* B: Timeline · v1.5 标签 top/bottom 双 lane 避让 */
+    .timeline-wrap { padding: 8px 0 4px 0; }
+    .timeline-bar {
+      position: relative; height: 8px;
+      background: var(--bg-soft); border-radius: 4px;
+      margin: 36px 56px 40px 56px;
+    }
+    .timeline-fill {
+      position: absolute; left: 0; top: 0; height: 100%;
+      background: linear-gradient(90deg, #B85F38 0%, #D97A37 30%, #F4A86C 70%, #FFCFA8 100%);
+      border-radius: 4px;
+      box-shadow: 0 0 12px rgba(var(--accent-rgb),0.30);
+    }
+    [data-theme="dark"] .timeline-fill {
+      background: linear-gradient(90deg, #7C3AED 0%, #A78BFA 30%, #C4B5FD 70%, #DDD6FE 100%);
+      box-shadow: 0 0 16px rgba(var(--accent-rgb),0.45);
+    }
+    .timeline-marker {
+      position: absolute; top: -4px;
+      width: 16px; height: 16px;
+      transform: translateX(-50%);
+    }
+    .marker-dot {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      border: 2.5px solid var(--accent);
+      cursor: pointer;
+      box-sizing: border-box;
+    }
+    .marker-dot.passed { background: var(--accent); }
+    .marker-dot.current {
+      background: var(--accent);
+      box-shadow: 0 0 0 5px rgba(217,119,87,0.22);
+    }
+    .marker-label {
+      position: absolute;
+      left: 50%; transform: translateX(-50%);
+      font-size: 10px; color: var(--ink-3);
+      white-space: nowrap;
+    }
+    .marker-label[data-lane="top"]    { top: -22px; }
+    .marker-label[data-lane="bottom"] { top:  16px; }
+    .marker-label[data-lane="current"] { top: 32px; }
+    .timeline-marker:first-of-type .marker-label {
+      left: -4px; transform: none;
+    }
+    .timeline-marker:last-of-type .marker-label {
+      left: auto; right: -4px; transform: none;
+    }
+    .timeline-meta {
+      display: flex; gap: 16px; font-size: 12px; color: var(--ink-2);
+    }
+    .timeline-meta b { color: var(--ink-1); }
+
+    /* C: Data cards */
+    .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--hairline);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .stat-label { font-size: 12px; color: var(--ink-3); margin-bottom: 8px; }
+    .stat-value { font-size: 22px; font-weight: 700; color: var(--ink-1); letter-spacing: -0.5px; }
+    .stat-value.gradient-text {
+      background: var(--grad-brand);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
+    .stat-meta { font-size: 11px; color: var(--ink-3); margin-top: 6px; }
+
+    /* D: Radar */
+    .radar-wrap { position: relative; }
+    .radar-canvas-wrap { width: 200px; height: 200px; margin: 0 auto; cursor: pointer; }
+    .radar-popover {
+      position: absolute;
+      top: 0; right: calc(100% + 10px);
+      width: 280px;
+      background: var(--bg-card);
+      border: 1px solid var(--hairline);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(31,26,23,0.06), 0 16px 40px rgba(31,26,23,0.10);
+      padding: 12px 14px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.15s ease;
+      z-index: 30;
+    }
+    /* 桥接 popover 与 canvas 间的 10px 空隙，避免鼠标穿越闪退 */
+    .radar-popover::after {
+      content: '';
+      position: absolute;
+      left: 100%;
+      top: 0; bottom: 0;
+      width: 14px;
+    }
+    .radar-wrap:hover .radar-popover,
+    .radar-popover:hover {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .radar-popover-title {
+      font-size: 12px; font-weight: 600; color: var(--ink-2);
+      margin-bottom: 8px;
+    }
+    .radar-dim {
+      display: flex; align-items: flex-start; gap: 8px;
+      padding: 6px 0; border-top: 1px solid var(--hairline);
+      font-size: 11px;
+    }
+    .radar-dim:first-of-type { border-top: none; padding-top: 0; }
+    .radar-dim-name { color: var(--ink-2); font-weight: 500; min-width: 56px; }
+    .radar-dim-level {
+      display: inline-block; padding: 1px 5px;
+      background: var(--accent-soft); color: var(--accent);
+      border-radius: 4px; font-size: 10px; font-weight: 600;
+    }
+    .radar-dim-desc { color: var(--ink-3); flex: 1; line-height: 1.5; }
+
+    /* E: Todos */
+    .todo-list { display: flex; flex-direction: column; gap: 8px; }
+    .todo-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 12px;
+      background: var(--bg-soft);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .todo-item:hover { background: var(--bg-card); border: 1px solid var(--hairline); padding: 9px 11px; }
+    .todo-checkbox {
+      flex-shrink: 0;
+      width: 16px; height: 16px;
+      border: 1.5px solid var(--ink-4);
+      border-radius: 4px; margin-top: 2px;
+      cursor: pointer; transition: all 0.15s ease;
+      display: grid; place-items: center;
+      background: #fff;
+    }
+    .todo-checkbox:hover { border-color: var(--accent); }
+    .todo-checkbox.checked {
+      background: var(--grad-cta); border-color: transparent;
+      box-shadow: var(--glow-accent-2);
+    }
+    .todo-checkbox.checked::after {
+      content: '✓'; color: #fff; font-size: 11px; font-weight: 700;
+    }
+    .todo-content { flex: 1; min-width: 0; }
+    .todo-text { font-size: 13px; color: var(--ink-1); }
+    .todo-text.done { text-decoration: line-through; color: var(--ink-3); }
+    .todo-meta { font-size: 11px; color: var(--ink-3); margin-top: 2px; }
+
+    /* Community row (独立行) · I-11 高度 ×3（之前过矮像挤在一起）*/
+    .community-row {
+      background: linear-gradient(90deg, var(--bg-card) 0%, var(--accent-soft) 100%);
+      border: 1px dashed var(--ink-4);
+      border-radius: 14px;
+      padding: 48px 24px;
+      min-height: 160px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .community-icon { font-size: 28px; flex-shrink: 0; }
+    .community-text { flex: 1; }
+    .community-text-title { font-size: 14px; font-weight: 600; color: var(--ink-2); }
+    .community-text-sub { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+    .community-tag {
+      padding: 4px 10px; font-size: 11px;
+      background: var(--bg-card); color: var(--ink-3);
+      border: 1px solid var(--hairline);
+      border-radius: 999px;
+    }
+
+    /* ===== Course list (左缩略 + 右详情 · 可展开 Activity) ===== */
+    .course-list { display: flex; flex-direction: column; gap: 10px; }
+    .course-card {
+      background: var(--glass-card);
+      border: 1px solid var(--hairline);
+      border-top-color: var(--hairline-top);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: border-color 0.15s ease;
+      backdrop-filter: blur(20px) saturate(150%);
+      -webkit-backdrop-filter: blur(20px) saturate(150%);
+      box-shadow:
+        inset 0 1px 0 var(--inset-highlight),
+        var(--shadow-card);
+    }
+    .course-card:hover { border-color: var(--ink-4); }
+    .course-card.expanded { border-color: var(--accent); }
+    .course-row {
+      display: flex; gap: 16px;
+      padding: 14px 16px;
+      cursor: pointer;
+      align-items: center;
+    }
+    .course-thumb {
+      width: 88px; height: 88px;
+      border-radius: 12px;
+      flex-shrink: 0;
+      display: grid; place-items: center;
+      color: #fff; font-size: 16px; font-weight: 700;
+      letter-spacing: 1px;
+      background: linear-gradient(135deg, var(--accent), #E89B6E);
+    }
+    .course-card.completed .course-thumb { background: linear-gradient(135deg, #6B8C70, #88A691); }
+    .course-card.notstarted .course-thumb { background: linear-gradient(135deg, #B8AFA6, #D8CFC4); }
+    /* dark mode: course thumbs 调整为紫色调 */
+    [data-theme="dark"] .course-card .course-thumb { background: var(--grad-cta); }
+    [data-theme="dark"] .course-card.completed .course-thumb { background: linear-gradient(135deg, #5EEAD4, #67E8F9); }
+    [data-theme="dark"] .course-card.notstarted .course-thumb { background: linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06)); }
+    .course-info { flex: 1; min-width: 0; }
+    .course-info-head {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 4px;
+    }
+    .course-title { font-size: 15px; font-weight: 600; color: var(--ink-1); }
+    .course-summary {
+      font-size: 12px; color: var(--ink-3); line-height: 1.5;
+      margin-bottom: 8px;
+      display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .course-foot {
+      display: flex; align-items: center; gap: 14px;
+      font-size: 11px; color: var(--ink-2);
+    }
+    .course-progress-bar {
+      flex: 1; max-width: 200px;
+      height: 4px; background: var(--bg-soft);
+      border-radius: 2px; overflow: hidden;
+    }
+    .course-progress-fill {
+      height: 100%;
+      background: var(--grad-brand);
+      box-shadow: var(--glow-accent-2);
+      transition: width 0.3s ease;
+    }
+    .course-card.completed .course-progress-fill { background: var(--success); }
+    .course-status {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 8px; border-radius: 8px; font-size: 10px;
+    }
+    .status-completed { background: rgba(79,139,92,0.1); color: var(--success); }
+    .status-progress { background: var(--accent-soft); color: var(--accent); }
+    .status-notstarted { background: var(--bg-soft); color: var(--ink-3); }
+    .course-chevron {
+      color: var(--ink-3);
+      transition: transform 0.2s ease;
+      flex-shrink: 0;
+    }
+    .course-card.expanded .course-chevron { transform: rotate(180deg); color: var(--accent); }
+
+    .course-activities {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      border-top: 1px solid var(--hairline);
+    }
+    .course-card.expanded .course-activities {
+      max-height: 800px;
+    }
+    .course-act-inner { padding: 12px 16px 16px 16px; background: var(--bg-soft); }
+    .course-cta-row {
+      display: flex; justify-content: flex-end;
+      padding: 0 16px 14px 16px;
+      background: var(--bg-soft);
+    }
+    .course-cta-btn {
+      padding: 8px 18px; border-radius: 10px;
+      border: none; cursor: pointer;
+      background: var(--grad-cta); color: #fff;
+      box-shadow: var(--glow-accent-2);
+      font-size: 13px; font-weight: 500;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: filter 0.15s ease;
+    }
+    .course-cta-btn:hover { filter: brightness(1.08); }
+    .course-cta-btn.completed-cta { background: var(--bg-card); color: var(--ink-2); border: 1px solid var(--hairline); box-shadow: none; }
+    .course-cta-btn.completed-cta:hover { border-color: var(--accent); color: var(--accent); filter: none; }
+    .activity-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--hairline);
+      border-radius: 10px;
+      margin-bottom: 6px;
+      transition: all 0.15s ease;
+    }
+    .activity-row:hover { border-color: var(--ink-4); }
+    .activity-row.locked { opacity: 0.5; }
+    .activity-icon {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      display: grid; place-items: center;
+      flex-shrink: 0;
+      font-size: 14px;
+    }
+    .activity-icon.lecture { background: rgba(74,124,157,0.12); color: var(--info); }
+    .activity-icon.practice { background: rgba(216,155,59,0.12); color: var(--warn); }
+    .activity-icon.recap { background: rgba(79,139,92,0.12); color: var(--success); }
+    .activity-info { flex: 1; min-width: 0; }
+    .activity-title { font-size: 13px; font-weight: 500; color: var(--ink-1); margin-bottom: 1px; }
+    .activity-meta { font-size: 11px; color: var(--ink-3); }
+    .activity-cta {
+      flex-shrink: 0;
+      padding: 5px 12px;
+      border-radius: 8px;
+      border: none;
+      background: var(--grad-cta); color: #fff;
+      box-shadow: var(--glow-accent-2);
+      font-size: 11px; font-weight: 500;
+      cursor: pointer;
+      transition: filter 0.15s ease;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .activity-cta:hover { filter: brightness(1.08); }
+    /* v1.5.1 B15 · 已完成 CTA 用半透明 emerald · 跟「开始学习」橙色明显区分 */
+    .activity-cta.completed-cta {
+      background: rgba(79, 139, 92, 0.10);
+      color: var(--success);
+      border: 1px solid rgba(79, 139, 92, 0.35);
+      box-shadow: none;
+    }
+    .activity-cta.completed-cta:hover { background: rgba(79, 139, 92, 0.18); color: var(--success); filter: none; }
+    .activity-cta.locked-cta {
+      background: var(--bg-soft); color: var(--ink-4);
+      border-color: var(--hairline);
+      cursor: not-allowed;
+    }
+
+    /* ===== Harvest tabs ===== */
+    .tabs {
+      display: flex; gap: 4px;
+      border-bottom: 1px solid var(--hairline);
+      margin-bottom: 14px;
+    }
+    .tab {
+      padding: 8px 14px;
+      font-size: 13px; color: var(--ink-3);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s ease;
+      margin-bottom: -1px;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .tab-icon { width: 14px; height: 14px; flex-shrink: 0; }
+    .tab:hover { color: var(--ink-1); }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
+    .tab-badge {
+      display: inline-block; margin-left: 4px;
+      padding: 0 6px;
+      background: var(--bg-soft); color: var(--ink-3);
+      border-radius: 8px; font-size: 10px; font-weight: 600;
+      line-height: 16px;
+    }
+    .tab.active .tab-badge { background: var(--accent-soft); color: var(--accent); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    /* I-15 4 库各自搜索框 */
+    .harvest-search {
+      width: 100%; padding: 7px 12px;
+      border: 1px solid var(--hairline); border-radius: 8px;
+      background: var(--bg-soft); color: var(--ink-1);
+      font-size: 12px; outline: none;
+      margin-bottom: 10px;
+    }
+    .harvest-search:focus { border-color: var(--accent); }
+    .item-card.search-hidden { display: none; }
+    .tab-panel-scroll {
+      /* I-10 固定高度 + 内滚（之前 max-height 内容少时不撑满，现在用固定 height）*/
+      height: 420px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .tab-panel-scroll::-webkit-scrollbar { width: 5px; }
+    .tab-panel-scroll::-webkit-scrollbar-thumb { background: var(--ink-5); border-radius: 3px; }
+    .item-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
+    }
+
+    /* highlight / report / tool / note item */
+    .item-card {
+      background: var(--bg-card);
+      border: 1px solid var(--hairline);
+      border-radius: 10px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .item-card:hover { border-color: var(--ink-4); box-shadow: var(--shadow-card); }
+    /* I-17 Activity hover 简介卡 */
+    .activity-tooltip {
+      position: fixed; z-index: 9999;
+      background: var(--bg-card); color: var(--ink-1);
+      border: 1px solid var(--hairline); border-radius: 10px;
+      padding: 10px 12px; font-size: 12px; line-height: 1.5;
+      box-shadow: 0 8px 24px rgba(31,26,23,0.12);
+      max-width: 280px;
+      opacity: 0; transform: translateY(-2px);
+      transition: opacity 0.12s, transform 0.12s;
+      pointer-events: none;
+    }
+    .activity-tooltip.show { opacity: 1; transform: translateY(0); }
+    .activity-tooltip-title { font-weight: 600; margin-bottom: 4px; color: var(--ink-1); }
+    .activity-tooltip-meta { font-size: 11px; color: var(--ink-3); margin-bottom: 6px; }
+    .activity-tooltip-goal { font-size: 11px; color: var(--ink-2); }
+
+    .item-card.locked { opacity: 0.5; cursor: default; background: var(--bg-soft); }
+    .item-card.locked:hover { border-color: var(--hairline); box-shadow: none; }
+    .item-card.new-note {
+      animation: noteFlash 1.2s ease;
+      border-color: var(--accent);
+    }
+    .item-icon-btn {
+      width: 24px; height: 24px;
+      border-radius: 6px;
+      color: var(--ink-3);
+      display: inline-grid; place-items: center;
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+    .item-icon-btn:hover { color: var(--accent); background: var(--accent-soft); }
+    .item-icon-btn.danger:hover { color: var(--error); background: rgba(192,57,43,0.08); }
+    @keyframes noteFlash {
+      0% { background: var(--accent-soft); }
+      100% { background: var(--bg-card); }
+    }
+    .item-tag {
+      display: inline-block; padding: 1px 6px;
+      background: var(--accent-soft); color: var(--accent);
+      font-size: 10px; font-weight: 600;
+      border-radius: 4px; margin-right: 6px;
+    }
+    .item-title { font-size: 13px; font-weight: 500; color: var(--ink-1); margin-bottom: 4px; }
+    .item-quote {
+      font-size: 11px; color: var(--ink-2);
+      font-style: italic;
+      padding-left: 8px; border-left: 2px solid var(--accent-soft);
+      margin: 6px 0;
+    }
+    .item-meta { font-size: 10px; color: var(--ink-3); display: flex; gap: 8px; }
+    .item-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+
+    /* ===== Right Neo Chat ===== */
+    .neo-chat {
+      background: var(--glass-card);
+      border-left: 1px solid var(--hairline);
+      backdrop-filter: blur(20px) saturate(150%);
+      -webkit-backdrop-filter: blur(20px) saturate(150%);
+      display: flex; flex-direction: column;
+      min-height: 0;
+      position: relative;
+    }
+    .neo-resize-handle {
+      position: absolute; left: -3px; top: 0; bottom: 0;
+      width: 6px; cursor: ew-resize;
+      z-index: 60;
+      transition: background 0.15s ease;
+    }
+    .neo-resize-handle:hover { background: var(--accent-soft); }
+    .neo-resize-handle.dragging { background: var(--accent); }
+    /* v1.4.1 FIX-1（修） · neo-bar 完全对齐 mgthome ora-bar · 仅居中文字 · 无头像 · 跨学员端/管理端统一 */
+    .neo-bar {
+      display: flex; align-items: center; justify-content: center;
+      padding: 9px 0 11px 0;
+      border-bottom: 1px solid var(--hairline);
+      background: var(--bg-card-solid);
+      flex-shrink: 0;
+    }
+    .neo-bar-text {
+      color: var(--ink-1);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .neo-hero {
+      position: relative;
+      padding: 12px 12px 14px 12px;
+      border-bottom: 1px solid var(--hairline);
+      background: var(--bg-card-solid);
+      overflow: hidden;            /* 切掉头像光晕外溢 */
+      flex-shrink: 0;
+      transition: padding 0.28s ease, background 0.2s ease;
+    }
+    .neo-hero-img {
+      width: 100%; height: 200px;
+      border-radius: 14px;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      background: var(--bg-soft);
+      transition: max-height 0.28s ease, opacity 0.2s ease, margin 0.28s ease, transform 0.4s ease;
+      max-height: 240px;
+      animation: neo-breathe 4.8s ease-in-out infinite;
+      transform-origin: center center;
+    }
+    /* 单一 keyframe · 两模式对仗 · accent 自动取当前主题色 · 光晕半径限制在 hero 内可见 */
+    @keyframes neo-breathe {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0);
+      }
+      50% {
+        transform: scale(1.012);
+        box-shadow: 0 0 14px 2px rgba(var(--accent-rgb), 0.55);
+      }
+    }
+    .neo-chat.collapsed .neo-hero-img { animation: none; }
+    .neo-hero-name {
+      position: absolute; left: 28px; bottom: 30px;
+      color: #fff;
+      font-size: 18px; font-weight: 600;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      transition: all 0.28s ease;
+      pointer-events: none;
+    }
+    /* Collapse btn — 在 flex flow 中夹于 hero 与 chat-stream 之间，靠负 margin 跨在分界线上 */
+    .neo-collapse-btn {
+      align-self: center;
+      width: 44px; height: 22px;
+      border-radius: 11px;
+      background: var(--bg-card-solid);
+      border: 1px solid var(--hairline-2);
+      border-top-color: var(--hairline-top);
+      color: var(--ink-2); cursor: pointer;
+      display: grid; place-items: center;
+      z-index: 12;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      transition: all 0.2s ease;
+      margin: -11px 0 0 0;          /* 负 margin 上拉一半高度 → 跨界线 */
+      flex-shrink: 0;
+    }
+    .neo-collapse-btn:hover {
+      background: var(--bg-soft);
+      color: var(--ink-1);
+      border-color: var(--accent);
+    }
+    .neo-collapse-btn svg { transition: transform 0.28s ease; }
+    /* 折叠态：图片 max-height 0 + 名字翻转为内联在 hero 内顶部居中 */
+    .neo-chat.collapsed .neo-hero {
+      padding: 0 12px;
+      background: var(--bg-card-solid);
+    }
+    .neo-chat.collapsed .neo-hero-img { max-height: 0; opacity: 0; margin-bottom: 0; }
+    .neo-chat.collapsed .neo-hero-name {
+      position: relative;
+      left: auto; bottom: auto;
+      color: var(--ink-1);
+      text-shadow: none;
+      font-size: 13px; font-weight: 600;
+      padding: 9px 0 11px 0;
+      display: block;
+      text-align: center;
+      pointer-events: auto;
+    }
+    .neo-chat.collapsed .neo-collapse-btn svg { transform: rotate(180deg); }
+
+    .neo-stream {
+      overflow-y: auto; padding: 24px 16px 8px 16px;   /* 顶 24 让出 collapse btn 12px 半高 + 12 余量 */
+      display: flex; flex-direction: column; gap: 12px;
+      flex: 1; min-height: 0;
+    }
+    .neo-stream::-webkit-scrollbar { width: 6px; }
+    .neo-stream::-webkit-scrollbar-thumb { background: var(--ink-5); border-radius: 3px; }
+
+    .msg { display: flex; gap: 8px; max-width: 100%; }
+    .msg.neo { align-self: flex-start; }
+    .msg.user { flex-direction: row-reverse; align-self: flex-end; }
+    .msg-avatar { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; overflow: hidden; }
+    .msg-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .msg-avatar.user-letter {
+      display: grid; place-items: center;
+      color: #fff; font-size: 12px; font-weight: 600;
+    }
+    .msg-bubble {
+      padding: 10px 12px; border-radius: 12px;
+      font-size: 13px; line-height: 1.5;
+      max-width: 280px; word-wrap: break-word;
+    }
+    .msg.neo .msg-bubble {
+      background: var(--bg-soft); color: var(--ink-1);
+      border-top-left-radius: 4px;
+    }
+    .msg.user .msg-bubble {
+      background: var(--accent); color: #fff;
+      border-top-right-radius: 4px;
+    }
+    [data-theme="dark"] .msg.user .msg-bubble {
+      background: var(--grad-cta); color: #fff;
+    }
+    .msg-actions { display: flex; gap: 4px; margin-top: 6px; }
+    .msg-action {
+      width: 24px; height: 24px;
+      display: grid; place-items: center;
+      color: var(--ink-4); cursor: pointer;
+      border-radius: 6px;
+      background: transparent; border: none;
+      transition: all 0.15s ease;
+    }
+    .msg-action:hover { color: var(--ink-2); background: var(--bg-soft); }
+    .msg-action.active { color: var(--accent); }
+
+    /* Neo cards */
+    .neo-card {
+      align-self: flex-start;
+      background: var(--bg-card);
+      border: 1px solid var(--accent-soft);
+      border-radius: 12px;
+      padding: 12px;
+      margin-left: 36px;
+      max-width: 300px;
+      width: 100%;
+      box-shadow: var(--shadow-card);
+    }
+    .neo-card-tag {
+      display: inline-block; padding: 2px 8px;
+      background: var(--accent-soft); color: var(--accent);
+      font-size: 10px; font-weight: 600;
+      border-radius: 4px; margin-bottom: 8px;
+    }
+    .neo-card-title { font-size: 13px; font-weight: 600; color: var(--ink-1); margin-bottom: 4px; }
+    .neo-card-body { font-size: 12px; color: var(--ink-2); line-height: 1.5; margin-bottom: 10px; }
+    .neo-card-options { display: flex; flex-direction: column; gap: 6px; }
+    .neo-card-option {
+      padding: 6px 10px;
+      background: var(--bg-cream);
+      border: 1px solid var(--hairline);
+      border-radius: 8px;
+      font-size: 12px; color: var(--ink-1);
+      cursor: pointer; transition: all 0.15s ease;
+      text-align: left;
+    }
+    .neo-card-option:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .neo-card-actions { display: flex; gap: 8px; }
+    .neo-card-btn {
+      flex: 1; padding: 6px 10px;
+      border-radius: 8px; font-size: 12px; cursor: pointer;
+      border: 1px solid var(--hairline);
+      background: var(--bg-cream); color: var(--ink-2);
+      transition: all 0.15s ease;
+    }
+    .neo-card-btn:hover { background: var(--bg-soft); }
+    .neo-card-btn.primary {
+      background: var(--grad-cta); color: #fff; border-color: transparent;
+      box-shadow: var(--glow-accent-2);
+    }
+    .neo-card-btn.primary:hover { filter: brightness(1.08); }
+
+    /* askUserQuestion popup（在输入框上方"长出"） */
+    .askq-popup {
+      position: relative;
+      margin: 0 12px 0 12px;
+      background: var(--bg-card-solid);
+      border: 1px solid var(--hairline-2);
+      border-top-color: var(--hairline-top);
+      border-radius: 14px 14px 14px 14px;
+      padding: 0 14px;
+      max-height: 0;
+      overflow: hidden;
+      box-shadow:
+        inset 0 1px 0 var(--inset-highlight),
+        0 -2px 8px rgba(var(--accent-rgb),0),
+        0 8px 20px rgba(0,0,0,0.06);
+      transform: translateY(8px);
+      opacity: 0;
+      transition: max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+                  padding 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+                  transform 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity 0.20s ease,
+                  box-shadow 0.32s ease;
+    }
+    .askq-popup.open {
+      max-height: 320px;
+      padding: 14px 14px 14px 14px;
+      transform: translateY(0);
+      opacity: 1;
+      box-shadow:
+        inset 0 1px 0 var(--inset-highlight),
+        0 -3px 12px rgba(var(--accent-rgb),0.18),
+        0 16px 32px rgba(0,0,0,0.10);
+    }
+    [data-theme="dark"] .askq-popup.open {
+      box-shadow:
+        inset 0 1px 0 var(--inset-highlight),
+        0 -4px 14px rgba(var(--accent-rgb),0.22),
+        0 16px 36px rgba(0,0,0,0.45);
+    }
+    .askq-meta {
+      font-size: 10px; font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.4px; text-transform: uppercase;
+      margin-bottom: 6px;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .askq-question {
+      font-size: 13px; color: var(--ink-1);
+      font-weight: 500; line-height: 1.5; margin-bottom: 10px;
+    }
+    .askq-options {
+      display: flex; flex-direction: column; gap: 4px;
+      margin-bottom: 10px;
+    }
+    .askq-option {
+      text-align: left;
+      padding: 7px 12px;
+      border-radius: 8px; border: 1px solid var(--hairline);
+      background: var(--bg-card);
+      color: var(--ink-1);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.1s ease;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .askq-option:hover { background: var(--bg-soft); }
+    .askq-option.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent-hover);
+    }
+    .askq-option .askq-num {
+      width: 18px; height: 18px;
+      background: var(--bg-soft);
+      color: var(--ink-3);
+      border-radius: 4px;
+      font-size: 10px; font-weight: 600;
+      display: grid; place-items: center;
+      flex-shrink: 0;
+    }
+    .askq-option.active .askq-num {
+      background: var(--accent); color: #fff;
+    }
+    .askq-hint {
+      font-size: 10px; color: var(--ink-4);
+      display: flex; gap: 12px; align-items: center;
+    }
+    .askq-hint kbd {
+      display: inline-block;
+      padding: 1px 5px; font-size: 10px;
+      background: var(--bg-card); color: var(--ink-3);
+      border: 1px solid var(--hairline);
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+    }
+
+    /* AI 安全声明 · 嵌于 input-row 内底部，共享 input-row 底色 · 无独立分隔线 */
+    .ai-safety-note {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 4px 0 4px;
+      font-size: 11px;
+      color: var(--ink-3);
+      opacity: 0.65;
+    }
+    .ai-safety-note svg { stroke: currentColor; flex-shrink: 0; }
+    .neo-input-row {
+      padding: 12px 16px 16px 16px;
+      border-top: 1px solid var(--hairline);
+      background: var(--bg-card);
+    }
+    .neo-input-wrap {
+      display: flex; gap: 8px; align-items: flex-end;
+      background: var(--bg-soft);
+      border: 1px solid var(--hairline);
+      border-radius: 12px;
+      padding: 8px 8px 8px 12px;
+      transition: border-color 0.15s ease;
+    }
+    .neo-input-wrap:focus-within { border-color: var(--accent); }
+    .neo-input {
+      flex: 1; resize: none;
+      border: none; background: transparent;
+      font-size: 13px; color: var(--ink-1);
+      outline: none;
+      max-height: 140px; min-height: 44px;
+      line-height: 1.55;
+      padding: 4px 0;
+    }
+    .neo-input::placeholder { color: var(--ink-4); }
+    .neo-btn-icon {
+      width: 32px; height: 32px;
+      border-radius: 8px; border: none;
+      background: transparent; color: var(--ink-3);
+      cursor: pointer; display: grid; place-items: center;
+    }
+    .neo-btn-icon:hover { background: var(--bg-cream); color: var(--ink-1); }
+    .neo-btn-send {
+      background: var(--grad-cta); color: #fff;
+      box-shadow: var(--glow-accent-2);
+    }
+    .neo-btn-send:hover { filter: brightness(1.08); color: #fff; }
+
+    /* ===== Topbar bell + avatar dropdown ===== */
+    .icon-btn {
+      position: relative;
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      display: grid; place-items: center;
+      cursor: pointer; color: var(--ink-2);
+      transition: background 0.15s ease;
+      border: none;
+      background: transparent;
+    }
+    .icon-btn:hover { background: var(--bg-soft); color: var(--ink-1); }
+    .badge {
+      position: absolute; top: 6px; right: 6px;
+      min-width: 16px; height: 16px;
+      padding: 0 4px;
+      background: var(--error); color: #fff;
+      border-radius: 8px; border: 2px solid var(--bg-cream);
+      font-size: 9px; font-weight: 700;
+      line-height: 12px; text-align: center;
+    }
+
+    .dropdown {
+      position: absolute; top: calc(100% + 6px); right: 0;
+      background: var(--drawer-bg);
+      border: 1px solid var(--hairline-2);
+      border-top-color: var(--hairline-top);
+      border-radius: 14px;
+      box-shadow: var(--shadow-pop);
+      z-index: 80;
+      display: none;
+      animation: dropdownIn 0.15s ease;
+      transform-origin: top right;
+    }
+    .dropdown.open { display: block; }
+    @keyframes dropdownIn { from { opacity: 0; transform: translateY(-6px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+    .bell-dropdown { width: 380px; max-height: 440px; overflow: hidden; }
+    .dropdown.open.bell-dropdown { display: flex; flex-direction: column; }
+    .dropdown-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px; border-bottom: 1px solid var(--hairline);
+    }
+    .dropdown-title { font-size: 14px; font-weight: 600; color: var(--ink-1); }
+    .dropdown-action {
+      font-size: 12px; color: var(--ink-3);
+      cursor: pointer;
+    }
+    .dropdown-action:hover { color: var(--accent); }
+    .msg-list { overflow-y: auto; flex: 1; }
+    .msg-list::-webkit-scrollbar { width: 6px; }
+    .msg-list::-webkit-scrollbar-thumb { background: var(--ink-5); border-radius: 3px; }
+    .msg-row {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--hairline);
+      cursor: pointer;
+      transition: background 0.15s ease;
+      display: flex; gap: 10px;
+    }
+    .msg-row:hover { background: var(--bg-soft); }
+    .msg-row:last-child { border-bottom: none; }
+    .msg-avatar-wrap {
+      width: 32px; height: 32px; flex-shrink: 0;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      overflow: hidden;
+    }
+    .msg-avatar-wrap.platform { background: var(--bg-soft); padding: 4px; }
+    .msg-avatar-wrap.platform img { width: 100%; height: 100%; object-fit: contain; }
+    .msg-avatar-wrap.system { background: rgba(74,124,157,0.12); color: var(--info); }
+    .msg-avatar-wrap.user { color: #fff; font-size: 12px; font-weight: 600; }
+    .msg-content { flex: 1; min-width: 0; }
+    .msg-head {
+      display: flex; align-items: center; gap: 6px;
+      flex-wrap: wrap;
+    }
+    .msg-text { font-size: 13px; font-weight: 500; color: var(--ink-1); flex: 1; min-width: 0; }
+    .msg-dot-unread {
+      display: inline-block; width: 6px; height: 6px;
+      background: var(--accent); border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .msg-desc {
+      font-size: 11px; color: var(--ink-3); line-height: 1.6;
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.25s ease, margin 0.25s ease;
+    }
+    .msg-row.expanded .msg-desc {
+      max-height: 200px;
+      margin-top: 6px;
+    }
+    .msg-time { font-size: 10px; color: var(--ink-4); margin-top: 4px; font-feature-settings: 'tnum'; }
+    .msg-sender { font-size: 11px; color: var(--ink-3); }
+
+    /* avatar dropdown */
+    .avatar-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 4px 10px 4px 4px;
+      border-radius: 999px; cursor: pointer;
+      border: 1px solid var(--hairline);
+      background: var(--bg-card);
+      transition: background 0.15s ease;
+    }
+    .avatar-btn:hover { background: var(--bg-soft); }
+    .avatar-circle {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: grid; place-items: center;
+      color: #fff; font-size: 12px; font-weight: 600;
+    }
+    .avatar-name { font-size: 13px; color: var(--ink-1); }
+    .avatar-dropdown { width: 240px; padding: 8px; }
+    .ad-head { padding: 10px 12px 12px 12px; border-bottom: 1px solid var(--hairline); margin-bottom: 8px; }
+    .ad-name { font-size: 14px; font-weight: 600; color: var(--ink-1); }
+    .ad-role { font-size: 11px; color: var(--ink-3); margin-top: 2px; }
+    .ad-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 12px; border-radius: 8px;
+      cursor: pointer; font-size: 13px; color: var(--ink-1);
+      transition: background 0.15s ease;
+    }
+    .ad-item:hover { background: var(--bg-soft); }
+    .ad-item.disabled { color: var(--ink-4); cursor: not-allowed; }
+    .ad-item.disabled:hover { background: transparent; }
+    .ad-item-left { display: flex; align-items: center; gap: 10px; }
+    .ad-divider { height: 1px; background: var(--hairline); margin: 6px 0; }
+    .ad-item.danger { color: var(--error); }
+
+    /* ===== Note float ===== */
+    .note-float {
+      position: fixed; left: 24px; bottom: 24px;
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: var(--grad-cta);
+      color: #fff;
+      display: grid; place-items: center;
+      cursor: pointer;
+      box-shadow:
+        var(--glow-accent-2),
+        0 4px 16px rgba(var(--accent-rgb),0.30),
+        0 8px 32px rgba(0,0,0,0.20);
+      z-index: 90;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      user-select: none;
+    }
+    .note-float:hover {
+      transform: translateY(-2px);
+      box-shadow:
+        0 0 36px rgba(var(--accent-rgb),0.45),
+        0 12px 28px rgba(var(--accent-rgb),0.30);
+    }
+    .note-panel {
+      position: fixed;
+      width: 480px; max-height: 70vh;
+      background: var(--drawer-bg);
+      border: 1px solid var(--hairline-2);
+      border-top-color: var(--hairline-top);
+      border-radius: 16px;
+      box-shadow: var(--shadow-pop);
+      display: none; flex-direction: column;
+      z-index: 95;
+      animation: panelIn 0.18s ease;
+    }
+    @keyframes panelIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .note-panel.open { display: flex; }
+    .note-meta {
+      padding: 12px 16px; border-bottom: 1px solid var(--hairline);
+      font-size: 11px; color: var(--ink-3);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .note-meta-tags { display: flex; gap: 6px; align-items: center; }
+    .note-meta-tag {
+      padding: 1px 6px; background: var(--bg-soft);
+      border-radius: 4px; color: var(--ink-2);
+    }
+    .note-body {
+      flex: 1; padding: 14px 16px;
+      font-size: 14px; color: var(--ink-1);
+      outline: none;
+      overflow-y: auto;
+      min-height: 200px;
+    }
+    .note-body[contenteditable]:empty:before {
+      content: attr(data-placeholder); color: var(--ink-4);
+    }
+    .note-foot {
+      padding: 10px 12px;
+      border-top: 1px solid var(--hairline);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .note-tools { display: flex; gap: 4px; }
+    .note-counter { font-size: 11px; color: var(--ink-3); margin-right: 8px; }
+    .note-archive {
+      padding: 6px 14px; border-radius: 8px;
+      background: var(--grad-cta); color: #fff;
+      border: none; cursor: pointer;
+      font-size: 12px; font-weight: 500;
+      box-shadow: var(--glow-accent-2);
+    }
+    .note-archive:hover { filter: brightness(1.08); }
+
+    /* ===== Course drawer ===== */
+    .drawer-mask {
+      position: fixed; inset: 0;
+      background: rgba(31,26,23,0.32);
+      z-index: 100;
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
+    .drawer-mask.open { display: block; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .drawer-right {
+      position: fixed; top: 0; right: 0; bottom: 0;
+      width: 460px;
+      background: var(--drawer-bg);
+      box-shadow: var(--shadow-pop);
+      z-index: 110;
+      display: flex; flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.25s ease;
+    }
+    [data-theme="dark"] .drawer-right {
+      box-shadow:
+        -8px 0 24px rgba(0,0,0,0.40),
+        inset 1px 0 0 var(--hairline-top);
+    }
+    .drawer-mask.open .drawer-right { transform: translateX(0); }
+    .drawer-head {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .drawer-title { font-size: 18px; font-weight: 600; color: var(--ink-1); margin-bottom: 4px; }
+    .drawer-sub { font-size: 12px; color: var(--ink-3); }
+    .drawer-close {
+      position: absolute; top: 16px; right: 16px;
+      width: 32px; height: 32px; border-radius: 8px;
+      cursor: pointer; display: grid; place-items: center;
+      color: var(--ink-3); background: transparent; border: none;
+    }
+    .drawer-close:hover { background: var(--bg-soft); color: var(--ink-1); }
+    .drawer-body { padding: 16px 24px; overflow-y: auto; flex: 1; }
+    .activity-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--hairline);
+      border-radius: 10px;
+      cursor: pointer;
+      margin-bottom: 8px;
+      transition: all 0.15s ease;
+    }
+    .activity-row:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .activity-row.locked { opacity: 0.5; cursor: not-allowed; }
+    .activity-row.locked:hover { border-color: var(--hairline); background: var(--bg-card); }
+    .activity-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      display: grid; place-items: center;
+      flex-shrink: 0;
+    }
+    .activity-icon.lecture { background: rgba(74,124,157,0.12); color: var(--info); }
+    .activity-icon.practice { background: rgba(216,155,59,0.12); color: var(--warn); }
+    .activity-icon.recap { background: rgba(79,139,92,0.12); color: var(--success); }
+    .activity-info { flex: 1; min-width: 0; }
+    .activity-title { font-size: 13px; font-weight: 500; color: var(--ink-1); margin-bottom: 2px; }
+    .activity-meta { font-size: 11px; color: var(--ink-3); }
+    .activity-status { font-size: 11px; color: var(--ink-3); }
+
+    /* Modal */
+    .modal-mask {
+      position: fixed; inset: 0;
+      background: rgba(31,26,23,0.40);
+      z-index: 200;
+      display: none;
+      align-items: center; justify-content: center;
+      animation: fadeIn 0.18s ease;
+    }
+    .modal-mask.open { display: flex; }
+    .modal-card {
+      position: relative;
+      background: linear-gradient(160deg, #FFFFFF 0%, #FBF5EB 60%, #F5E5DC 100%);
+      border-radius: 16px;
+      border: 1px solid var(--hairline);
+      box-shadow: 0 4px 16px rgba(31,26,23,0.08), 0 24px 60px rgba(31,26,23,0.14);
+      max-width: 560px; width: 90%;
+      max-height: 80vh; overflow-y: auto;
+      padding: 24px 28px;
+      animation: modalIn 0.22s ease;
+      /* scrollbar inset · 不破坏圆角 */
+      scrollbar-gutter: stable;
+    }
+    /* I-03 modal 右上角 × 关闭按钮 */
+    .modal-close-x {
+      position: absolute; top: 14px; right: 14px;
+      width: 28px; height: 28px;
+      border-radius: 50%; border: none;
+      background: var(--bg-soft); color: var(--ink-3);
+      font-size: 18px; line-height: 1; cursor: pointer;
+      display: grid; place-items: center;
+      transition: all 0.12s;
+      z-index: 5;
+    }
+    .modal-close-x:hover { background: var(--ink-5); color: var(--ink-1); }
+    .modal-card::-webkit-scrollbar { width: 6px; }
+    .modal-card::-webkit-scrollbar-track { background: transparent; margin: 12px 0; }
+    .modal-card::-webkit-scrollbar-thumb {
+      background: var(--ink-5); border-radius: 3px;
+    }
+    .modal-card::-webkit-scrollbar-thumb:hover { background: var(--ink-4); }
+    [data-theme="dark"] .modal-card {
+      background: linear-gradient(160deg, #2B2438 0%, #271F36 60%, #1F1A2A 100%);
+      border-color: var(--hairline-top);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.04);
+    }
+    @keyframes modalIn { from { transform: scale(0.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal-title { font-size: 18px; font-weight: 600; color: var(--ink-1); margin-bottom: 8px; }
+    .modal-sub { font-size: 13px; color: var(--ink-3); margin-bottom: 16px; }
+    .modal-body { font-size: 13px; color: var(--ink-2); line-height: 1.7; margin-bottom: 20px; }
+    .modal-body img { max-width: 100%; border-radius: 8px; margin: 8px 0; }
+    /* 笔记 modal 内容 frame · 深浅模式分别 token */
+    .modal-body.note-frame {
+      background: rgba(255,255,255,0.55);
+      padding: 18px 22px;
+      border-radius: 12px;
+      border: 1px solid var(--hairline);
+      margin: 14px 0;
+      color: var(--ink-1);
+    }
+    [data-theme="dark"] .modal-body.note-frame {
+      background: rgba(0,0,0,0.30);
+      border-color: var(--hairline-2);
+      color: var(--ink-1);
+    }
+    .modal-body h3 { font-size: 14px; font-weight: 600; color: var(--ink-1); margin: 14px 0 6px; }
+    .modal-body ul { padding-left: 18px; margin: 6px 0; }
+    .modal-body li { margin-bottom: 4px; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+    .modal-btn {
+      padding: 8px 18px; border-radius: 10px;
+      border: 1px solid var(--hairline);
+      background: var(--bg-card); color: var(--ink-2);
+      font-size: 13px; cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .modal-btn:hover { background: var(--bg-soft); }
+    .modal-btn.primary {
+      background: var(--grad-cta); color: #fff; border-color: transparent;
+      box-shadow: var(--glow-accent-2);
+    }
+    .modal-btn.primary:hover { filter: brightness(1.08); }
+
+    /* Settings drawer */
+    .settings-section { padding: 16px 0; border-bottom: 1px solid var(--hairline); }
+    .settings-section:last-child { border-bottom: none; }
+    .settings-section-title { font-size: 12px; font-weight: 600; color: var(--ink-3); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .settings-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 0;
+    }
+    .settings-label { font-size: 13px; color: var(--ink-1); }
+    .settings-options { display: flex; gap: 6px; }
+    .opt-btn {
+      padding: 6px 12px; font-size: 12px;
+      border-radius: 8px; cursor: pointer;
+      border: 1px solid var(--hairline);
+      background: var(--bg-card); color: var(--ink-2);
+    }
+    .opt-btn:hover { border-color: var(--accent); }
+    .opt-btn.active { background: var(--grad-cta); color: #fff; border-color: transparent; box-shadow: var(--glow-accent-2); }
+
+    /* Toast */
+    .toast {
+      position: fixed; top: 80px; left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: #1F1A17; color: #FFFFFF;
+      padding: 10px 18px; border-radius: 10px;
+      font-size: 13px; opacity: 0;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.30);
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: all 0.25s ease;
+      z-index: 200;
+      pointer-events: none; z-index: 200;
+    }
+    /* I-12 dark 模式 toast 与浅紫炭页面 bg 反差更强 */
+    [data-theme="dark"] .toast {
+      background: #F1F3F8; color: #1F1A17;
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.50);
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ===== Hover tooltip for heatmap (米白柔光卡 · 含双环细节图) ===== */
+    .hm-tooltip {
+      position: fixed; pointer-events: none;
+      background: var(--bg-card); color: var(--ink-1);
+      border: 1px solid var(--hairline);
+      border-radius: 12px; padding: 14px 16px;
+      font-size: 12px; line-height: 1.5;
+      box-shadow: 0 4px 12px rgba(31,26,23,0.06), 0 16px 40px rgba(31,26,23,0.10);
+      z-index: 50; opacity: 0;
+      transform: translate(-50%, -100%) translateY(-14px);
+      transition: opacity 0.12s ease;
+      min-width: 240px;
+    }
+    .hm-tooltip.show { opacity: 1; }
+    .hm-tt-head {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--hairline);
+      margin-bottom: 10px;
+    }
+    .hm-tt-rings { flex-shrink: 0; }
+    .hm-tt-info { flex: 1; min-width: 0; }
+    .hm-tt-date { font-size: 13px; font-weight: 600; color: var(--ink-1); }
+    .hm-tt-weekday { font-size: 10px; color: var(--ink-3); margin-top: 1px; }
+    .hm-tt-milestone {
+      display: inline-flex; align-items: center; gap: 4px;
+      margin-top: 4px;
+      font-size: 10px; color: var(--accent); font-weight: 500;
+    }
+    .hm-tt-milestone::before {
+      content: ''; width: 6px; height: 6px;
+      border-radius: 50%; background: var(--accent);
+    }
+    .hm-tt-stats {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+      margin-bottom: 10px;
+    }
+    .hm-tt-stat {
+      background: var(--bg-soft); border-radius: 8px;
+      padding: 6px 10px;
+    }
+    .hm-tt-stat-label {
+      font-size: 10px; color: var(--ink-3);
+      display: flex; align-items: center; gap: 4px;
+      margin-bottom: 2px;
+    }
+    .hm-tt-stat-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .hm-tt-stat-value { font-size: 14px; font-weight: 600; color: var(--ink-1); }
+    .hm-tt-stat-unit { font-size: 10px; color: var(--ink-3); margin-left: 2px; font-weight: 400; }
+    .hm-tt-section-title { font-size: 10px; color: var(--ink-3); margin-bottom: 6px; }
+    .hm-tt-bar {
+      height: 6px; border-radius: 3px;
+      background: var(--bg-soft);
+      overflow: hidden;
+      display: flex;
+    }
+    .hm-tt-bar-seg { height: 100%; }
+    .hm-tt-legend {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px;
+      margin-top: 8px; font-size: 10px; color: var(--ink-2);
+    }
+    .hm-tt-legend span { display: inline-flex; align-items: center; gap: 5px; }
+    .hm-tt-legend i { width: 8px; height: 8px; border-radius: 2px; display: inline-block; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-brand">
+        <img src="assets/logo.png" alt="睿学 NeoLearning" />
+      </div>
+      <span class="port-chip port-chip-learner" title="当前在学员端">学员端</span>
+      <div class="topbar-project">
+        <span class="topbar-project-name">基层管理者培训项目</span>
+        <span class="topbar-project-meta">· W6 / 26 · 第 6 周</span>
+      </div>
+      <div class="topbar-actions">
+        <!-- bell -->
+        <div style="position:relative">
+          <button class="icon-btn" id="bellBtn" aria-label="消息提醒">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 003.4 0"/></svg>
+            <span class="badge" id="bellBadge">3</span>
+          </button>
+          <div class="dropdown bell-dropdown" id="bellDropdown">
+            <div class="dropdown-head">
+              <span class="dropdown-title">消息提醒</span>
+              <span class="dropdown-action" id="markAllRead">全部已读</span>
+            </div>
+            <div class="msg-list" id="msgList"></div>
+          </div>
+        </div>
+        <!-- avatar -->
+        <div style="position:relative">
+          <button class="avatar-btn" id="avatarBtn">
+            <span class="avatar-circle" id="avatarCircle">赵</span>
+            <span class="avatar-name" id="avatarName">赵工</span>
+          </button>
+          <div class="dropdown avatar-dropdown" id="avatarDropdown">
+            <div class="ad-head">
+              <div class="ad-name" id="adName">赵工</div>
+              <div class="ad-role">区域销售主管 · 学员 + HR + 项目运营</div>
+            </div>
+            <div class="ad-item" id="openSettings">
+              <span class="ad-item-left">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                设置
+              </span>
+            </div>
+            <div class="ad-item" id="openHelp">
+              <span class="ad-item-left">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                帮助
+              </span>
+            </div>
+            <div class="ad-item" id="switchPort">
+              <span class="ad-item-left">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+                切换到管理端
+              </span>
+              <span style="font-size:10px;color:var(--ink-4)">多角色</span>
+            </div>
+            <div class="ad-divider"></div>
+            <div class="ad-item danger" id="logoutBtn">
+              <span class="ad-item-left">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                退出登录
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN ROW: left nav + main scroll + neo chat -->
+    <div class="main-row">
+      <!-- LEFT NAV -->
+      <nav class="left-nav">
+        <div class="nav-pill">
+          <div class="nav-item active" title="大厅">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span class="nav-tooltip">大厅</span>
+          </div>
+          <div class="nav-item disabled" title="社区（敬请期待）">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><circle cx="17" cy="7" r="4"/></svg>
+            <span class="nav-tooltip">社区 · 敬请期待</span>
+          </div>
+        </div>
+      </nav>
+
+      <!-- MAIN SCROLL -->
+      <main class="main-scroll">
+       <div class="main-inner">
+
+        <!-- ============ § 9.2.2.1 项目总览区 ============ -->
+        <section class="section" style="margin-top:0">
+          <div class="overview-grid">
+            <div class="overview-left">
+              <!-- A 热力图 -->
+              <div class="card">
+                <div class="card-title">
+                  <span>学习热力 · 开营至今</span>
+                </div>
+                <div class="heatmap-outer">
+                  <button class="hm-scroll-btn left" id="hmScrollLeft" title="向左滚动">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                  </button>
+                  <div class="heatmap-wrap" id="heatmapWrap">
+                    <div class="heatmap-grid" id="heatmap" style="--weeks: 7"></div>
+                  </div>
+                  <button class="hm-scroll-btn right" id="hmScrollRight" title="向右滚动">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                </div>
+                <div class="heatmap-legend">
+                  <div class="legend-group">
+                    <span>少</span>
+                    <span class="legend-scale">
+                      <span style="background:var(--heat-1)"></span>
+                      <span style="background:var(--heat-2)"></span>
+                      <span style="background:var(--heat-3)"></span>
+                      <span style="background:var(--heat-4)"></span>
+                    </span>
+                    <span>多</span>
+                  </div>
+                  <span class="legend-dot" style="margin-left:auto"><span></span> 里程碑</span>
+                </div>
+              </div>
+
+              <!-- B 时间轴 -->
+              <div class="card">
+                <div class="card-title">
+                  <span>项目时间轴</span>
+                </div>
+                <div class="timeline-wrap" id="heroTimelineWrap">
+                  <!-- v1.3 · 由 JS 从 _shared/mock/milestones.js 渲染 -->
+                </div>
+              </div>
+
+              <!-- C 3 数据卡片 -->
+              <div class="stat-row">
+                <div class="stat-card">
+                  <div class="stat-label">项目走到哪</div>
+                  <div class="stat-value gradient-text">28<span style="font-size:14px;color:var(--ink-3);font-weight:500;-webkit-text-fill-color:initial">%</span></div>
+                  <div class="stat-meta">已完成 8 / 29 Activity · 剩 5 Course / 21 Activity</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">我现在在哪</div>
+                  <div class="stat-value" style="font-size:16px;line-height:1.4">Course 2 横向协作<br/><span style="font-size:13px;color:var(--ink-3);font-weight:500">Activity 3 · PIN 法</span></div>
+                  <div class="stat-meta" style="display:inline-flex;align-items:center;gap:4px">连续学习 <b style="color:var(--accent)">5 天</b><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"/></svg></div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">我攒了什么</div>
+                  <div class="stat-value" style="font-size:18px;display:flex;gap:14px;align-items:center">
+                    <span style="display:inline-flex;align-items:center;gap:4px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--info)"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>5</span>
+                    <span style="display:inline-flex;align-items:center;gap:4px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--accent)"><path d="M12 3l1.91 5.84L20 10l-5 4.84L16.18 21 12 17.77 7.82 21 9 14.84 4 10l6.09-1.16z"/></svg>12</span>
+                    <span style="display:inline-flex;align-items:center;gap:4px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--success)"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>3</span>
+                  </div>
+                  <div class="stat-meta">5 笔记 · 12 高光 · 3 工具解锁</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="overview-right">
+              <!-- D 6 维雷达 -->
+              <div class="card radar-wrap">
+                <div class="card-title"><span class="brand-neo">Neo</span> 怎么看你</div>
+                <div class="radar-canvas-wrap">
+                  <canvas id="radarChart"></canvas>
+                </div>
+                <div class="radar-popover" id="radarPopover"></div>
+              </div>
+
+              <!-- E 待办清单（移入 overview-right 第二卡，原社区位置） -->
+              <div class="card todo-card">
+                <div class="card-title">
+                  <span style="display:inline-flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg> Neo 给我的待办</span>
+                </div>
+                <div class="todo-list" id="todoList"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ § 9.2.2.2 内容目录区 ============ -->
+        <section class="section">
+          <div class="section-head">
+            <div>
+              <div class="section-title">课程目录</div>
+              <div class="section-sub">8 门 Course · 自由学习</div>
+            </div>
+          </div>
+          <div class="course-list" id="courseList"></div>
+        </section>
+
+        <!-- ============ § 9.2.2.3 学习成果区 ============ -->
+        <section class="section">
+          <div class="section-head">
+            <div>
+              <div class="section-title">学习成果</div>
+              <div class="section-sub">报告 · 高光 · 工具 · 笔记</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="tabs" id="harvestTabs">
+              <div class="tab active" data-tab="highlights"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.91 5.84L20 10l-5 4.84L16.18 21 12 17.77 7.82 21 9 14.84 4 10l6.09-1.16z"/></svg> 我的高光<span class="tab-badge">12</span></div>
+              <div class="tab" data-tab="tools"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg> 我的工具<span class="tab-badge">3 / 8</span></div>
+              <div class="tab" data-tab="notes"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> 我的笔记<span class="tab-badge">8</span></div>
+              <div class="tab" data-tab="reports"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> 我的报告<span class="tab-badge">5</span></div>
+            </div>
+            <div class="tab-panel active" data-panel="highlights">
+              <input class="harvest-search" type="search" data-search="highlights" placeholder="搜索高光（标题 / 引文 / 来源）" />
+              <div class="tab-panel-scroll"><div class="item-grid" id="panelHighlights"></div></div>
+            </div>
+            <div class="tab-panel" data-panel="tools">
+              <input class="harvest-search" type="search" data-search="tools" placeholder="搜索工具（名称 / 描述）" />
+              <div class="tab-panel-scroll"><div class="item-grid" id="panelTools"></div></div>
+            </div>
+            <div class="tab-panel" data-panel="notes">
+              <input class="harvest-search" type="search" data-search="notes" placeholder="搜索笔记（内容）" />
+              <div class="tab-panel-scroll"><div class="item-grid" id="panelNotes"></div></div>
+            </div>
+            <div class="tab-panel" data-panel="reports">
+              <input class="harvest-search" type="search" data-search="reports" placeholder="搜索报告（标题）" />
+              <div class="tab-panel-scroll"><div class="item-grid" id="panelReports"></div></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ § 9.2.2.4 社区窗口（独立 section，最后一行）============ -->
+        <section class="section">
+          <div class="section-head">
+            <div>
+              <div class="section-title">社区</div>
+              <div class="section-sub">看看其他学员在做什么</div>
+            </div>
+          </div>
+          <div class="community-row">
+            <div class="community-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+            </div>
+            <div class="community-text">
+              <div class="community-text-title">社区功能 · 敬请期待</div>
+              <div class="community-text-sub">未来你能在这里看到同期学员的进度、分享、讨论</div>
+            </div>
+            <div class="community-tag">Coming Soon</div>
+          </div>
+        </section>
+
+       </div><!-- /main-inner -->
+      </main>
+
+      <!-- ============ Right Neo Chat ============ -->
+      <aside class="neo-chat" id="neoChat">
+        <div class="neo-resize-handle" id="neoResize" title="拖拽调整宽度"></div>
+        <!-- v1.4.1 FIX-1 · 完全对齐 mgthome ora-bar · 仅居中文字 · 无头像 · 删 hero 大头像 + 删收起箭头 -->
+        <div class="neo-bar">
+          <span class="neo-bar-text" id="neoBarText">Neo</span>
+        </div>
+        <div class="neo-stream" id="neoStream"></div>
+        <div class="askq-popup" id="askqPopup">
+          <div class="askq-meta">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Neo 想问你
+          </div>
+          <div class="askq-question" id="askqQuestion"></div>
+          <div class="askq-options" id="askqOptions"></div>
+          <span id="askqDismiss" style="display:none"></span>
+        </div>
+        <div class="neo-input-row">
+          <div class="neo-input-wrap">
+            <textarea class="neo-input" id="neoInput" placeholder="和 Neo 聊聊..." rows="2"></textarea>
+            <button class="neo-btn-icon" title="语音输入">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 00-3 3v7a3 3 0 006 0V5a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            </button>
+            <button class="neo-btn-icon neo-btn-send" title="发送" id="neoSend">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+          <div class="ai-safety-note">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span>以上内容由 NeoLearning AI 生成，仅供参考</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Note float -->
+  <div class="note-float" id="noteFloat">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+  </div>
+  <div class="note-panel" id="notePanel">
+    <div class="note-meta">
+      <div class="note-meta-tags">
+        <span class="note-meta-tag">📍 大厅</span>
+        <span style="font-size:11px">2026-05-04 14:32</span>
+      </div>
+      <span style="cursor:pointer;color:var(--ink-3);font-size:18px;line-height:1" id="noteClose">×</span>
+    </div>
+    <div class="note-body" id="noteBody" contenteditable="true" data-placeholder="此刻想到什么，随手记下..."></div>
+    <div class="note-foot">
+      <div class="note-tools">
+        <button class="neo-btn-icon" title="语音输入">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 00-3 3v7a3 3 0 006 0V5a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        </button>
+      </div>
+      <div style="display:flex;align-items:center">
+        <span class="note-counter" id="noteCounter">0 / 500</span>
+        <button class="note-archive" id="noteArchive">归档到笔记库</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 通用确认弹窗 + 知识详情弹窗 -->
+  <div class="modal-mask" id="modalMask">
+    <div class="modal-card" id="modalCard"></div>
+  </div>
+
+  <!-- Settings drawer -->
+  <div class="drawer-mask" id="settingsDrawer">
+    <aside class="drawer-right" style="width:420px">
+      <button class="drawer-close" id="settingsClose">×</button>
+      <div class="drawer-head">
+        <div class="drawer-title">设置</div>
+        <div class="drawer-sub">个人偏好</div>
+      </div>
+      <div class="drawer-body">
+        <div class="settings-section">
+          <div class="settings-section-title"><span class="brand-neo">Neo</span> 形象</div>
+          <div class="settings-row">
+            <span class="settings-label">数字人形象</span>
+            <div class="settings-options">
+              <button class="opt-btn active" data-persona="male">男 <span class="brand-neo">Neo</span></button>
+              <button class="opt-btn" data-persona="female">女 <span class="brand-neo">Neo</span></button>
+            </div>
+          </div>
+        </div>
+        <div class="settings-section">
+          <div class="settings-section-title">主题</div>
+          <div class="settings-row">
+            <span class="settings-label">外观</span>
+            <div class="settings-options">
+              <button class="opt-btn active" data-theme="light">日间</button>
+              <button class="opt-btn" data-theme="dark">夜间</button>
+            </div>
+          </div>
+        </div>
+        <div class="settings-section">
+          <div class="settings-section-title">AI 语速</div>
+          <div class="settings-row">
+            <span class="settings-label">朗读 / 流式速度</span>
+            <div class="settings-options">
+              <button class="opt-btn" data-speed="slow">慢</button>
+              <button class="opt-btn active" data-speed="normal">中</button>
+              <button class="opt-btn" data-speed="fast">快</button>
+            </div>
+          </div>
+        </div>
+        <div class="settings-section">
+          <div class="settings-section-title">账号</div>
+          <div class="settings-row">
+            <span class="settings-label">头像</span>
+            <span style="font-size:12px;color:var(--ink-3)">按姓氏自动生成（不可改）</span>
+          </div>
+          <div class="settings-row">
+            <span class="settings-label">密码</span>
+            <span style="font-size:12px;color:var(--accent);cursor:pointer">修改</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Heatmap tooltip -->
+  <div class="hm-tooltip" id="hmTooltip"></div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // =============================================================
+    // ICONS（线形 SVG 集中复用）
+    // =============================================================
+    const ICON = {
+      lecture: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>',
+      practice: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+      recap: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0118 0M3 12l3-3M3 12l3 3"/><path d="M21 12l-3-3M21 12l-3 3"/></svg>',
+      check: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+      play: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor"/></svg>',
+      circle: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>',
+      lock: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>',
+      sparkle: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.91 5.84L20 10l-5 4.84L16.18 21 12 17.77 7.82 21 9 14.84 4 10l6.09-1.16z"/></svg>',
+      tool: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>',
+      notebook: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+      report: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+      download: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+      bookmark: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>',
+      help: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+      target: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+      brain: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4a3 3 0 013 3v10a3 3 0 11-6 0V7a3 3 0 013-3z"/><path d="M15 4a3 3 0 00-3 3v10a3 3 0 106 0V7a3 3 0 00-3-3z"/></svg>',
+      mic: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 00-3 3v7a3 3 0 006 0V5a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>',
+      camera: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>',
+      clip: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/></svg>'
+    };
+
+    // =============================================================
+    // MOCK DATA
+    // =============================================================
+    // learner 从 session 动态绑定（admin@ 多角色 → 陈总 / zhao@ → 赵工）
+    const __sess = Session.get() || {};
+    const learner = {
+      name: __sess.display || '赵工',
+      // v1.3 · firstChar 用 AdminCtx.pickSurname 取首个汉字（"HR 王"→"王"）
+      firstChar: (window.AdminCtx && window.AdminCtx.pickSurname)
+        ? window.AdminCtx.pickSurname(__sess.display || '赵工')
+        : (__sess.display || '赵').charAt(0),
+      role: __sess.role === 'learner+admin' ? 'multi-role' : 'learner',
+      // I-V12-01: 跨页同步 persona（与 lecture/practice 共用 localStorage rx-persona）
+      neoPersona: localStorage.getItem('rx-persona') || 'male'
+    };
+    const project = window.PROJECT;
+
+    // v1.3 · hero 时间轴渲染（从 _shared/mock/milestones.js 读 · 不再写死）
+    function renderHeroTimeline() {
+      const wrap = document.getElementById('heroTimelineWrap');
+      if (!wrap || typeof Milestones === 'undefined') return;
+      const list = Milestones.all();
+      const cw = window.MILESTONES.currentWeek;
+      const totalWeeks = window.MILESTONES.totalWeeks;
+      const currentPct = Math.round(((cw - 1) / (totalWeeks - 1)) * 100);
+      const fmtDate = iso => { const d = new Date(iso); return d.getFullYear() + '/' + (d.getMonth()+1) + '/' + d.getDate(); };
+      // marker HTML — 每个里程碑都挂日期 · v1.5 双 lane 上下错开避免重叠
+      const markersHtml = list.map((m, i) => {
+        const cls = m.passed ? 'passed' : '';
+        const lane = (i % 2 === 0) ? 'top' : 'bottom';
+        return `<div class="timeline-marker" style="left:${m.pct}%">
+          <div class="marker-dot ${cls}"></div>
+          <span class="marker-label" data-lane="${lane}">${m.name} · ${fmtDate(m.date)}</span>
+        </div>`;
+      }).join('');
+      // 当前 W marker · 第 3 lane（current 主色）· 与上下两 lane 错开
+      const currentMarkerHtml = `<div class="timeline-marker" style="left:${currentPct}%">
+        <div class="marker-dot current"></div>
+        <span class="marker-label" data-lane="current" style="color:var(--accent);font-weight:600">当前 · W${cw}</span>
+      </div>`;
+      // 距结营 / 距下里程碑
+      const closing = Milestones.findById('closing');
+      const daysToClosing = closing ? Math.max(0, Math.round((new Date(closing.date) - new Date(window.MILESTONES.startDate)) / 86400000) - (cw - 1) * 7) : '-';
+      const nextMs = Milestones.nextOf(['check', 'recap', 'closing']);
+      const daysToNext = Milestones.daysToNext(['check', 'recap', 'closing']);
+      const nextLabel = nextMs ? nextMs.name : '-';
+      wrap.innerHTML = `
+        <div class="timeline-bar">
+          <div class="timeline-fill" style="width:${currentPct}%"></div>
+          ${markersHtml}
+          ${currentMarkerHtml}
+        </div>
+        <div class="timeline-meta">
+          <span>距结营 <b>${daysToClosing} 天</b></span>
+          <span>距下里程碑 <b>${daysToNext != null ? daysToNext + ' 天' : '-'}</b>（${nextLabel}）</span>
+        </div>`;
+    }
+    // 启动时渲染（DOMContentLoaded 之后就执行 · 此 script 在 body 末已加载完）
+    if (document.readyState !== 'loading') renderHeroTimeline();
+    else document.addEventListener('DOMContentLoaded', renderHeroTimeline);
+
+    // v1.3 · branding 跨页应用（Neo 名字）· v1.4.1 改用 neoBarText（hero 头像区已删 · neo-bar 仅文字）
+    function applyBranding() {
+      const B = window.BRANDING || {};
+      const barText = document.getElementById('neoBarText');
+      if (barText && B.neoName) barText.textContent = B.neoName;
+      // 全局扫 .brand-neo / .brand-ora（散文 / 设置面板 / 卡片标题）
+      if (typeof Branding !== 'undefined') Branding.applyAll();
+    }
+    if (document.readyState !== 'loading') applyBranding();
+    else document.addEventListener('DOMContentLoaded', applyBranding);
+
+    // 散色 hash · v1.5 P1 #9 · 接 _shared/js/avatar-color.js · 跨页一致
+    function getGradFor(name) {
+      return (typeof AvatarColor !== 'undefined') ? AvatarColor.forName(name) : ['#D97757', '#E89B6E'];
+    }
+
+    // Heatmap 数据（整个服务周期 26 周）
+    // start = 2026-03-23 W1 周一 / 当前 2026-05-04（W7 周一）/ 服务周期 26 周
+    const HEATMAP_WEEKS = 26;
+    const today = new Date(2026, 4, 4); // 2026-05-04（W7 周一）
+    const weekStart = new Date(2026, 2, 23); // 2026-03-23 W1 周一
+    const heatmapData = []; // 按 [周][星期] 二维
+    for (let w = 0; w < HEATMAP_WEEKS; w++) {
+      const week = [];
+      for (let d = 0; d < 7; d++) {
+        const date = new Date(weekStart);
+        date.setDate(date.getDate() + w * 7 + d);
+        const isFuture = date > today;
+        const minutes = isFuture ? 0 : (Math.random() < 0.18 ? 0 : Math.floor(Math.random() * 50) + (w >= 5 ? 18 : 6));
+        const tokens = isFuture ? 0 : Math.floor(minutes * (0.4 + Math.random() * 0.8));
+        // 里程碑读 _shared/mock/milestones.js（v1.3 取代 timeline.js · 与项目时间轴一致）：
+        // 开营 W1 周一 / W4 中期 周五 / W12 复盘 周一 / 结营 W26 周日
+        let milestone = null;
+        if (w === 0  && d === 0) milestone = '开营';
+        if (w === 3  && d === 4) milestone = 'W4 中期';
+        if (w === 11 && d === 0) milestone = 'W12 复盘';
+        if (w === 25 && d === 6) milestone = '结营';
+        week.push({
+          date: date.toISOString().slice(0, 10),
+          minutes, tokens, milestone, future: isFuture,
+          segments: minutes > 0 ? {
+            lecture: Math.floor(minutes * 0.42),
+            practice: Math.floor(minutes * 0.32),
+            recap: Math.floor(minutes * 0.16),
+            hall: Math.floor(minutes * 0.10)
+          } : null
+        });
+      }
+      heatmapData.push(week);
+    }
+
+    // Profile 6 维（spec § 2.3.3.5 prompt 锚点风格）
+    const profile6 = [
+      { name: '思考反思', level: 4, desc: '你在讨论跨部门问题时，往往先快走后退，可能是怕冲突' },
+      { name: '学习投入', level: 4, desc: '你最近 5 天稳定打卡，节奏把握得好' },
+      { name: '场景讨论', level: 3, desc: '你能给案例了，但还偏抽象——下次试试带人事细节' },
+      { name: '表达开放', level: 3, desc: '失败的事你愿意提了，但还会修饰；试试更直白' },
+      { name: '挑战接纳', level: 2, desc: '我提反对意见时你会先解释自己——这是防御态' },
+      { name: '学习自驱', level: 4, desc: '你会自己定本周节奏，但还需我推荐才探新方向' }
+    ];
+
+    // Todos
+    const todos = [
+      { id: 1, text: '下周一跟跨部门同事会上，试一次先表达立场再求共识', source: 'Course 2 横向协作', done: false },
+      { id: 2, text: '本周给小张一次 SBI 反馈：表达，不绕弯', source: 'Course 1 角色认知', done: false },
+      { id: 3, text: '用 GROW 法和老李做一次 1on1，先问 G 再说 R', source: 'Course 3 辅导反馈', done: true }
+    ];
+
+    // 8 Courses
+    const courses = [
+      { id: 1, name: '角色认知',  summary: '从业务骨干到管理者的身份转换',                progress: '3/3', status: 'completed',  color: ['#7CA873', '#9EBE96'] },
+      { id: 2, name: '横向协作',  summary: '跨部门 / 跨团队场景下的沟通与影响',          progress: '3/5', status: 'progress',   color: ['#D97757', '#E89B6E'], current: true },
+      { id: 3, name: '辅导反馈',  summary: '给下属做有效的辅导和正负反馈',              progress: '1/4', status: 'progress',   color: ['#D97757', '#E89B6E'] },
+      { id: 4, name: '目标拆解',  summary: '把模糊业务目标拆解为可执行任务',            progress: '0/4', status: 'notstarted', color: ['#B8AFA6', '#D8CFC4'] },
+      { id: 5, name: '有效授权',  summary: '在管太多和管太少之间找平衡',                progress: '0/3', status: 'notstarted', color: ['#B8AFA6', '#D8CFC4'] },
+      { id: 6, name: '人员激励',  summary: '让团队成员有动力、有方向',                  progress: '0/4', status: 'notstarted', color: ['#B8AFA6', '#D8CFC4'] },
+      { id: 7, name: '向上影响',  summary: '与上级有效沟通和资源争取',                  progress: '0/3', status: 'notstarted', color: ['#B8AFA6', '#D8CFC4'] },
+      { id: 8, name: '过程管控',  summary: '团队工作过程的监控与调整',                  progress: '0/3', status: 'notstarted', color: ['#B8AFA6', '#D8CFC4'] }
+    ];
+
+    // Activities (per course)
+    // v1.5 P4 · recap Activity 加 relatedActivityIds（同 Course 内前置 Activity id）· 0.5.1 spec 锁定逻辑用
+    const activitiesByCourse = {
+      1: [
+        { id: 1, title: 'A1 · 从骨干到管理者',   type: 'lecture', minutes: 16, status: 'completed', target: 'lecture-ppt' },
+        { id: 2, title: 'A2 · POLC 四职责',       type: 'lecture', minutes: 14, status: 'completed', target: 'lecture-ppt' },
+        { id: 3, title: 'A3 · 角色认知小结',      type: 'recap',   minutes: 10, status: 'completed', target: 'recap',
+          relatedActivityIds: [1, 2] }
+      ],
+      2: [
+        { id: 1, title: 'A1 · 跨部门协作的本质',  type: 'lecture',  minutes: 18, status: 'completed', target: 'lecture-ppt' },
+        { id: 2, title: 'A2 · PIN 法三层模型',     type: 'lecture',  minutes: 22, status: 'completed', target: 'lecture-ppt' },
+        { id: 3, title: 'A3 · PIN 法实战演练',     type: 'practice', minutes: 35, status: 'progress',  target: 'practice-intro' },
+        { id: 4, title: 'A4 · 利益相关方地图',     type: 'lecture',  minutes: 16, status: 'notstarted', target: 'lecture-ppt' },
+        { id: 5, title: 'A5 · 横向协作 Course 小结', type: 'recap',  minutes: 12, status: 'notstarted', target: 'recap',
+          relatedActivityIds: [1, 2, 3, 4] }
+      ],
+      3: [
+        { id: 1, title: 'A1 · GROW 教练法',        type: 'lecture',  minutes: 20, status: 'completed', target: 'lecture-ppt' },
+        { id: 2, title: 'A2 · SBI 反馈框架',        type: 'lecture',  minutes: 18, status: 'progress',  target: 'lecture-ppt' },
+        { id: 3, title: 'A3 · 反馈对练',            type: 'practice', minutes: 30, status: 'notstarted', target: 'practice-intro' },
+        { id: 4, title: 'A4 · 辅导反馈小结',        type: 'recap',    minutes: 10, status: 'notstarted', target: 'recap',
+          relatedActivityIds: [1, 2, 3] }
+      ]
+    };
+    function defaultActivities(course) {
+      // 未填详细的 Course → generic
+      const total = parseInt(course.progress.split('/')[1]);
+      return Array.from({ length: total }, (_, i) => ({
+        id: i + 1,
+        title: `A${i + 1} · ${course.name} 学习单元 ${i + 1}`,
+        type: i === total - 1 ? 'recap' : (i % 3 === 2 ? 'practice' : 'lecture'),
+        minutes: 18,
+        status: 'notstarted',
+        target: i === total - 1 ? 'recap' : (i % 3 === 2 ? 'practice-intro' : 'lecture-ppt'),
+        // v1.5 P4 · 默认 recap 关联本 Course 内所有前置 Activity
+        ...(i === total - 1 ? { relatedActivityIds: Array.from({ length: total - 1 }, (_, k) => k + 1) } : {})
+      }));
+    }
+
+    // 4 库内容
+    const harvest = {
+      reports: [
+        {
+          title: 'Course 1 · 角色认知 · 个人报告',
+          meta: '完成态 milestone · 2026-04-12',
+          type: 'recap',
+          status: '已完成',
+          // 5 块结构：① 内容锚点 ② 走过的轨迹 ③ 6 维画像 ④ 关键证据 ⑤ 待办任务
+          anchor: '这门课讲的是从业务骨干到管理者的身份转换。关键概念是 POLC 四职责（计划/组织/领导/控制）+ 90 天上任规划。你在学习中提到过自己刚被提拔做小组长的真实场景，正好是这门课要解决的问题——你在 A3 的对话里承认"我现在还是用业务骨干的方式做事"。',
+          trajectory: {
+            text: '在 3 个 Activity 中，A3 互动最多——你在小结环节才真正"打开"。前两个 Activity 偏被动，A3 后明显进入反思状态。',
+            bars: [
+              { name: 'A1 从骨干到管理者', value: 12, color: '#6B96B5' },
+              { name: 'A2 POLC 四职责', value: 8, color: '#6B96B5' },
+              { name: 'A3 角色认知小结', value: 18, color: '#7CA86B' }
+            ]
+          },
+          profile6: [
+            { name: '思考反思', from: 3, to: 4, evidence: '上周三跟王总会上，你先抛了方案再问他想法——你自己说"确实是先入为主"' },
+            { name: '表达开放', from: 2, to: 3, evidence: '在 A3 你愿意承认"我对小王有偏见"——这是开放度的标志' }
+          ],
+          highlights: [
+            { quote: '"我现在还是用业务骨干的方式做事"', neo: '这句话出自你自己——这是 1v1 老师最看重的觉察起点' }
+          ],
+          gaps: [
+            { quote: '在 A1 你跳过了"我作为管理者的核心职责是什么"这个反思题', neo: '下次试试：先停下，写 3 个你认为的核心职责' }
+          ],
+          todos: [
+            '本周给小张一次 SBI 反馈，先听他的反思',
+            '下个 1on1 用 GROW 法，少给方案多问目标',
+            '写下你做小组长 90 天的"我希望被记住的 3 件事"'
+          ]
+        },
+        {
+          title: 'Course 2 · 横向协作 · 部分态报告',
+          meta: '部分态（基于 3/5 Activity） · 2026-05-03',
+          type: 'recap',
+          status: '部分态',
+          partial: true,
+          anchor: '这门课讲跨部门 / 跨团队场景下的沟通与影响。关键概念是 PIN 法（立场/利益/需求）+ 推拉沟通法 + 干系人地图。你提到过自己跟 HR 周在 KPI 归属上的分歧——这是典型的 I 层冲突。',
+          trajectory: {
+            text: '已完成 3/5：A1 概念 / A2 PIN 法 / A3 实战演练。后两个 Activity 还没完成，所以本报告暂为部分态。',
+            bars: [
+              { name: 'A1 跨部门协作的本质', value: 14, color: '#6B96B5' },
+              { name: 'A2 PIN 法三层模型', value: 22, color: '#6B96B5' },
+              { name: 'A3 PIN 法实战演练', value: 28, color: '#D9923D' }
+            ]
+          },
+          profile6: [],
+          highlights: [
+            { quote: '"原来 Pressure 是表面，Need 才是深层"', neo: 'A2 顿悟瞬间，你是从概念抽象 → 具体应用的过渡' }
+          ],
+          gaps: [],
+          todos: []
+        },
+        {
+          title: 'A3 · PIN 法实战演练 · 评分报告',
+          meta: 'practice · 2026-05-01',
+          type: 'practice',
+          status: '已完成',
+          competency: [
+            { name: '倾听', level: 4 },
+            { name: '追问深度', level: 3 },
+            { name: '共识建立', level: 4 },
+            { name: '不剧透', level: 4 },
+            { name: '节奏控制', level: 3 }
+          ],
+          competencyText: '整体 3.7/5。你做对了——主动追问对方真实顾虑。可以更好——还停在 I 层，没挖到 N。',
+          highlights: [
+            { quote: '第 5 轮：你说"你说不能配合，是流程问题还是认人问题？"', neo: '这是 PIN 法 P→I 的标准过渡。Actor 老李第一次松口' },
+            { quote: '第 7 轮：你主动承认"我之前可能没充分考虑你部门的压力"', neo: '共识建立的关键句——情感层 align 让对话节奏从对抗转向协作' }
+          ],
+          suggestions: [
+            '下次试试在 I 之后再多追一层："那如果不是认人问题，是不是你担心做了背锅？" → N',
+            '共识开场可以更前置——开头就承认"我知道你最近压力大"',
+            '第 8 轮你急了，节奏掉了——记得"宁慢勿急"'
+          ]
+        },
+        {
+          title: 'Course 0 · 项目导学回顾',
+          meta: '导学完成 · 2026-03-22',
+          type: 'recap',
+          status: '已完成',
+          anchor: '项目首次开营会的回顾。Neo 跟你确认了 6 个月项目目标（成为合格的小组长）+ 期待。你提到最关心"如何带 5 个比自己资历久的同事"——这成为后续 Course 1 角色认知和 Course 3 辅导反馈的重点。',
+          trajectory: { text: '导学单 Activity，1 轮深度对话。', bars: [{ name: '导学开营对话', value: 9, color: '#7CA86B' }] },
+          profile6: [],
+          highlights: [{ quote: '"我担心他们觉得我没资格管"', neo: '坦诚说出自己的脆弱点——这给后续 6 个月学习定下基调' }],
+          gaps: [],
+          todos: ['每周写一条"我作为小组长今天做对的一件小事"']
+        },
+        {
+          title: '试用期反思报告',
+          meta: '试用期 · 2026-03-25',
+          type: 'recap',
+          status: '已完成',
+          anchor: '试用 3 天后的反思。你说"睿学跟其他培训不一样的地方是 Neo 真的记得我说过的话"——这是产品设计的"懂你"承诺验证。',
+          trajectory: { text: '试用期含 2 个 Course 体验 Activity。', bars: [
+            { name: '体验 Activity 1', value: 6, color: '#6B96B5' },
+            { name: '体验 Activity 2', value: 8, color: '#D9923D' }
+          ]},
+          profile6: [],
+          highlights: [{ quote: '"以前的培训学完就忘了，这个不一样——Neo 第二次问我同一个问题，我答得跟第一次不一样了"', neo: '你已经在体验渐进画像的价值' }],
+          gaps: [],
+          todos: []
+        }
+      ],
+      highlights: [
+        { tag: 'lecture', title: '把 Pressure 和 Need 区分开了', quote: '"原来 Pressure 是表面，Need 才是深层"', meta: 'Course 2 · A2' },
+        { tag: 'practice', title: '主动追问对方真实顾虑', quote: '"你说不能配合，是流程问题还是认人问题？"', meta: 'Course 2 · A3 第 3 轮' },
+        { tag: 'lecture', title: '用 GROW 法替代直接给答案', quote: '"那你觉得 G 是什么？"', meta: 'Course 3 · A1' },
+        { tag: 'practice', title: '反馈时具体到行为', quote: '"上周三那次会，你打断了三次"', meta: 'Course 3 · A2' },
+        { tag: '大厅', title: '用 PIN 法分析自己困扰', quote: '"我下属的需求其实是被认可，不是涨薪"', meta: '大厅辅导' },
+        { tag: 'lecture', title: '识别"角色认知"卡点', quote: '"我其实还在用业务骨干的方式"', meta: 'Course 1 · A2' }
+      ],
+      tools: [
+        { name: 'PIN 法', desc: '立场 / 利益 / 需求 三层推进', locked: false },
+        { name: 'GROW 教练法', desc: 'Goal / Reality / Options / Will', locked: false },
+        { name: 'SBI 反馈框架', desc: 'Situation / Behavior / Impact', locked: false },
+        { name: '推拉沟通法', desc: '推动 vs 拉动 双向沟通', locked: true, unlock: '完成 Course 2 解锁' },
+        { name: '干系人地图', desc: '识别利益相关方与影响力', locked: true, unlock: '完成 Course 2 A4 解锁' },
+        { name: '1on1 面谈框架', desc: '一对一深度沟通节奏', locked: true, unlock: '完成 Course 3 解锁' },
+        { name: 'STAR 反馈框架', desc: 'Situation / Task / Action / Result', locked: true, unlock: '完成 Course 3 解锁' },
+        { name: 'SMART 目标', desc: '可执行目标的 5 维度', locked: true, unlock: '完成 Course 4 解锁' }
+      ],
+      notes: [
+        {
+          title: '原来 PIN 法的 N 才是关键',
+          content: `<p>今天上 A2 课时讲到三层结构：</p>
+<ul><li>"不能做" = P 立场</li><li>"没人手" = I 利益</li><li>"怕做完没人认" = N 需求</li></ul>
+<p>我组里小王不接活不是怕累，是怕做完没人认。下次 1on1 我得问 N 层，不能停在 I。</p>`,
+          meta: 'Course 2 横向协作 · A2 · lecture',
+          time: '4 天前 14:32'
+        },
+        {
+          title: 'SBI 三段不能省略',
+          content: `<p>今天对练被打脸：</p>
+<ul><li>我跳过 S/B，直接说 I（"你打断了，影响士气"）</li><li>对方防御："我不知道你说哪次"</li></ul>
+<img src="assets/modals/sbi-feedback.jpg" alt="对练时白板上记下的 SBI 框架" style="width:100%;border-radius:8px;margin:10px 0"/>
+<p>下次先具体到 <b>S</b>（哪次会议），再描述 <b>B</b>（具体行为），最后才是 <b>I</b>（影响）。</p>`,
+          meta: 'Course 3 辅导反馈 · A2 · lecture',
+          time: '3 天前 16:08'
+        },
+        {
+          title: '今天跟 HR 周开会用 PIN 比想象中顺',
+          content: `<p>她一开始说"这个项目跨部门太复杂"（P）</p>
+<p>我问"你担心的是流程还是责任？"（I）</p>
+<p>她回答"主要是 KPI 算谁的"（I）</p>
+<p>我又问"那如果跟你部门同评 KPI 呢？"（接近 N）</p>
+<p>她迟疑了一下，说"那我们可以试试"。</p>
+<p><b>挖到 I 层就破局了——不一定每次都要到 N。</b></p>`,
+          meta: '大厅辅导',
+          time: '1 天前 11:42'
+        },
+        {
+          title: '组员小王的目标实际是想被看见',
+          content: `<p>他这周主动报名了一个跨部门小组——之前他从来不主动。</p>
+<p>用 GROW 法分析：</p>
+<ul><li><b>G</b>：他的目标是被认可</li><li><b>R</b>：现实是技术做得好但少在大场合露面</li><li><b>O</b>：跨部门小组是低风险的曝光</li><li><b>W</b>：可以推他写个总结</li></ul>
+<p>我之前总以为他是技术派不愿管事——错怪他了。</p>`,
+          meta: '大厅辅导',
+          time: '今天 09:15',
+          fresh: false
+        },
+        {
+          title: '区分"管理过程"和"管理结果"',
+          content: `<p>我之前管小王是按"周报有没有写"来的——这是<b>过程</b>。</p>
+<p>但真正应该看的是"这周 deliverable 是什么 / 完成度多少"——这是<b>结果</b>。</p>
+<p style="color:var(--ink-3);font-size:12px">过程用来兜底，不是用来管控。</p>`,
+          meta: 'Course 1 角色认知 · A3 · lecture',
+          time: '上周'
+        },
+        {
+          title: '横向沟通的 80% 是"先理解再被理解"',
+          content: `<p>读到一句话：你想让别人买你的方案，先承认他的方案有道理的部分。</p>
+<p>今天会上试了一次：</p>
+<blockquote style="margin:8px 0;padding:8px 12px;background:rgba(217,119,87,0.08);border-left:3px solid var(--accent);border-radius:6px;font-style:italic">"老李，你说的成本敏感这点，我完全同意，去年我们部门也吃过这亏。"</blockquote>
+<p>后面再讲我的方案时，他没像往常那样立刻反驳。</p>
+<p>这跟 PIN 法的 N 层共识其实是一回事——先在情感层 align。</p>`,
+          meta: 'Course 2 横向协作 · A1 · lecture',
+          time: '上周'
+        },
+        {
+          title: '我之前总用 fact 否定别人 feeling',
+          content: `<p>例如：</p>
+<ul><li>同事："这个客户太难搞了"（feeling）</li><li>我："其实他们 KPI 这季度压力大，所以..."（fact 否定）</li><li>同事：闭嘴</li></ul>
+<p><b>正确做法</b>：先 ack feeling，再讲 fact。</p>
+<p>"是有点棘手——他们 KPI 压力大可能也有关。"</p>
+<p>类似 SBI 的 I 层处理——先承认对方感受，再补充客观信息。</p>`,
+          meta: '大厅辅导',
+          time: '上周'
+        },
+        {
+          title: '好的提问 vs 普通的提问',
+          content: `<p>普通："你为什么 X？"</p>
+<p>好："这件事的什么部分让你 X？"</p>
+<p>普通是 <b>why</b>，引发防御。</p>
+<p>好的是 <b>what</b>，引发反思。</p>
+<p>GROW 的 R 阶段全用 "what"，不用 "why"——明白了。</p>`,
+          meta: 'Course 3 辅导反馈 · A1 · lecture',
+          time: '上周'
+        }
+      ]
+    };
+
+    // 站内消息：按当前 session.role 过滤共享 _shared/mock/messages.js
+    const messages = window.filterMessagesByRole((Session.get() || {}).role);
+
+    // Neo Chat mock：分两半。前半已发生（直接渲染），后半待 askq 选完后追加。
+    const neoChatPast = [
+      { role: 'neo', text: '欢迎回来，赵工。你上次完成了 Course 2 的 A2「PIN 法三层模型」——感觉怎么样？' },
+      { role: 'user', text: '挺有启发的，但还不太会用在实际场景里' },
+      { role: 'neo', text: '正常。理解到了，做不出来——这是「应用层卡点」，不是知识层。我想确认一下，你最想先在哪类场景里试用 PIN？' }
+    ];
+    // 当前挂起的 askUserQuestion（在输入框上方 popup）
+    const pendingAskQ = {
+      question: '你最想先在哪类场景试 PIN 法？挑一个你这周就能用上的：',
+      options: ['跨部门要资源', '说服上级改方向', '处理同级冲突', '其他场景（直接打字告诉我）']
+    };
+    // 学员选完后的后续流（含课程 / 任务 / 知识 卡）
+    const neoChatAfterAskq = [
+      { role: 'neo', text: '好。那个场景在 A3「实战演练」里有针对性的剧本。要不要直接进去练一次？' },
+      { role: 'card', cardType: 'course', tag: '推荐学习', title: 'A3 · PIN 法实战演练', body: '场景：你向技术部申请人手支援，对方部门长有顾虑。学习目标：识别对方真实顾虑层（N），先建共识。',
+        primary: '进入学习', target: 'practice-intro', activityId: 'c2-a3' },
+      { role: 'user', text: '我先想想，下周有个会，能给我提点准备建议吗？' },
+      { role: 'neo', text: '可以。你准备 3 件事就够了——这个我顺手帮你做成待办：' },
+      { role: 'card', cardType: 'task', tag: '应用计划', title: '下周一跨部门会前准备', body: '会前 30 分钟：① 写出对方部门长可能的 P / I / N ② 准备一个先建共识的开场 ③ 别先抛你的方案',
+        primary: '加入待办', secondary: '暂不' },
+      { role: 'neo', text: '会后回来告诉我效果——我会问你具体那一刻你说了什么。还想看一下 PIN 工具卡复习一下吗？' },
+      { role: 'card', cardType: 'knowledge', tag: '知识工具', title: 'PIN 法 · 立场 / 利益 / 需求', body: '三层推进结构：先听 Position（说出来的立场），再问 Interest（背后的诉求），最后挖 Need（深层动机）。',
+        primary: '查看完整工具' }
+    ];
+
+    // =============================================================
+    // RENDER
+    // =============================================================
+    const $ = (id) => document.getElementById(id);
+
+    // --- Avatar circle (v1.5 P1 #9 · 用 memberId 稳定 hash · 跨页一致) ---
+    function renderAvatar() {
+      const sess = (window.Session && window.Session.get) ? Session.get() : {};
+      const [c1, c2] = (typeof AvatarColor !== 'undefined') ? AvatarColor.forMemberId(sess.memberId || learner.name) : getGradFor(learner.name);
+      const grad = `linear-gradient(135deg, ${c1}, ${c2})`;
+      $('avatarCircle').style.background = grad;
+      $('avatarCircle').textContent = learner.firstChar;
+      $('avatarName').textContent = learner.name;
+      $('adName').textContent = learner.name;
+    }
+
+    // --- Heatmap (Apple Watch ring 风：行=星期 / 列=周 / 厚边框) ---
+    function renderHeatmap() {
+      const grid = $('heatmap');
+      grid.innerHTML = '';
+      grid.style.setProperty('--weeks', HEATMAP_WEEKS);
+      const wkdayLabels = ['一', '二', '三', '四', '五', '六', '日'];
+
+      // 第一行：左上空格 + N 周顶部日期
+      const corner = document.createElement('div');
+      corner.style.gridColumn = '1';
+      corner.style.gridRow = '1';
+      grid.appendChild(corner);
+
+      heatmapData.forEach((week, wi) => {
+        const lbl = document.createElement('div');
+        lbl.className = 'hm-week-label';
+        lbl.style.gridColumn = `${wi + 2}`;
+        lbl.style.gridRow = '1';
+        lbl.textContent = `W${wi + 1}`;
+        grid.appendChild(lbl);
+      });
+
+      // 7 行：每行 = 星期 标 + N 周 cells
+      for (let dayIdx = 0; dayIdx < 7; dayIdx++) {
+        const dayLbl = document.createElement('div');
+        dayLbl.className = 'hm-day-label';
+        dayLbl.style.gridColumn = '1';
+        dayLbl.style.gridRow = `${dayIdx + 2}`;
+        dayLbl.textContent = wkdayLabels[dayIdx];
+        grid.appendChild(dayLbl);
+
+        for (let wi = 0; wi < HEATMAP_WEEKS; wi++) {
+          const d = heatmapData[wi][dayIdx];
+          const cell = document.createElement('div');
+          cell.className = 'heatmap-cell';
+          cell.style.gridColumn = `${wi + 2}`;
+          cell.style.gridRow = `${dayIdx + 2}`;
+          if (d.future) {
+            cell.classList.add('empty');
+          } else if (d.minutes === 0) {
+            cell.classList.add('zero');  // 已过日子但没学习
+          } else {
+            // cell 主色 = 学习时长（5 阶柔和橙系，降饱和）
+            const palette = (function(){
+        const cs = getComputedStyle(document.documentElement);
+        return [
+          cs.getPropertyValue('--heat-0').trim(),
+          cs.getPropertyValue('--heat-1').trim(),
+          cs.getPropertyValue('--heat-2').trim(),
+          cs.getPropertyValue('--heat-3').trim(),
+          cs.getPropertyValue('--heat-4').trim()
+        ];
+      })();
+            const m = d.minutes;
+            let fillIdx = 0;
+            if (m > 50)      fillIdx = 4;
+            else if (m > 30) fillIdx = 3;
+            else if (m > 15) fillIdx = 2;
+            else if (m > 5)  fillIdx = 1;
+            cell.style.setProperty('--cell-fill', palette[fillIdx]);
+            // Neo 互动 idx 存到 dataset（tooltip 双环图用）
+            const t = d.tokens;
+            let innerIdx = 0;
+            if (t > 30)      innerIdx = 4;
+            else if (t > 15) innerIdx = 3;
+            else if (t > 5)  innerIdx = 2;
+            else if (t > 0)  innerIdx = 1;
+            cell.dataset.outerIdx = fillIdx;
+            cell.dataset.innerIdx = innerIdx;
+          }
+          // 里程碑：当天打点（不再用 ⚡ icon）
+          if (d.milestone) {
+            const dot = document.createElement('span');
+            dot.className = 'hm-dot';
+            cell.appendChild(dot);
+          }
+          // 所有 cell（含未学习/未开始）都可 hover 看 tooltip
+          cell.addEventListener('mouseenter', (e) => showHeatmapTooltip(e, d, cell));
+          cell.addEventListener('mouseleave', hideHeatmapTooltip);
+          grid.appendChild(cell);
+        }
+      }
+    }
+
+    // 4 场域柔和色卡（外环 lec / 对练 / 小结 / 大厅）
+    const SEG_COLORS = {
+      lecture: '#6B96B5',  // muted blue
+      practice: '#D9923D', // warm amber
+      recap: '#7CA86B',    // muted sage
+      hall: '#B5827E'      // rose brown
+    };
+
+    // 双环 SVG（按 DM 参数 cell 半径 12 / 外环 4 / 缝 2 / 内环 4 / 空心 2）
+    function ringSvg(outerColor, innerColor) {
+      // viewBox 24×24，cell 半径 12
+      // 外环：cx=12 cy=12, stroke-width 4, r=10（中心到外环中心半径）
+      // 内环：r=4，stroke-width 4
+      return `<svg width="40" height="40" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="12" fill="${outerColor || 'transparent'}"/>
+        <circle cx="12" cy="12" r="8" fill="var(--bg-card)"/>
+        <circle cx="12" cy="12" r="6" fill="${innerColor || 'transparent'}"/>
+        <circle cx="12" cy="12" r="2" fill="var(--bg-card)"/>
+      </svg>`;
+    }
+
+    function showHeatmapTooltip(e, d, cell) {
+      const tip = $('hmTooltip');
+      const fmt = (s) => { const dt = new Date(s); return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`; };
+      const wkday = (s) => { const dt = new Date(s); return '周' + '日一二三四五六'[dt.getDay()]; };
+      const cs = getComputedStyle(document.documentElement);
+      const palette = [
+        'transparent',
+        cs.getPropertyValue('--heat-1').trim(),
+        cs.getPropertyValue('--heat-2').trim(),
+        cs.getPropertyValue('--heat-3').trim(),
+        cs.getPropertyValue('--heat-4').trim()
+      ];
+      if (d.future) {
+        tip.innerHTML = `
+          <div class="hm-tt-head" style="border:none;margin:0;padding:0">
+            <div class="hm-tt-rings">${ringSvg('#F5F1EB', null)}</div>
+            <div class="hm-tt-info">
+              <div class="hm-tt-date">${fmt(d.date)}</div>
+              <div class="hm-tt-weekday">${wkday(d.date)} · 尚未到来</div>
+            </div>
+          </div>`;
+      } else if (d.minutes === 0) {
+        tip.innerHTML = `
+          <div class="hm-tt-head" style="border:none;margin:0;padding:0">
+            <div class="hm-tt-rings">${ringSvg('#ECE7DF', null)}</div>
+            <div class="hm-tt-info">
+              <div class="hm-tt-date">${fmt(d.date)}</div>
+              <div class="hm-tt-weekday">${wkday(d.date)} · 没有学习记录</div>
+            </div>
+          </div>`;
+      } else {
+        const segs = d.segments;
+        const total = d.minutes;
+        const oIdx = parseInt(cell.dataset.outerIdx || '0');
+        const iIdx = parseInt(cell.dataset.innerIdx || '0');
+        tip.innerHTML = `
+          <div class="hm-tt-head">
+            <div class="hm-tt-rings">${ringSvg(palette[oIdx], iIdx > 0 ? palette[iIdx] : 'transparent')}</div>
+            <div class="hm-tt-info">
+              <div class="hm-tt-date">${fmt(d.date)}</div>
+              <div class="hm-tt-weekday">${wkday(d.date)}</div>
+              ${d.milestone ? `<div class="hm-tt-milestone">${d.milestone}</div>` : ''}
+            </div>
+          </div>
+          <div class="hm-tt-stats">
+            <div class="hm-tt-stat">
+              <div class="hm-tt-stat-label"><span class="hm-tt-stat-dot" style="background:${palette[oIdx]}"></span>外环 学习时长</div>
+              <div class="hm-tt-stat-value">${total}<span class="hm-tt-stat-unit">分钟</span></div>
+            </div>
+            <div class="hm-tt-stat">
+              <div class="hm-tt-stat-label"><span class="hm-tt-stat-dot" style="background:${iIdx > 0 ? palette[iIdx] : 'var(--ink-5)'}"></span>内环 Neo 互动</div>
+              <div class="hm-tt-stat-value">${d.tokens}<span class="hm-tt-stat-unit">次</span></div>
+            </div>
+          </div>
+          <div class="hm-tt-section-title">分场域</div>
+          <div class="hm-tt-bar">
+            <div class="hm-tt-bar-seg" style="width:${segs.lecture / total * 100}%;background:${SEG_COLORS.lecture}"></div>
+            <div class="hm-tt-bar-seg" style="width:${segs.practice / total * 100}%;background:${SEG_COLORS.practice}"></div>
+            <div class="hm-tt-bar-seg" style="width:${segs.recap / total * 100}%;background:${SEG_COLORS.recap}"></div>
+            <div class="hm-tt-bar-seg" style="width:${segs.hall / total * 100}%;background:${SEG_COLORS.hall}"></div>
+          </div>
+          <div class="hm-tt-legend">
+            <span><i style="background:${SEG_COLORS.lecture}"></i>授课 ${segs.lecture}m</span>
+            <span><i style="background:${SEG_COLORS.practice}"></i>对练 ${segs.practice}m</span>
+            <span><i style="background:${SEG_COLORS.recap}"></i>小结 ${segs.recap}m</span>
+            <span><i style="background:${SEG_COLORS.hall}"></i>大厅 ${segs.hall}m</span>
+          </div>`;
+      }
+      // 跟随 cell 位置（不跟鼠标）+ 视口边界自适应
+      const r = cell.getBoundingClientRect();
+      tip.style.transform = 'none';
+      tip.style.left = '0px';
+      tip.style.top = '0px';
+      tip.classList.add('show');
+      // 用 RAF 等下一帧布局，再读 size + clamp
+      requestAnimationFrame(() => {
+        const tipW = tip.offsetWidth;
+        const tipH = tip.offsetHeight;
+        const margin = 8;
+        const cellMid = r.x + r.width / 2;
+        let left = cellMid - tipW / 2;
+        let top = r.y - tipH - 14;
+        // 水平 clamp（贴左/右边）
+        left = Math.max(margin, Math.min(window.innerWidth - tipW - margin, left));
+        // 上方放不下时翻到下方
+        if (top < margin) top = r.y + r.height + 14;
+        // 底部还放不下时强制贴底
+        if (top + tipH > window.innerHeight - margin) top = window.innerHeight - tipH - margin;
+        tip.style.left = left + 'px';
+        tip.style.top = top + 'px';
+      });
+    }
+    function hideHeatmapTooltip() {
+      $('hmTooltip').classList.remove('show');
+    }
+
+    // --- Radar (Chart.js) — theme-aware + 幂等保护 ---
+    let _radarChart = null;
+    let _radarRenderedTheme = null;
+    function renderRadar(force) {
+      const ctx = $('radarChart').getContext('2d');
+      const curTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      // 幂等：已为当前主题渲染过且非强制 → 跳过
+      if (!force && _radarChart && _radarRenderedTheme === curTheme) return;
+      if (_radarChart) { _radarChart.destroy(); _radarChart = null; }
+      _radarRenderedTheme = curTheme;
+      const cs = getComputedStyle(document.documentElement);
+      const accentRgb = cs.getPropertyValue('--accent-rgb').trim() || '217,119,87';
+      const accent = cs.getPropertyValue('--accent').trim() || '#D97757';
+      const ink2 = cs.getPropertyValue('--ink-2').trim() || '#5C544E';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const gridColor = isDark ? 'rgba(255,255,255,0.10)' : 'rgba(31,26,23,0.08)';
+      _radarChart = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: profile6.map(p => p.name),
+          datasets: [{
+            label: 'Neo 视角',
+            data: profile6.map(p => p.level),
+            backgroundColor: `rgba(${accentRgb},0.18)`,
+            borderColor: accent,
+            borderWidth: 2,
+            pointBackgroundColor: accent,
+            pointBorderColor: isDark ? '#221C2D' : '#fff',
+            pointBorderWidth: 1.5,
+            pointRadius: 3
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false }, tooltip: { enabled: false } },
+          scales: {
+            r: {
+              suggestedMin: 0, suggestedMax: 5,
+              ticks: { stepSize: 1, display: false, color: 'transparent' },
+              grid: { color: gridColor },
+              angleLines: { color: gridColor },
+              pointLabels: {
+                font: { size: 11, family: 'Inter, PingFang SC' },
+                color: ink2
+              }
+            }
+          }
+        }
+      });
+      // popover content
+      const pop = $('radarPopover');
+      pop.innerHTML = `<div class="radar-popover-title">Neo 在这门 Course 中看到的你</div>` +
+        profile6.map(p => `
+          <div class="radar-dim">
+            <span class="radar-dim-name">${p.name}</span>
+            <span class="radar-dim-level">L${p.level}</span>
+            <span class="radar-dim-desc">${p.desc}</span>
+          </div>
+        `).join('');
+    }
+
+    // --- Todos ---
+    function renderTodos() {
+      const list = $('todoList');
+      list.innerHTML = '';
+      // US-V12-LINK-004: 合并初始 mock + 跨场域 Todos store（lecture/practice 加入的待办）
+      const externalTodos = (typeof Todos === 'object') ? Todos.get() : [];
+      const merged = todos.concat(externalTodos);
+      merged.forEach(t => {
+        const row = document.createElement('div');
+        row.className = 'todo-item';
+        row.innerHTML = `
+          <div class="todo-checkbox ${t.done ? 'checked' : ''}" data-id="${t.id}"></div>
+          <div class="todo-content">
+            <div class="todo-text ${t.done ? 'done' : ''}">${t.text}</div>
+            <div class="todo-meta" style="display:inline-flex;align-items:center;gap:4px">${ICON.bookmark}<span>${t.source}${t.done ? ' · 已完成' : ''}</span></div>
+          </div>
+        `;
+        row.querySelector('.todo-checkbox').addEventListener('click', (e) => {
+          e.stopPropagation();
+          t.done = !t.done;
+          if (!t.done && row.querySelector('.todo-text')) {
+            row.querySelector('.todo-text').classList.remove('done');
+          }
+          if (t.done) {
+            // Neo 跟进
+            pushNeoMsg('做完了？跟我说说当时具体怎么说的，对方反应是什么——这个比"做没做"更有用。');
+          }
+          renderTodos();
+        });
+        list.appendChild(row);
+      });
+    }
+
+    // --- Courses (左缩略 + 右详情 + 展开 Activity) ---
+    function renderCourses() {
+      const list = $('courseList');
+      list.innerHTML = '';
+      courses.forEach(c => {
+        const card = document.createElement('div');
+        const statusLabel = { completed: '已完成', progress: '进行中', notstarted: '未开始' }[c.status];
+        const statusClass = { completed: 'status-completed', progress: 'status-progress', notstarted: 'status-notstarted' }[c.status];
+        const [done, total] = c.progress.split('/').map(Number);
+        const pct = (done / total) * 100;
+        card.className = `course-card ${c.status === 'completed' ? 'completed' : c.status === 'notstarted' ? 'notstarted' : ''}`;
+        // I-09 改：默认全部折叠（之前默认展开 Course 2）
+
+        const acts = activitiesByCourse[c.id] || defaultActivities(c);
+        // US-V12-LINK-001: 跨场域 Progress 覆盖 mock 初始 status
+        const progressMap = (typeof Progress === 'object') ? Progress.get() : {};
+        // 先 pass 1：刷 progressMap 覆盖 status
+        acts.forEach(a => {
+          const aId = `c${c.id}-a${a.id}`;
+          if (progressMap[aId]?.status === 'completed' && a.status !== 'completed') {
+            a.status = 'completed';
+          }
+        });
+        // v1.5 P4 · 0.5.1 spec · pass 2：recap 类 Activity · 关联前置未全完成 → status='locked'
+        acts.forEach(a => {
+          if (a.type !== 'recap') return;
+          if (a.status === 'completed') return;
+          const deps = a.relatedActivityIds || [];
+          if (deps.length === 0) return;
+          const allDone = deps.every(depAid => {
+            const dep = acts.find(x => x.id === depAid);
+            return dep && dep.status === 'completed';
+          });
+          if (!allDone) a.status = 'locked';
+          else if (a.status === 'locked') a.status = 'notstarted';
+        });
+        const actsHtml = acts.map(a => {
+          const aId = `c${c.id}-a${a.id}`;
+          const typeIcon = ICON[a.type];
+          const typeLabel = { lecture: '授课', practice: '对练', recap: '小结' }[a.type];
+          const stText = { completed: '已完成', progress: '进行中', notstarted: '未开始', locked: '待解锁' }[a.status];
+          // CTA 按钮文案 + class
+          const ctaLabel = { completed: '自由复习', progress: '继续学习', notstarted: '开始学习', locked: '待解锁' }[a.status];
+          const ctaClass = a.status === 'completed' ? 'completed-cta' : a.status === 'locked' ? 'locked-cta' : '';
+          // I-17 hover 简介数据 · 注入 dataset 供 hover popover 读
+          const intro = a.intro || `${typeLabel} · ${a.minutes} 分钟 · ${stText}`;
+          const learnGoal = a.goal || ({
+            lecture:  '理解概念框架 + 关键案例',
+            practice: '在模拟场景中练习应用 + Neo 实时反馈',
+            recap:    '回顾 + 提炼方法 + 形成可复用清单'
+          }[a.type] || '');
+          return `<div class="activity-row ${a.status === 'locked' ? 'locked' : ''}"
+            data-intro="${intro}" data-goal="${learnGoal}" data-type-label="${typeLabel}" data-minutes="${a.minutes}" data-st="${stText}">
+            <div class="activity-icon ${a.type}">${typeIcon}</div>
+            <div class="activity-info">
+              <div class="activity-title">${a.title}</div>
+              <div class="activity-meta">${typeLabel} · ${a.minutes} 分钟 · ${stText}</div>
+            </div>
+            <button class="activity-cta ${ctaClass}" data-target="${a.target}" data-title="${a.title}" data-activity-id="c${c.id}-a${a.id}" data-status="${a.status}" ${a.status === 'locked' ? 'disabled' : ''}>${ctaLabel}</button>
+          </div>`;
+        }).join('');
+
+        card.innerHTML = `
+          <div class="course-row">
+            <div class="course-thumb">${c.name}</div>
+            <div class="course-info">
+              <div class="course-info-head">
+                <span class="course-title">Course ${c.id} · ${c.name}</span>
+                ${c.current ? '<span style="font-size:10px;color:var(--accent);font-weight:600">· 学习中</span>' : ''}
+                <span class="course-status ${statusClass}" style="margin-left:auto">${statusLabel}</span>
+              </div>
+              <div class="course-summary">${c.summary}</div>
+              <div class="course-foot">
+                <span style="font-weight:500">${c.progress} Activity</span>
+                <div class="course-progress-bar">
+                  <div class="course-progress-fill" style="width:${pct}%"></div>
+                </div>
+                <span style="color:var(--ink-3)">${Math.round(pct)}%</span>
+              </div>
+            </div>
+            <svg class="course-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="course-activities">
+            <div class="course-act-inner">${actsHtml}</div>
+          </div>
+        `;
+
+        // 展开切换（accordion 模式 — 只能展开一个）
+        card.querySelector('.course-row').addEventListener('click', (e) => {
+          e.stopPropagation();  // 防止触发 outside-click 收起
+          const wasExpanded = card.classList.contains('expanded');
+          // 收起所有
+          document.querySelectorAll('.course-card.expanded').forEach(c => c.classList.remove('expanded'));
+          if (!wasExpanded) card.classList.add('expanded');
+        });
+        // Activity CTA 按钮（每个 Activity 一个）
+        card.querySelectorAll('.activity-cta:not(.locked-cta)').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const target = btn.dataset.target;
+            const title = btn.dataset.title;
+            const activityId = btn.dataset.activityId;
+            // I-V12-02: completed Activity 自动进自由模式（spec § 9.3.1.7.3 / § 9.3.2.8.8）
+            const opts = { activityId };
+            if (btn.dataset.status === 'completed') opts.mode = 'free';
+            confirmAndJump(title, target, opts);
+          });
+        });
+        list.appendChild(card);
+      });
+      // I-16 外部点击自动收起 Course 展开（仅绑定一次）
+      if (!list.dataset.outsideBound) {
+        list.dataset.outsideBound = '1';
+        document.addEventListener('click', (e) => {
+          if (e.target.closest('#courseList')) return;     // 课程区内点击不影响
+          if (document.querySelector('.modal-mask.open')) return;  // modal 打开时不收
+          document.querySelectorAll('.course-card.expanded').forEach(c => c.classList.remove('expanded'));
+        });
+      }
+      // I-17 hover Activity 弹简介卡片
+      const actTip = document.getElementById('activityTooltip') || (() => {
+        const t = document.createElement('div');
+        t.id = 'activityTooltip';
+        t.className = 'activity-tooltip';
+        document.body.appendChild(t);
+        return t;
+      })();
+      list.querySelectorAll('.activity-row').forEach(row => {
+        row.addEventListener('mouseenter', e => {
+          const r = row.getBoundingClientRect();
+          actTip.innerHTML = `
+            <div class="activity-tooltip-title">${row.querySelector('.activity-title')?.textContent || ''}</div>
+            <div class="activity-tooltip-meta">${row.dataset.typeLabel} · ${row.dataset.minutes} 分钟 · ${row.dataset.st}</div>
+            <div class="activity-tooltip-goal"><b>学习目标</b>：${row.dataset.goal}</div>
+          `;
+          actTip.style.left = (r.right + 12) + 'px';
+          actTip.style.top  = r.top + 'px';
+          // 视口右溢出 → 翻到左侧
+          const tw = actTip.offsetWidth;
+          if (r.right + 12 + tw > window.innerWidth - 8) {
+            actTip.style.left = (r.left - tw - 12) + 'px';
+          }
+          actTip.classList.add('show');
+        });
+        row.addEventListener('mouseleave', () => actTip.classList.remove('show'));
+      });
+    }
+
+    // --- Harvest tabs ---
+    function renderHarvest() {
+      // US-V12-LINK-002: 跨场域高光合并（lecture/practice 收藏的卡片）
+      const externalHighlights = (typeof Highlights === 'object') ? Highlights.get().map(h => ({
+        tag: h.tag || h.source,
+        title: h.title,
+        quote: h.content,
+        meta: (h.source === 'practice' ? '对练' : (h.source === 'lecture' ? '授课' : h.source)) +
+              ' · ' + new Date(h.ts).toLocaleString('zh-CN', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+      })) : [];
+      const mergedHighlights = externalHighlights.concat(harvest.highlights);
+      // 同时提前算 externalNotes 数量给 tab badge 用
+      const externalNotesCount = (typeof Notes === 'object') ? Notes.get().length : 0;
+      // Tab 数量徽标动态更新
+      const tabBadges = document.querySelectorAll('.tab .tab-badge');
+      const counts = { highlights: mergedHighlights.length, tools: `${harvest.tools.filter(t=>!t.locked).length} / ${harvest.tools.length}`, notes: harvest.notes.length + externalNotesCount, reports: harvest.reports.length };
+      document.querySelectorAll('.tab').forEach(tab => {
+        const k = tab.dataset.tab;
+        if (counts[k] !== undefined) tab.querySelector('.tab-badge').textContent = counts[k];
+      });
+
+      const reports = harvest.reports.map((r, i) => `
+        <div class="item-card" data-type="report" data-idx="${i}">
+          <div class="item-title">${r.title}</div>
+          <div class="item-meta">
+            <span>${r.meta}</span>
+            <span style="margin-left:auto;display:inline-flex;gap:10px">
+              <span class="item-icon-btn" data-action="download" title="导出 PDF"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
+            </span>
+          </div>
+        </div>`).join('');
+      $('panelReports').innerHTML = reports;
+
+      const highlights = mergedHighlights.map((h, i) => `
+        <div class="item-card" data-type="highlight" data-idx="${i}">
+          <span class="item-tag">${h.tag}</span>
+          <span class="item-title" style="display:inline">${h.title}</span>
+          <div class="item-quote">${h.quote}</div>
+          <div class="item-meta">${h.meta}</div>
+        </div>`).join('');
+      $('panelHighlights').innerHTML = highlights;
+
+      const tools = harvest.tools.map((t, i) => `
+        <div class="item-card ${t.locked ? 'locked' : ''}" data-type="tool" data-idx="${i}">
+          <div class="item-title">${t.locked ? '🔒 ' : ''}${t.name}</div>
+          <div class="item-meta">${t.desc}${t.locked ? ' · ' + t.unlock : ''}</div>
+        </div>`).join('');
+      $('panelTools').innerHTML = tools;
+
+      // US-V12-LINK-003: 合并跨场域 Notes（lecture/practice 归档的笔记）
+      // v1.5 FIX-#1 · 合并后的 mergedNotes 提到 module 级，删除/详情用同一份 idx 不再错位
+      // external 笔记标记 _externalId · 删除走 Notes.remove；harvest 自己的笔记走 splice
+      const externalNotes = (typeof Notes === 'object') ? Notes.get().map(n => ({
+        content: n.content,
+        meta: n.source || '场域',
+        time: new Date(n.ts).toLocaleString('zh-CN', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+        _externalId: n.id
+      })) : [];
+      const mergedNotes = externalNotes.concat(harvest.notes);
+      window.__hallMergedNotes = mergedNotes;
+      const notes = mergedNotes.map((n, i) => {
+        const preview = (n.content || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').slice(0, 60);
+        return `
+        <div class="item-card ${n.isNew ? 'new-note' : ''}" data-type="note" data-idx="${i}">
+          <div class="item-title">${n.title || preview}</div>
+          <div style="font-size:11px;color:var(--ink-3);line-height:1.5;margin:4px 0 6px 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${preview}${preview.length >= 60 ? '…' : ''}</div>
+          <div class="item-meta">
+            <span>${n.meta} · ${n.time || '刚刚'}</span>
+            <span style="margin-left:auto;display:inline-flex;gap:10px">
+              <span class="item-icon-btn" data-action="export" title="导出 PDF"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
+              <span class="item-icon-btn danger" data-action="delete" title="删除"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 01-2 2H9a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></span>
+            </span>
+          </div>
+        </div>`;
+      }).join('');
+      $('panelNotes').innerHTML = notes;
+
+      // 卡片点击事件（事件委托）
+      // v1.4.1 FIX-2 · 用 closest('[data-action]') 找最近的 action 元素 · 避免点 SVG path 时 e.target 没 dataset 漏匹配
+      ['panelHighlights', 'panelTools', 'panelNotes', 'panelReports'].forEach(panelId => {
+        $(panelId).querySelectorAll('.item-card').forEach(card => {
+          card.addEventListener('click', (e) => {
+            const actionEl = e.target.closest('[data-action]');
+            const action = actionEl?.dataset?.action;
+            const type = card.dataset.type;
+            const idx = parseInt(card.dataset.idx);
+            if (action === 'download' || action === 'export') {
+              e.stopPropagation();
+              showToast('PDF 已下载（demo 占位）');
+            } else if (action === 'delete') {
+              e.stopPropagation();
+              confirmDeleteNote(idx);
+            } else {
+              if (type === 'tool' && harvest.tools[idx].locked) {
+                showToast(`${harvest.tools[idx].unlock}`);
+                return;
+              }
+              openHarvestDetail(type, idx);
+            }
+          });
+        });
+      });
+
+      // Tab switching
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          const target = tab.dataset.tab;
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          document.querySelectorAll('.tab-panel').forEach(p => {
+            p.classList.toggle('active', p.dataset.panel === target);
+          });
+        });
+      });
+    }
+
+    // ==== 4 库卡片点击 → 详情 modal ====
+    function openHarvestDetail(type, idx) {
+      if (type === 'highlight') {
+        const h = harvest.highlights[idx];
+        openModal(`
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+            <span class="item-tag">${h.tag}</span>
+            <span style="font-size:11px;color:var(--ink-3)">${h.meta}</span>
+          </div>
+          <div class="modal-title">${h.title}</div>
+          <div class="modal-body">
+            <div style="background:rgba(255,255,255,0.6);padding:12px 14px;border-radius:10px;border-left:3px solid var(--accent);font-style:italic;color:var(--ink-2);margin:12px 0">
+              ${h.quote}
+            </div>
+            <p style="color:var(--ink-2)">这是 Neo 在你学习过程中识别到的「顿悟瞬间」——把抽象概念真正应用到了具体场景里。这个理解的转折点就是从"听懂"到"能用"的关键，值得在工作中刻意复习几次。</p>
+          </div>
+          <div class="modal-actions">
+            <button class="modal-btn primary" onclick="closeModal()">知道了</button>
+          </div>
+        `);
+      } else if (type === 'tool') {
+        openKnowledgeModal(harvest.tools[idx].name);
+      } else if (type === 'note') {
+        // v1.5 FIX-#1 · 用 mergedNotes 取（外部+本地合并后）· 不再 idx 错位
+        const n = (window.__hallMergedNotes || harvest.notes)[idx];
+        if (!n) return;
+        openModal(`
+          <div class="modal-title">${n.title || '我的笔记'}</div>
+          <div class="modal-sub">${n.meta} · ${n.time || ''}</div>
+          <div class="modal-body note-frame">
+            ${n.content}
+          </div>
+          <div class="modal-actions">
+            <button class="modal-btn" style="color:var(--error);border-color:var(--hairline)" onclick="closeModal();confirmDeleteNote(${idx});">删除</button>
+            <button class="modal-btn" onclick="closeModal();showToast('PDF 已下载（demo 占位）');">导出 PDF</button>
+            <button class="modal-btn primary" onclick="closeModal()">关闭</button>
+          </div>
+        `);
+      } else if (type === 'report') {
+        openReportModal(idx);
+      }
+    }
+
+    // ==== 完整报告 modal（recap 5 块 / practice 3 部分）====
+    function openReportModal(idx) {
+      const r = harvest.reports[idx];
+      const isRecap = r.type === 'recap';
+      let body = '';
+      // 顶部状态横幅
+      if (r.partial) {
+        body += `<div style="background:rgba(216,155,59,0.12);border-left:3px solid #D89B3B;padding:8px 12px;border-radius:6px;margin-bottom:14px;font-size:12px;color:#8B6020">⚠️ 仅基于 ${r.trajectory ? r.trajectory.bars.length : '已完成'} 个 Activity 生成；完成更多前序 Activity 后报告会自动更新。</div>`;
+      }
+      if (isRecap) {
+        // ① 内容锚点
+        if (r.anchor) body += `<h3 style="display:flex;align-items:center;gap:8px"><span style="background:var(--accent);color:#fff;font-size:11px;padding:2px 7px;border-radius:10px">①</span>内容锚点</h3><p>${r.anchor}</p>`;
+        // ② 走过的轨迹
+        if (r.trajectory) {
+          const max = Math.max(...r.trajectory.bars.map(b => b.value));
+          body += `<h3 style="display:flex;align-items:center;gap:8px"><span style="background:var(--accent);color:#fff;font-size:11px;padding:2px 7px;border-radius:10px">②</span>走过的轨迹</h3><p>${r.trajectory.text}</p>`;
+          body += `<div style="background:var(--bg-soft);padding:14px 16px;border-radius:10px;border:1px solid var(--hairline);margin:8px 0">`;
+          r.trajectory.bars.forEach(b => {
+            const pct = (b.value / max) * 100;
+            body += `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <span style="font-size:11px;color:var(--ink-2);width:160px">${b.name}</span>
+              <div style="flex:1;height:8px;background:var(--bg-soft);border-radius:4px;overflow:hidden">
+                <div style="width:${pct}%;height:100%;background:${b.color};border-radius:4px"></div>
+              </div>
+              <span style="font-size:11px;color:var(--ink-1);font-weight:600;width:40px;text-align:right">${b.value} 轮</span>
+            </div>`;
+          });
+          body += `</div>`;
+        }
+        // ③ 6 维画像变化点
+        if (r.profile6 && r.profile6.length > 0) {
+          body += `<h3 style="display:flex;align-items:center;gap:8px"><span style="background:var(--accent);color:#fff;font-size:11px;padding:2px 7px;border-radius:10px">③</span>6 维画像变化点</h3>`;
+          r.profile6.forEach(p => {
+            body += `<div style="background:var(--bg-soft);padding:10px 14px;border-radius:8px;border-left:3px solid var(--accent);margin:8px 0">
+              <div style="font-size:12px;font-weight:600;color:var(--ink-1)">${p.name} <span style="color:var(--accent)">L${p.from} → L${p.to} ↑</span></div>
+              <div style="font-size:11px;color:var(--ink-3);margin-top:4px;font-style:italic">证据：${p.evidence}</div>
+            </div>`;
+          });
+        } else if (r.profile6) {
+          body += `<h3 style="display:flex;align-items:center;gap:8px"><span style="background:var(--accent);color:#fff;font-size:11px;padding:2px 7px;border-radius:10px">③</span>6 维画像</h3><p style="color:var(--ink-3);font-size:12px">本 Course 中 Neo 对你的画像没有触发实质变化，6 维当前快照保持不变。</p>`;
+        }
+        // ④ 关键证据
+        if (r.highlights || r.gaps) {
+          body += `<h3 style="display:flex;align-items:center;gap:8px"><span style="background:var(--accent);color:#fff;font-size:11px;padding:2px 7px;border-radius:10px">④</span>关键证据</h3>`;
+          if (r.highlights) r.highlights.forEach(h => {
+            body += `<div style="background:var(--bg-soft);padding:10px 14px;border-radius:8px;border-left:3px solid #7CA86B;margin:8px 0">
+              <div style="font-size:11px;color:#5C7A4F;font-weight:600;margin-bottom:4px">🌟 高光</div>
+              <div style="font-style:italic;color:var(--ink-2);margin-bottom:4px">${h.quote}</div>
+              <div style="font-size:11px;color:var(--ink-3)">— ${h.neo}</div>
+            </div>`;
+          });
+          if (r.gaps) r.gaps.forEach(g => {
+            body += `<div style="background:var(--bg-soft);padding:10px 14px;border-radius:8px;border-left:3px solid #D89B3B;margin:8px 0">
+              <div style="font-size:11px;color:#8B6020;font-weight:600;margin-bottom:4px">⚠️ 卡点</div>
+              <div style="font-style:italic;color:var(--ink-2);margin-bottom:4px">${g.quote}</div>
+              <div style="font-size:11px;color:var(--ink-3)">— ${g.neo}</div>
+            </div>`;
+          });
+        }
+        // ⑤ 待办任务
+        if (r.todos && r.todos.length > 0) {
+          body += `<h3 style="display:flex;align-items:center;gap:8px"><span style="background:var(--accent);color:#fff;font-size:11px;padding:2px 7px;border-radius:10px">⑤</span>待办任务（已加入大厅待办）</h3><ul>`;
+          r.todos.forEach(t => body += `<li>${t}</li>`);
+          body += `</ul>`;
+        }
+      } else if (r.type === 'practice') {
+        // 能力评分（雷达图 SVG 简化版）
+        body += `<h3>能力评分</h3>`;
+        const max = 5, n = r.competency.length;
+        const cx = 130, cy = 130, R = 90;
+        let polyPts = '', labelHtml = '';
+        r.competency.forEach((c, i) => {
+          const angle = (Math.PI * 2 * i) / n - Math.PI / 2;
+          const x = cx + Math.cos(angle) * R * (c.level / max);
+          const y = cy + Math.sin(angle) * R * (c.level / max);
+          polyPts += `${x},${y} `;
+          const lx = cx + Math.cos(angle) * (R + 18);
+          const ly = cy + Math.sin(angle) * (R + 18);
+          labelHtml += `<text x="${lx}" y="${ly}" text-anchor="middle" font-size="11" fill="#5C544E">${c.name} L${c.level}</text>`;
+        });
+        let gridHtml = '';
+        for (let lvl = 1; lvl <= max; lvl++) {
+          let gridPts = '';
+          for (let i = 0; i < n; i++) {
+            const angle = (Math.PI * 2 * i) / n - Math.PI / 2;
+            gridPts += `${cx + Math.cos(angle) * R * (lvl / max)},${cy + Math.sin(angle) * R * (lvl / max)} `;
+          }
+          gridHtml += `<polygon points="${gridPts}" fill="none" stroke="rgba(31,26,23,0.06)"/>`;
+        }
+        body += `<div style="background:var(--bg-soft);border:1px solid var(--hairline);border-radius:10px;padding:16px;margin:8px 0;display:flex;align-items:center;gap:20px">
+          <svg width="260" height="260" viewBox="0 0 260 260">
+            ${gridHtml}
+            <polygon points="${polyPts}" fill="rgba(217,119,87,0.18)" stroke="#D97757" stroke-width="2"/>
+            ${r.competency.map((c, i) => {
+              const angle = (Math.PI * 2 * i) / n - Math.PI / 2;
+              const x = cx + Math.cos(angle) * R * (c.level / max);
+              const y = cy + Math.sin(angle) * R * (c.level / max);
+              return `<circle cx="${x}" cy="${y}" r="3" fill="#D97757"/>`;
+            }).join('')}
+            ${labelHtml}
+          </svg>
+          <div style="flex:1">
+            <p style="font-size:13px;color:var(--ink-2);line-height:1.7">${r.competencyText}</p>
+          </div>
+        </div>`;
+        // 高光
+        body += `<h3>高光时刻</h3>`;
+        r.highlights.forEach(h => {
+          body += `<div style="background:var(--bg-soft);padding:10px 14px;border-radius:8px;border-left:3px solid #7CA86B;margin:8px 0">
+            <div style="font-style:italic;color:var(--ink-2);margin-bottom:4px">${h.quote}</div>
+            <div style="font-size:11px;color:var(--ink-3)">— ${h.neo}</div>
+          </div>`;
+        });
+        // 提升建议
+        body += `<h3>提升建议</h3><ol>`;
+        r.suggestions.forEach(s => body += `<li style="margin-bottom:6px">${s}</li>`);
+        body += `</ol>`;
+      }
+      openModal(`
+        <div class="modal-title">${r.title}</div>
+        <div class="modal-sub">${r.meta}</div>
+        <div class="modal-body">${body}</div>
+        <div class="modal-actions">
+          <button class="modal-btn" onclick="closeModal();showToast('PDF 已下载（demo 占位）');">导出 PDF</button>
+          <button class="modal-btn primary" onclick="closeModal()">关闭</button>
+        </div>
+      `);
+    }
+
+    // ==== 删除笔记二次确认 · v1.5 FIX-#1 改读 mergedNotes · 区分 external/harvest 来源 ====
+    function confirmDeleteNote(idx) {
+      const merged = window.__hallMergedNotes || harvest.notes;
+      const n = merged[idx];
+      if (!n) return;
+      openModal(`
+        <div class="modal-title">删除笔记</div>
+        <div class="modal-body">
+          <p>确定要删除这条笔记吗？删除后不可恢复。</p>
+          <div style="background:var(--bg-soft);padding:10px 12px;border-radius:8px;border:1px solid var(--hairline);margin-top:10px;font-size:12px;color:var(--ink-3);max-height:120px;overflow:hidden;font-style:italic">
+            "${n.content}"
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="modal-btn" onclick="closeModal()">取消</button>
+          <button class="modal-btn primary" style="background:var(--error);border-color:var(--error)" onclick="closeModal();doDeleteNote(${idx});">确定删除</button>
+        </div>
+      `);
+    }
+    function doDeleteNote(idx) {
+      const merged = window.__hallMergedNotes || harvest.notes;
+      const n = merged[idx];
+      if (!n) return;
+      if (n._externalId && typeof Notes !== 'undefined') {
+        // 跨场域归档笔记 → 走 Notes.remove
+        Notes.remove(n._externalId);
+      } else {
+        // 大厅本地 mock 笔记 → 找 harvest.notes 中对应元素 splice（不能依赖 mergedNotes 的 idx）
+        const localIdx = harvest.notes.indexOf(n);
+        if (localIdx >= 0) harvest.notes.splice(localIdx, 1);
+      }
+      renderHarvest();
+      showToast('笔记已删除');
+    }
+
+    // --- Bell messages (3 类头像 + accordion) ---
+    function renderMessages() {
+      const list = $('msgList');
+      list.innerHTML = '';
+      messages.forEach((m, i) => {
+        const row = document.createElement('div');
+        row.className = 'msg-row';
+        let avatarHtml = '';
+        if (m.type === 'platform') {
+          avatarHtml = `<div class="msg-avatar-wrap platform"><img src="assets/logo.png" alt="平台" /></div>`;
+        } else if (m.type === 'system') {
+          avatarHtml = `<div class="msg-avatar-wrap system"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>`;
+        } else if (m.type === 'user') {
+          // 管理员头像（首字母散色）
+          const [c1, c2] = getGradFor(m.sender);
+          avatarHtml = `<div class="msg-avatar-wrap user" style="background:linear-gradient(135deg,${c1},${c2})">${m.avatarChar}</div>`;
+        }
+        // US-V12-LINK-005: MessagesRead 跨场域已读
+        const isRead = (typeof MessagesRead === 'object') ? MessagesRead.isRead(m) : (m.unread === false);
+        row.innerHTML = `
+          ${avatarHtml}
+          <div class="msg-content">
+            <div class="msg-head">
+              <span class="msg-text">${m.title}</span>
+              ${!isRead ? '<span class="msg-dot-unread"></span>' : ''}
+            </div>
+            <div class="msg-sender">${m.sender} · ${m.time}</div>
+            <div class="msg-desc">${m.desc}</div>
+          </div>
+        `;
+        // accordion: 一次展开一个
+        row.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const wasExpanded = row.classList.contains('expanded');
+          list.querySelectorAll('.msg-row.expanded').forEach(r => r.classList.remove('expanded'));
+          if (!wasExpanded) {
+            row.classList.add('expanded');
+            if (typeof MessagesRead === 'object') MessagesRead.markRead(m);
+            const role = (window.Session?.get()?.role) || 'learner';
+            const unread = (typeof MessagesRead === 'object') ? MessagesRead.unreadCount(role) : messages.filter(mm => mm.unread !== false).length;
+            if (unread === 0) $('bellBadge').style.display = 'none';
+            else { $('bellBadge').style.display = 'flex'; $('bellBadge').textContent = unread; }
+            const dot = row.querySelector('.msg-dot-unread');
+            if (dot) dot.remove();
+          }
+        });
+        list.appendChild(row);
+      });
+      const role = (window.Session?.get()?.role) || 'learner';
+      const unread = (typeof MessagesRead === 'object') ? MessagesRead.unreadCount(role) : messages.filter(m => m.unread !== false).length;
+      if (unread === 0) {
+        $('bellBadge').style.display = 'none';
+      } else {
+        $('bellBadge').textContent = unread;
+        $('bellBadge').style.display = 'flex';
+      }
+    }
+
+    // --- Neo Chat ---
+    function renderNeoChat() {
+      const stream = $('neoStream');
+      stream.innerHTML = '';
+      neoChatPast.forEach(msg => appendNeoMsg(msg, false));
+      stream.scrollTop = stream.scrollHeight;
+      // 渲染完已发生 → 触发 askq popup
+      setTimeout(() => openAskq(pendingAskQ), 300);
+    }
+    function appendNeoMsg(msg, scroll = true) {
+      const stream = $('neoStream');
+      let el;
+      if (msg.role === 'neo') {
+        el = document.createElement('div');
+        el.className = 'msg neo';
+        el.innerHTML = `
+          <div class="msg-avatar"><img src="assets/neo-${learner.neoPersona}.png" alt="Neo" /></div>
+          <div>
+            <div class="msg-bubble">${msg.text}</div>
+            <div class="msg-actions">
+              <button class="msg-action" data-action="like" title="点赞">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3zM7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/></svg>
+              </button>
+              <button class="msg-action" data-action="dislike" title="点踩">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15v4a3 3 0 003 3l4-9V2H5.72a2 2 0 00-2 1.7l-1.38 9a2 2 0 002 2.3zM17 2h2.67A2.31 2.31 0 0122 4v7a2.31 2.31 0 01-2.33 2H17"/></svg>
+              </button>
+              <button class="msg-action" data-action="comment" title="评论">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+              </button>
+            </div>
+          </div>`;
+      } else if (msg.role === 'user') {
+        const [c1, c2] = getGradFor(learner.name);
+        el = document.createElement('div');
+        el.className = 'msg user';
+        el.innerHTML = `
+          <div class="msg-avatar user-letter" style="background:linear-gradient(135deg,${c1},${c2})">${learner.firstChar}</div>
+          <div class="msg-bubble">${msg.text}</div>`;
+      } else if (msg.role === 'card') {
+        el = document.createElement('div');
+        el.className = 'neo-card';
+        el.dataset.cardType = msg.cardType;
+        let inner = `<span class="neo-card-tag">${msg.tag}</span>
+          <div class="neo-card-title">${msg.title}</div>
+          <div class="neo-card-body">${msg.body}</div>`;
+        if (msg.options) {
+          inner += `<div class="neo-card-options">${
+            msg.options.map(o => `<button class="neo-card-option">${o}</button>`).join('')
+          }</div>`;
+        } else if (msg.primary || msg.secondary) {
+          inner += `<div class="neo-card-actions">${
+            msg.secondary ? `<button class="neo-card-btn" data-action="secondary">${msg.secondary}</button>` : ''
+          }${msg.primary ? `<button class="neo-card-btn primary" data-action="primary">${msg.primary}</button>` : ''}</div>`;
+        }
+        el.innerHTML = inner;
+        // 卡片动作绑定
+        el.querySelectorAll('.neo-card-option').forEach(btn => {
+          btn.addEventListener('click', () => {
+            // askUserQuestion: 选项被选中后高亮 + Neo 回应（mock）
+            el.querySelectorAll('.neo-card-option').forEach(b => b.style.opacity = 0.4);
+            btn.style.opacity = 1;
+            btn.style.background = 'var(--accent-soft)';
+            btn.style.borderColor = 'var(--accent)';
+          });
+        });
+        const primaryBtn = el.querySelector('[data-action="primary"]');
+        if (primaryBtn) {
+          primaryBtn.addEventListener('click', () => {
+            if (msg.cardType === 'course') {
+              confirmAndJump(msg.title, msg.target || 'lecture-ppt', { activityId: msg.activityId });
+            } else if (msg.cardType === 'task') {
+              addTodoFromCard(msg.title, '来自 Neo · ' + (msg.body.slice(0, 14) + '...'));
+              primaryBtn.disabled = true;
+              primaryBtn.textContent = '✓ 已加入待办';
+              primaryBtn.style.background = 'var(--success)';
+              primaryBtn.style.borderColor = 'var(--success)';
+            } else if (msg.cardType === 'knowledge') {
+              openKnowledgeModal(msg.title);
+            }
+          });
+        }
+        const secondaryBtn = el.querySelector('[data-action="secondary"]');
+        if (secondaryBtn) {
+          secondaryBtn.addEventListener('click', () => {
+            secondaryBtn.disabled = true;
+            secondaryBtn.style.opacity = 0.5;
+            if (primaryBtn) { primaryBtn.disabled = true; primaryBtn.style.opacity = 0.5; }
+            showToast('已忽略');
+          });
+        }
+      }
+      if (el) stream.appendChild(el);
+      if (scroll) stream.scrollTop = stream.scrollHeight;
+    }
+    function pushNeoMsg(text) {
+      appendNeoMsg({ role: 'neo', text });
+    }
+
+    // Course drawer 已被 inline 展开取代（renderCourses 内处理）
+
+    // =============================================================
+    // INTERACTIONS
+    // =============================================================
+    // Bell + Avatar dropdowns
+    function setupDropdowns() {
+      const dropdowns = [
+        { btn: 'bellBtn', menu: 'bellDropdown' },
+        { btn: 'avatarBtn', menu: 'avatarDropdown' }
+      ];
+      dropdowns.forEach(({ btn, menu }) => {
+        $(btn).addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isOpen = $(menu).classList.contains('open');
+          // close all
+          dropdowns.forEach(d => $(d.menu).classList.remove('open'));
+          if (!isOpen) $(menu).classList.add('open');
+        });
+      });
+      document.addEventListener('click', () => {
+        dropdowns.forEach(d => $(d.menu).classList.remove('open'));
+      });
+      // mark all read
+      $('markAllRead').addEventListener('click', (e) => {
+        e.stopPropagation();
+        // US-V12-LINK-005: 跨场域已读
+        const role = (window.Session?.get()?.role) || 'learner';
+        if (typeof MessagesRead === 'object') MessagesRead.markAllReadFor(role);
+        renderMessages();
+      });
+    }
+
+    // Settings drawer
+    function setupSettingsDrawer() {
+      $('openSettings').addEventListener('click', () => {
+        $('avatarDropdown').classList.remove('open');
+        $('settingsDrawer').classList.add('open');
+      });
+      $('settingsClose').addEventListener('click', () => $('settingsDrawer').classList.remove('open'));
+      $('settingsDrawer').addEventListener('click', (e) => {
+        if (e.target === $('settingsDrawer')) $('settingsDrawer').classList.remove('open');
+      });
+      // Persona switch
+      document.querySelectorAll('[data-persona]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('[data-persona]').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          learner.neoPersona = btn.dataset.persona;
+          // I-V12-01: 跨页同步 persona（v1.2 工程纪律 K · lecture/practice 共用 rx-persona key）
+          localStorage.setItem('rx-persona', learner.neoPersona);
+          // v1.4.1 · hall hero 头像已删 · 仅同步 chat msg 头像
+          // 重新渲染 Chat 中的 Neo 头像
+          document.querySelectorAll('.msg.neo .msg-avatar img').forEach(img => {
+            img.src = `assets/neo-${learner.neoPersona}.png`;
+          });
+          showToast(`已切换为${btn.dataset.persona === 'male' ? '男' : '女'} Neo`);
+        });
+      });
+      // Other opt-btn groups (theme / speed) — 限定 .opt-btn 避免选中 <html data-theme>
+      // v1.3 · speed click 也持久化 localStorage（rx-speed · 跨页同 key）
+      ['data-theme', 'data-speed'].forEach(attr => {
+        document.querySelectorAll(`.opt-btn[${attr}]`).forEach(btn => {
+          btn.addEventListener('click', () => {
+            if (btn.disabled) return;
+            const group = btn.parentElement;
+            group.querySelectorAll(`.opt-btn[${attr}]`).forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            // theme 已在 initThemeButtons 处理 · 这里仅给 speed 加 setItem
+            if (attr === 'data-speed') {
+              try { localStorage.setItem('rx-speed', btn.dataset.speed); } catch {}
+            }
+          });
+        });
+      });
+      // v1.3 · 启动时同步 localStorage → active class（speed + persona）
+      try {
+        const sp = localStorage.getItem('rx-speed') || 'normal';
+        document.querySelectorAll('.opt-btn[data-speed]').forEach(b => b.classList.toggle('active', b.dataset.speed === sp));
+        const ps = localStorage.getItem('rx-persona') || 'male';
+        document.querySelectorAll('.opt-btn[data-persona]').forEach(b => b.classList.toggle('active', b.dataset.persona === ps));
+      } catch {}
+    }
+
+    // Neo persona 切换由设置 drawer 内 [data-persona] 按钮独立处理（详 setupSettingsDrawer）
+
+    // Course drawer 已移除
+
+    // Note float（含拖拽 / 单击区分）
+    function setupNoteFloat() {
+      const float = $('noteFloat');
+      const panel = $('notePanel');
+      let dragging = false, moved = false, startX = 0, startY = 0, origX = 0, origY = 0;
+
+      float.addEventListener('mousedown', (e) => {
+        dragging = true; moved = false;
+        startX = e.clientX; startY = e.clientY;
+        const rect = float.getBoundingClientRect();
+        origX = rect.left; origY = rect.top;
+        float.style.transition = 'none';
+        e.preventDefault();
+      });
+      document.addEventListener('mousemove', (e) => {
+        if (!dragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        if (Math.abs(dx) > 4 || Math.abs(dy) > 4) moved = true;
+        if (moved) {
+          let newLeft = origX + dx;
+          let newTop = origY + dy;
+          // 边界保护
+          newLeft = Math.max(8, Math.min(window.innerWidth - 64, newLeft));
+          newTop = Math.max(8, Math.min(window.innerHeight - 64, newTop));
+          float.style.left = newLeft + 'px';
+          float.style.top = newTop + 'px';
+          float.style.right = 'auto';
+          float.style.bottom = 'auto';
+        }
+      });
+      document.addEventListener('mouseup', () => {
+        if (dragging) {
+          float.style.transition = '';
+          if (!moved) {
+            panel.classList.add('open'); // 没拖动 = 单击 → 弹面板
+            positionNotePanel(); // 视口自适应
+          }
+          if (moved) positionNotePanel();
+        }
+        dragging = false;
+      });
+
+      // 笔记面板视口自适应：贴近 float 弹出，超出屏幕则翻面
+      function positionNotePanel() {
+        if (!panel.classList.contains('open')) return;
+        const margin = 16;
+        // 先重置 inline 位置 + 临时隐藏 visibility 来量真实尺寸
+        panel.style.left = '0px';
+        panel.style.top = '0px';
+        panel.style.right = 'auto';
+        panel.style.bottom = 'auto';
+        // 用 RAF 等下一帧布局
+        requestAnimationFrame(() => {
+          const rect = float.getBoundingClientRect();
+          const panelW = panel.offsetWidth || 480;
+          const panelH = panel.offsetHeight || 320;
+          const aboveSpace = rect.top - margin;
+          const useBelow = aboveSpace < panelH;
+          // 水平：默认向 float 右侧伸（左对齐 float.left）；溢出右屏则向左侧伸
+          let left = rect.left;
+          if (left + panelW > window.innerWidth - margin) {
+            left = rect.right - panelW;
+          }
+          if (left < margin) left = margin;
+          // 垂直：上方放得下用上方（贴 float.top）；放不下翻到下方
+          let top = useBelow ? rect.bottom + 12 : rect.top - panelH - 12;
+          if (top < margin) top = margin;
+          if (top + panelH > window.innerHeight - margin) top = window.innerHeight - panelH - margin;
+          panel.style.left = left + 'px';
+          panel.style.top = top + 'px';
+        });
+      }
+      // 暴露给外部其它"打开 panel"路径调用
+      window._positionNotePanel = positionNotePanel;
+
+      $('noteClose').addEventListener('click', () => panel.classList.remove('open'));
+      // 点击外部任意位置关闭笔记面板
+      document.addEventListener('mousedown', (e) => {
+        if (!panel.classList.contains('open')) return;
+        if (panel.contains(e.target) || float.contains(e.target)) return;
+        panel.classList.remove('open');
+      });
+      $('noteBody').addEventListener('input', () => {
+        const len = $('noteBody').textContent.length;
+        $('noteCounter').textContent = `${len} / 500`;
+      });
+      $('noteArchive').addEventListener('click', () => {
+        const text = $('noteBody').textContent.trim();
+        if (!text) { showToast('笔记为空'); return; }
+        // US-V12-LINK-003: 写入跨场域 Notes store（lecture/practice 也能看见）
+        // v1.4.1 FIX-3 · 删 harvest.notes.unshift（避免 Notes.add + harvest 双写 · renderHarvest zip 时重复显示）
+        if (typeof Notes === 'object') {
+          Notes.add({ content: text, source: '大厅' });
+        }
+        renderHarvest();
+        // 切换到我的笔记 tab + toast
+        document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === 'notes'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.dataset.panel === 'notes'));
+        showToast('已归档到笔记库');
+        $('noteBody').textContent = '';
+        $('noteCounter').textContent = '0 / 500';
+        $('notePanel').classList.remove('open');
+      });
+    }
+
+    // ===== askUserQuestion popup =====
+    let askqState = { open: false, options: [], activeIdx: 0, onAnswer: null };
+    function openAskq(askq) {
+      askqState.open = true;
+      askqState.options = askq.options;
+      askqState.activeIdx = 0;
+      $('askqQuestion').textContent = askq.question;
+      const optsEl = $('askqOptions');
+      optsEl.innerHTML = askq.options.map((o, i) => `
+        <button class="askq-option ${i === 0 ? 'active' : ''}" data-idx="${i}">
+          <span class="askq-num">${i + 1}</span>
+          <span>${o}</span>
+        </button>
+      `).join('');
+      optsEl.querySelectorAll('.askq-option').forEach(b => {
+        b.addEventListener('mouseenter', () => updateAskqActive(parseInt(b.dataset.idx)));
+        b.addEventListener('click', () => answerAskq(askqState.options[parseInt(b.dataset.idx)]));
+      });
+      $('askqPopup').classList.add('open');
+      $('neoInput').focus();
+    }
+    function closeAskq() {
+      askqState.open = false;
+      $('askqPopup').classList.remove('open');
+    }
+    // I-02 ESC 跳过 askq · 不算回答 / 标记 dismissed → 下次用户发任何信息触发 mock 卡推送
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && askqState.open) {
+        e.preventDefault();
+        closeAskq();
+        askqState.dismissed = true;
+        showToast('已跳过 askq，发任意消息继续');
+      }
+    });
+    function updateAskqActive(idx) {
+      askqState.activeIdx = idx;
+      $('askqOptions').querySelectorAll('.askq-option').forEach((b, i) => {
+        b.classList.toggle('active', i === idx);
+      });
+    }
+    function answerAskq(text) {
+      // 学员选完 → 关闭 popup + 追加 user msg + 触发后续 mock 流
+      closeAskq();
+      appendNeoMsg({ role: 'user', text });
+      // 后续 mock 流逐条延迟显示
+      let delay = 600;
+      neoChatAfterAskq.forEach((msg, i) => {
+        setTimeout(() => appendNeoMsg(msg), delay);
+        delay += 600;
+      });
+    }
+
+    // Neo Chat input
+    // I-15 学习成果区 4 库各自搜索（标题 + 引文 + meta 文本）
+    function setupHarvestSearch() {
+      document.querySelectorAll('.harvest-search').forEach(input => {
+        const tab = input.dataset.search;
+        const panel = input.parentElement;  // .tab-panel
+        input.addEventListener('input', () => {
+          const q = input.value.trim().toLowerCase();
+          const cards = panel.querySelectorAll('.item-card');
+          cards.forEach(c => {
+            if (!q) { c.classList.remove('search-hidden'); return; }
+            const text = c.textContent.toLowerCase();
+            c.classList.toggle('search-hidden', !text.includes(q));
+          });
+        });
+      });
+    }
+
+    // I-04 点赞 / 点踩 / 评论 - 事件委托到 neoStream
+    function setupMsgActions() {
+      const stream = $('neoStream');
+      if (!stream) return;
+      stream.addEventListener('click', (e) => {
+        const btn = e.target.closest('.msg-action');
+        if (!btn) return;
+        const action = btn.dataset.action;
+        if (!action) return;
+        const actions = btn.parentElement;
+        if (action === 'like' || action === 'dislike') {
+          const isOn = btn.classList.contains('active');
+          // 互斥 + toggle: 一次点亮，二次熄灭
+          actions.querySelectorAll('.msg-action[data-action="like"], .msg-action[data-action="dislike"]')
+            .forEach(b => b.classList.remove('active'));
+          if (!isOn) btn.classList.add('active');
+          showToast(isOn ? '已取消反馈' : action === 'like' ? '感谢你的点赞 👍' : '已记录你的不满意，Neo 会调整');
+          return;
+        }
+        if (action === 'comment') {
+          openModal(`
+            <div class="modal-title">写评论给 Neo</div>
+            <div class="modal-body">
+              <textarea id="msgCommentInput" placeholder="说点什么…比如：这个回答没回到点上 / 想要更具体的例子" style="width:100%;min-height:90px;padding:10px 12px;border-radius:10px;border:1px solid var(--hairline);background:var(--bg-soft);color:var(--ink-1);font-size:13px;resize:vertical;outline:none"></textarea>
+            </div>
+            <div class="modal-actions">
+              <button class="modal-btn" onclick="closeModal()">取消</button>
+              <button class="modal-btn primary" onclick="(function(){
+                var v = document.getElementById('msgCommentInput').value.trim();
+                if (!v) { showToast('请先写点内容'); return; }
+                closeModal();
+                showToast('感谢反馈，已发送给 Neo');
+              })()">提交</button>
+            </div>
+          `);
+          setTimeout(() => document.getElementById('msgCommentInput')?.focus(), 50);
+        }
+      });
+    }
+
+    function setupNeoInput() {
+      const input = $('neoInput');
+      input.addEventListener('input', () => {
+        input.style.height = 'auto';
+        input.style.height = Math.min(120, input.scrollHeight) + 'px';
+      });
+      const send = () => {
+        const v = input.value.trim();
+        if (!v) return;
+        // 如果 askq 打开中，自由打字 = 回答 askq
+        if (askqState.open) {
+          answerAskq(v);
+        } else if (askqState.dismissed) {
+          // I-02 askq 被 ESC 跳过 → 下次发消息触发设计好的卡片流
+          appendNeoMsg({ role: 'user', text: v });
+          askqState.dismissed = false;
+          let delay = 600;
+          neoChatAfterAskq.forEach(msg => {
+            setTimeout(() => appendNeoMsg(msg), delay);
+            delay += 600;
+          });
+        } else {
+          appendNeoMsg({ role: 'user', text: v });
+          setTimeout(() => {
+            appendNeoMsg({ role: 'neo', text: '收到，让我想想——你这个场景里，对方的核心顾虑可能在哪？' });
+          }, 800);
+        }
+        input.value = '';
+        input.style.height = 'auto';
+      };
+      $('neoSend').addEventListener('click', send);
+      input.addEventListener('keydown', (e) => {
+        // askq 打开时，未输入内容时 ↑↓ 切换选项 / Enter 选中 / Esc 关闭
+        if (askqState.open && input.value.trim() === '') {
+          if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            updateAskqActive((askqState.activeIdx + 1) % askqState.options.length);
+            return;
+          }
+          if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            updateAskqActive((askqState.activeIdx - 1 + askqState.options.length) % askqState.options.length);
+            return;
+          }
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            answerAskq(askqState.options[askqState.activeIdx]);
+            return;
+          }
+          if (e.key === 'Escape') {
+            e.preventDefault();
+            closeAskq();
+            showToast('已跳过，可以直接打字回答');
+            return;
+          }
+          // 数字键 1-9 快捷选择
+          if (/^[1-9]$/.test(e.key)) {
+            const idx = parseInt(e.key) - 1;
+            if (idx < askqState.options.length) {
+              e.preventDefault();
+              answerAskq(askqState.options[idx]);
+              return;
+            }
+          }
+        }
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+      });
+
+      // 关闭按钮
+      $('askqDismiss').addEventListener('click', () => {
+        closeAskq();
+        showToast('已跳过，可以直接打字回答');
+      });
+    }
+
+    // Logout · 清 session 跳 login
+    $('logoutBtn').addEventListener('click', () => {
+      $('avatarDropdown').classList.remove('open');
+      openModal(`
+        <div class="modal-title">退出登录</div>
+        <div class="modal-body">确定要退出当前账号吗？退出后需重新登录。</div>
+        <div class="modal-actions">
+          <button class="modal-btn" onclick="closeModal()">取消</button>
+          <button class="modal-btn primary" onclick="Session.clear();Router.go('login');">确定退出</button>
+        </div>
+      `);
+    });
+    $('openHelp').addEventListener('click', () => showToast('帮助文档（demo 占位）'));
+
+    // 切换到管理端 — 二次确认 · 仅多角色可点
+    (function setupSwitchPort() {
+      const btn = $('switchPort');
+      if (!btn) return;
+      const canSwitch = Session.canSwitchPort();
+      if (!canSwitch) {
+        btn.style.opacity = '0.45';
+        btn.style.cursor = 'not-allowed';
+        btn.title = '你只有学员角色 · 多角色账号才能切换端口';
+      }
+      btn.addEventListener('click', () => {
+        $('avatarDropdown').classList.remove('open');
+        if (!canSwitch) {
+          showToast('你只有学员角色 · 不能切到管理端');
+          return;
+        }
+        openModal(`
+          <div class="modal-title">切换到管理端</div>
+          <div class="modal-body">
+            <p>你将离开学员端，进入管理端工作台。</p>
+            <p style="color:var(--ink-3);font-size:12px;margin-top:8px">多角色账号 · 切换后可随时切回学员端</p>
+          </div>
+          <div class="modal-actions">
+            <button class="modal-btn" onclick="closeModal()">取消</button>
+            <button class="modal-btn primary" onclick="Router.go('mgthome', { from: 'hall' });">确认切换</button>
+          </div>
+        `);
+      });
+    })();
+
+    // Toast
+    function showToast(msg) {
+      const t = $('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    // ==== Modal ====
+    function openModal(html) {
+      // I-03 自动注入右上角 × 关闭按钮（除非 html 已含）
+      const closeX = html.includes('modal-close-x')
+        ? ''
+        : '<button class="modal-close-x" type="button" aria-label="关闭" onclick="closeModal()">×</button>';
+      $('modalCard').innerHTML = closeX + html;
+      $('modalMask').classList.add('open');
+    }
+    function closeModal() { $('modalMask').classList.remove('open'); }
+    $('modalMask').addEventListener('click', (e) => {
+      if (e.target === $('modalMask')) closeModal();
+    });
+
+    // ==== 课程进入 / Activity 进入 → 委托给 Jumper（_shared/js/jumper.js）====
+    function confirmAndJump(title, target, opts) {
+      Jumper.confirmAndJump(title, target, Object.assign({ from: 'hall' }, opts || {}));
+    }
+
+    // ==== 加入待办 ====
+    function addTodoFromCard(text, source) {
+      todos.push({ id: Date.now(), text, source, done: false });
+      renderTodos();
+      showToast('已加入大厅待办');
+    }
+
+    // ==== 知识工具详情弹窗 ====
+    function openKnowledgeModal(name) {
+      // 名称模糊匹配：兼容 Neo Chat 卡片的长名 + 4 库工具卡的短名
+      const matchKey = (n) => {
+        const map = {
+          'PIN 法': 'PIN',
+          'PIN 法 · 立场 / 利益 / 需求': 'PIN',
+          'GROW 教练法': 'GROW',
+          'SBI 反馈框架': 'SBI'
+        };
+        return map[n] || n;
+      };
+      const k0 = matchKey(name);
+      const knowledge = {
+        'PIN': {
+          title: 'PIN 法',
+          sub: '立场 / 利益 / 需求 · 三层推进结构',
+          body: `
+            <img src="assets/modals/pin-meeting.jpg" alt="跨部门会议场景" style="width:100%;height:180px;object-fit:cover;border-radius:10px;margin-bottom:14px"/>
+            <div style="display:flex;gap:24px;align-items:center;justify-content:center;margin:8px 0 16px 0;padding:20px;background:var(--bg-soft);border-radius:12px;border:1px solid var(--hairline)">
+              <div style="text-align:center">
+                <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#FFE7D4,#F4A86C);display:grid;place-items:center;color:#fff;font-weight:700;font-size:18px">P</div>
+                <div style="font-size:12px;color:var(--ink-2);margin-top:6px">立场</div>
+              </div>
+              <div style="font-size:18px;color:var(--ink-3)">→</div>
+              <div style="text-align:center">
+                <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#F4A86C,#D97A37);display:grid;place-items:center;color:#fff;font-weight:700;font-size:18px">I</div>
+                <div style="font-size:12px;color:var(--ink-2);margin-top:6px">利益</div>
+              </div>
+              <div style="font-size:18px;color:var(--ink-3)">→</div>
+              <div style="text-align:center">
+                <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#D97A37,#A4541F);display:grid;place-items:center;color:#fff;font-weight:700;font-size:18px">N</div>
+                <div style="font-size:12px;color:var(--ink-2);margin-top:6px">需求</div>
+              </div>
+            </div>
+            <p><b>定义</b>：PIN 法是横向沟通中识别对方真实诉求的三层推进结构，避免在表层"立场对立"中僵持。</p>
+            <h3>P · Position 立场</h3>
+            <p>对方说出来的明确主张。"我不同意"、"我们做不了"、"这个不行"。</p>
+            <h3>I · Interest 利益</h3>
+            <p>立场背后的利益关切。"我担心 KPI"、"我怕背锅"、"我们部门有自己的优先级"。</p>
+            <h3>N · Need 需求</h3>
+            <p>更深层的动机或情感需求。"我希望被认可"、"我害怕失败"、"我想拥有掌控感"。</p>
+            <h3>使用要点</h3>
+            <ul>
+              <li>先听 P 不打断，确认对方说完了</li>
+              <li>用"为什么 / 担心什么 / 这对你意味着什么"引导到 I</li>
+              <li>挖到 N 通常需要 3-5 轮追问 + 安全感建立</li>
+              <li>共识从 N 层建立——大多数冲突在 N 层是兼容的</li>
+            </ul>
+          `
+        },
+        'GROW': {
+          title: 'GROW 教练法',
+          sub: 'Goal / Reality / Options / Will · 1v1 辅导经典框架',
+          body: `
+            <img src="assets/modals/grow-coaching.jpg" alt="1on1 辅导对话场景" style="width:100%;height:180px;object-fit:cover;border-radius:10px;margin-bottom:14px"/>
+            <p>GROW 是 1v1 辅导对话的经典框架，4 个阶段引导下属自己想清楚。</p>
+            <h3>G · Goal 目标</h3>
+            <p>"你希望达成什么？" 让目标清晰、具体、可衡量。</p>
+            <h3>R · Reality 现状</h3>
+            <p>"现在的实际情况是什么？" 不评价，只描述。</p>
+            <h3>O · Options 选项</h3>
+            <p>"你能想到哪些做法？" 鼓励多个，不立刻判断好坏。</p>
+            <h3>W · Will 行动</h3>
+            <p>"你打算先做哪一步？" 落到具体下一步行动 + 时间。</p>`
+        },
+        'SBI': {
+          title: 'SBI 反馈框架',
+          sub: 'Situation / Behavior / Impact · 极简反馈结构',
+          body: `
+            <img src="assets/modals/sbi-give-back.jpg" alt="给下属反馈对话场景" style="width:100%;height:180px;object-fit:cover;border-radius:10px;margin-bottom:14px"/>
+            <p>SBI 是给下属反馈时的极简结构，避免"绕"和"主观判断"。</p>
+            <h3>S · Situation 情境</h3>
+            <p>具体到时间地点。"上周三 10 点的项目会上"</p>
+            <h3>B · Behavior 行为</h3>
+            <p>对方做了什么具体行为。"你打断了小王三次"</p>
+            <h3>I · Impact 影响</h3>
+            <p>这个行为带来的客观影响。"会议节奏被打断 + 小王后面不再发言"</p>`
+        }
+      };
+      const k = knowledge[k0] || { title: name, sub: '', body: '<p>该工具的详细内容待补充。</p>' };
+      openModal(`
+        <div class="modal-title">${k.title}</div>
+        <div class="modal-sub">${k.sub}</div>
+        <div class="modal-body">${k.body}</div>
+        <div class="modal-actions">
+          <button class="modal-btn primary" onclick="closeModal()">知道了</button>
+        </div>
+      `);
+    }
+
+    // =============================================================
+    // INIT
+    // =============================================================
+    renderAvatar();
+    // v1.4.1 · hall hero Neo 头像已删（FIX-1）· chat msg 头像仍由各 msg 渲染器内同步 persona
+    renderHeatmap();
+    renderRadar();
+    renderTodos();
+    renderCourses();
+    renderHarvest();
+    renderMessages();
+    renderNeoChat();
+    setupDropdowns();
+    setupSettingsDrawer();
+    setupNoteFloat();
+    setupNeoInput();
+    setupMsgActions();
+    setupHarvestSearch();
+    // v1.4.1 · 删 neo-collapse 按钮（PM 反馈：跟 mgthome ora-bar 一致 · 不要收起小箭头）
+    // setupNeoCollapse();
+    setupNeoResize();
+    setupHmScroll();
+
+    // 热力图横向滚动（按钮 + 鼠标滚轮 + 渐变蒙版指示）
+    function setupHmScroll() {
+      const wrap = $('heatmapWrap');
+      const outer = wrap.parentElement;
+      const btnL = $('hmScrollLeft');
+      const btnR = $('hmScrollRight');
+      const SCROLL_STEP = 250;  // 滚动距离 ≈ 10 周
+      const updateState = () => {
+        const atLeft = wrap.scrollLeft <= 1;
+        const atRight = wrap.scrollLeft >= wrap.scrollWidth - wrap.clientWidth - 1;
+        btnL.disabled = atLeft;
+        btnR.disabled = atRight;
+        outer.style.setProperty('--mask-l', atLeft ? '0' : '1');
+        outer.style.setProperty('--mask-r', atRight ? '0' : '1');
+      };
+      btnL.addEventListener('click', () => { wrap.scrollBy({ left: -SCROLL_STEP, behavior: 'smooth' }); });
+      btnR.addEventListener('click', () => { wrap.scrollBy({ left: SCROLL_STEP, behavior: 'smooth' }); });
+      // 鼠标滚轮：垂直滚动 → 横向
+      wrap.addEventListener('wheel', (e) => {
+        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+          e.preventDefault();
+          wrap.scrollLeft += e.deltaY;
+        }
+      }, { passive: false });
+      wrap.addEventListener('scroll', updateState);
+      window.addEventListener('resize', updateState);
+      setTimeout(updateState, 80);
+      // 自动滚动到当前周（W6）
+      setTimeout(() => { wrap.scrollLeft = Math.max(0, 5 * 25 - 60); updateState(); }, 100);
+    }
+
+    // Neo Hero 收起 / 展开（点同一按钮 toggle）
+    function setupNeoCollapse() {
+      const chat = $('neoChat');
+      $('neoCollapse').addEventListener('click', () => chat.classList.toggle('collapsed'));
+    }
+
+    // Neo Chat 宽度拖拽
+    function setupNeoResize() {
+      const handle = $('neoResize');
+      let dragging = false, startX = 0, startW = 380;
+      handle.addEventListener('mousedown', (e) => {
+        dragging = true;
+        startX = e.clientX;
+        startW = $('neoChat').offsetWidth;
+        handle.classList.add('dragging');
+        document.body.style.cursor = 'ew-resize';
+        document.body.style.userSelect = 'none';
+        e.preventDefault();
+      });
+      document.addEventListener('mousemove', (e) => {
+        if (!dragging) return;
+        const dx = startX - e.clientX;
+        const min = 320;
+        const max = Math.floor(window.innerWidth / 3);
+        let w = startW + dx;
+        w = Math.max(min, Math.min(max, w));
+        document.documentElement.style.setProperty('--neo-w', w + 'px');
+      });
+      document.addEventListener('mouseup', () => {
+        if (dragging) {
+          dragging = false;
+          handle.classList.remove('dragging');
+          document.body.style.cursor = '';
+          document.body.style.userSelect = '';
+        }
+      });
+    }
+  
+    // ===== Theme toggle wire-up（data-theme 已在 <head> 阶段提前设置）=====
+    (function initThemeButtons() {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      // sync settings drawer btn active state
+      document.querySelectorAll('[data-theme]').forEach(btn => {
+        if (btn.tagName !== 'BUTTON') return;
+        btn.classList.toggle('active', btn.dataset.theme === current);
+      });
+      // wire click
+      document.querySelectorAll('button[data-theme]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const t = btn.dataset.theme;
+          if (!t || btn.disabled) return;
+          document.documentElement.setAttribute('data-theme', t);
+          localStorage.setItem('rx-theme', t);
+          document.querySelectorAll('button[data-theme]').forEach(b => b.classList.toggle('active', b === btn));
+          // 主题切换时 re-render heatmap + radar 来吸取新调色板
+          if (typeof renderHeatmap === 'function') renderHeatmap();
+          if (typeof renderRadar === 'function') renderRadar();
+        });
+      });
+    })();
+
+  </script>
+</body>
+</html>

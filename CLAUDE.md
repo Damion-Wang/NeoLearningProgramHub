@@ -2,7 +2,7 @@
 
 > 睿学（NeoLearning）是面向企业的 AI-Native 培训交付平台。本期交付：睿学培训项目（NeoLearningProgram）。本仓库是产品规划 + 设计 + 原型工作树。
 >
-> **当前阶段**：V-0.2.0 / **D-5.0 spec 已交付** —— 22 文件（21 章节 + 00-glossary）/ 全部【已审阅】/ 每文件独立编号 / 跨文件引用 `[文件名 § X.Y]` 格式 / 等待研发对接
+> **当前阶段**：V-0.2.0 / **D-5.0 是当前基线**（22 文件 / **recap 于 2026-05-09 已合并 D-5.1 重写内容**）+ **D-5.0 spec 补充区持续迭代**（综合决议文档 + UI demo / 后续补充继续走补充区）。**暂不进入 D-6.0。**
 
 ---
 
@@ -11,8 +11,8 @@
 | 维度 | 当前值 | 说明 |
 |------|--------|------|
 | 产品版本 | **V-0.2.0** | 产品大版本号，用到 6 月交付，未指示前不动 |
-| 文档版本 | **D-4.0**（已冻结）/ **D-5.0**（已交付）| 文档迭代版本号 |
-| 文档归集 | `00-public/product-V-0.2.0-D-X.0/` | 顶层目录名即版本号载体 |
+| 文档版本 | **D-4.0**（已冻结）/ **D-5.0**（当前基线 / recap 已含 D-5.1 整合）/ **D-5.0-supplements**（活跃补充区）| 文档迭代版本号 |
+| 文档归集 | `00-public/product-V-0.2.0-D-X.Y/` 或 `00-public/product-V-0.2.0-D-5.0-supplements/` | 顶层目录名即版本号 / 补充区载体 |
 | 文件元数据 | frontmatter `version:` `status:` `last-updated:` `numbering:` | 单文件级元数据 |
 | 目录元数据 | 各级 `VERSION.md` + README banner | 目录级元数据 |
 
@@ -31,23 +31,42 @@
 
 ## 关键路径
 
-### D-5.0 已交付 spec（最终参考 ★）
+### D-5.0 spec 补充区 ★（活跃迭代）
+
+`00-public/product-V-0.2.0-D-5.0-supplements/` —— **活跃补充区**。
+
+| 内容 | 状态 |
+|---|---|
+| `D-5.0-spec-supplements-2026-05-09.md` | 综合决议文档（341 行 / 21 项决议 / 跨 spec 设计 + demo 偏差校准）|
+| `demo/` | 完整 UI demo（24.63 MB / 9 HTML / 4 演示账号 / 双击启动）|
+
+**已合并到 D-5.0**（2026-05-09）：
+- `recap.md`（D-5.1 重写 898 行）→ 替换 `D-5.0/spec/05-learner/05-recap【已审阅】.md` / 副本已删
+- `cross-spec-decisions-2026-05-08.md` + `demo-vs-spec-diff-2026-05-09.md` → 内容合并为 `D-5.0-spec-supplements-2026-05-09.md` / 两源文档已删
+
+**两种整合方式**（按需选用）：
+1. **替换式整合**（如 recap / 直接覆盖 D-5.0 同名文件 / 补充区不留副本）
+2. **保留为补充**（与 D-5.0 spec 互为引用 / 不强行回写 / 如 demo + 综合决议文档）
+
+**何时退出补充区**：DM 决定整合（→ D-5.2 全量基线 / 或直接 → D-6.0 研发对接）。
+
+### D-5.0 已交付 spec 基线（22 文件 ★）
 
 `00-public/product-V-0.2.0-D-5.0/spec/` 下 **22 文件**（每文件独立编号 / 每文件 § 1 起）：
 
-| 板块 | 文件 |
-|------|------|
-| **00-glossary** | 术语决议表 v2（15 节 / 含 § 15 管理端架构）|
-| **01-vision** | 愿景 |
-| **02-foundation/** | 01-personas / 02-methodology / 03-roles-and-ports / 04-data-model |
-| **03-lifecycle/** | 01-pre-learning / 02-learning / 03-completion |
-| **04-global/** | 01-user-global / 02-platform-global |
-| **05-learner/** | 01-overview / 02-hub / 03-lecture / 04-practice / 05-recap / 06-cross-context |
-| **06-management/** | 01-overview / 02-home / 03-report-center / 04-program-config / 05-message |
+| 板块 | 文件 | 备注 |
+|------|------|---|
+| **00-glossary** | 术语决议表 v2（15 节 / 含 § 15 管理端架构）| 补充区不另起 glossary，术语变更同步更新此文件 |
+| **01-vision** | 愿景 | — |
+| **02-foundation/** | 01-personas / 02-methodology / 03-roles-and-ports / 04-data-model | — |
+| **03-lifecycle/** | 01-pre-learning / 02-learning / 03-completion | — |
+| **04-global/** | 01-user-global / 02-platform-global | — |
+| **05-learner/** | 01-overview / 02-hub / 03-lecture / 04-practice / **05-recap** / 06-cross-context | **05-recap 于 2026-05-09 已含 D-5.1 重写整合内容（923 行）** |
+| **06-management/** | 01-overview / 02-home / 03-report-center / 04-program-config / 05-message | — |
 
 跨文件引用格式：`[05-learner/05-recap § 1.2.3]`；自引用格式：`§ 1.2.3`。
 
-### D-4.0 已审阅 spec（冻结基线）
+### D-4.0 已审阅 spec（冻结基线 / 历史快照）
 - 产品 spec：`00-public/product-V-0.2.0-D-4.0/spec/`（17 文件含 README × 4）
 - 功能树：`00-public/product-V-0.2.0-D-4.0/feature-tree/`（13 文件含 manifest）
 - 原型 v1.1：`00-public/product-V-0.2.0-D-4.0/prototype/build/`（11 个 HTML）+ `prototype/assets/`
@@ -59,12 +78,13 @@
 - 课程内容：`00-public/6-content/`
 
 ### 临时区
-- DM 临时区：`02-temp/`（DM 自己的临时改动、会议笔记、产品思考、未定型笔记）
+- DM 临时区：`02-temp/`（保留 D-5.0 补充期间过程档：feature-tree 探索 5 + recap mock/design 2 + recap-build-plan + debate-log + record / 按需清理或归档）
 - ~~Claude 临时区 `claude-workspace/`~~ 已退场（2026-05-06 / D-5.0 交付时一并清理）
 
 ### 参考资料
 - 外部 demo：`01-ref/demo/`（视频 + coaching-skills JS 项目）
 - 原型参考：`01-ref/prototype-references/`（5 个教室 HTML、NEO 头像原图）
+- 报告参考：`01-ref/product-ideas/报告/`（recap 设计期导入的中欧报告框架 / xmind / PPTX / 7 文件）
 
 ---
 
@@ -79,7 +99,12 @@
    - **风格立场**：像 1v1 真人老师（这是第一性原理锁定的）
 4. **场域统一**（2026-05-06 校准）：学员端 = **大厅（中枢层 / 不算场域）+ 3 学习场域**（授课 lecture / 对练 practice / 小结 recap）；场域内用 Topbar + 覆盖式抽屉 + 全幅内容 + 右侧 Neo Chat 统一布局；未来场域 inquiry 等留口
 5. **2 个账号**：student01（张磊·中期学员+管理员，W5/16）/ newbie01（李明·初期学员+开营新运营，W0/16）
-6. **spec 改动方式**：D-4.0 文件**已冻结**不改；新设计走 **D-5.0 `spec/` 22 文件**；任何术语 / 编号变更同步更新 `00-glossary.md`
+6. **spec 改动方式**（2026-05-09 校准）：
+    - **D-4.0 整体冻结** —— 不改
+    - **D-5.0 是当前基线** —— 22 文件 / recap 已含 D-5.1 整合内容
+    - **新设计 / 新调整走 D-5.0 补充区** —— 在 `00-public/product-V-0.2.0-D-5.0-supplements/` 下放新文件 + UI demo + 综合决议文档
+    - **整合方式两种**：① **替换式整合**（直接覆盖 D-5.0 同名 / 补充区不留副本）② **保留为补充**（与 D-5.0 spec 互为引用 / 不强行回写 / 如 demo + 综合决议文档）
+    - **术语 / 编号变更** —— 补充区 **不另起 glossary**，统一回写到 `D-5.0/spec/00-glossary.md`（这是术语权威表）
 7. **原型独立性**：每页自包含（CSS/JS 内联，图片 base64），仅 CDN 外链允许（Tailwind/Lucide/Fonts）
 8. **调研边界**（2026-04-26 起）：第一性原理为基准 + spec 为 scope + 来源不设限——任何调研产出必须能映射回"它让 Neo 更像 1v1 老师吗"
 9. **懂你 · 记忆系统底层原则**（2026-04-26 立）：Neo 必须**越用越懂学员**。跨场域 + 跨会话 + 跨课程的渐进画像构建；主动调用记忆（"我记得你上次说过…"）；记什么 / 何时调 / 如何避免幻觉式调用 是底层议题，不是 feature
@@ -115,25 +140,59 @@
 
 ---
 
-## V-0.2.0 / D-5.0 spec 已交付（2026-05-06）
+## 当前推进重心 · D-5.0 spec 补充区
 
-**交付内容**：
-- `spec/` 22 文件（含 00-glossary）/ 7000+ 行 / 全部【已审阅】
-- 每文件独立编号（每文件 § 1 起 / frontmatter 加 `numbering: per-file-independent`）
-- 跨文件引用统一格式 `[文件名 § X.Y]`
-- 术语决议表 v2 持久化（00-glossary / 15 节 / ~250 术语）
+**已合并到 D-5.0**（2026-05-09）：
+- recap.md（D-5.1 重写 898 行 / 16 项 PM 决议 + 自主 debate 修订）→ 替换式整合到 D-5.0/spec/05-learner/05-recap【已审阅】.md（923 行）
+- D-5.0-spec-supplements-2026-05-09.md（341 行 / 21 项决议）= cross-spec-decisions + demo-vs-spec-diff 内容驱动合并
 
-**何时退出 D-5.0**：DM 决定开始研发对接（启动 D-6.0 或 V-0.2.1-D-1.0）。
+**当前在补充区**：
+- D-5.0-spec-supplements-2026-05-09.md（综合决议文档）
+- demo/（UI demo / 24.63 MB / 9 HTML）
+
+**进行中**：基于综合决议文档执行 demo 修齐 + spec 修齐。
+
+**何时退出补充区**：DM 决定整合（→ D-5.2 全量基线 / 或直接 → D-6.0 研发对接）。**当前明确暂不进入 D-6.0**。
 
 ---
 
-## 工作流偏好
+## 如何与 Claude 协作
 
-- **复杂任务先规划再执行**（写规划 md → 用户确认 → 启动 agent）
-- **多文件改动用 Agent 并行**（fan-out / fan-in 模式）
-- **大量 UI 改动用 Playwright MCP 浏览器验证**（截图证据）
-- **询问用户用 AskUserQuestion 工具**（不要文字列表）
-- **决策点 1 次最多 4 个问题**（工具限制）
+> 本节是 Claude 的工作手册。新会话开场读这一段就能进入"密切协作"状态。
+
+### PM 风格定位（4 锁 / 2026-04-26 锁定）
+
+1. **PM 角度，不要问技术实现** —— 技术选型 / 架构 / 验证机制由研发决定，PM 只管效果与 Agent 表现
+2. **遇事不决参照 1v1 真人老师** —— 设计冲突总判断器（不写入 Neo Soul，是 PM 工具）
+3. **Soul 按场域差异化** —— Neo 不是单一身份，按场域调用差异化 skill 与倾向
+4. **不决定时间，研发能力决定** —— 不预设周数 / 节点
+
+### 协作方式
+
+- **复杂任务先规划再执行** —— 写规划 md → 用户确认 → 启动 agent / 不要直接动手大改
+- **多文件改动用 Agent 并行** —— fan-out / fan-in 模式
+- **大量 UI 改动用 Playwright MCP 浏览器验证** —— 截图证据
+- **询问用户用 AskUserQuestion 工具** —— 不要用文字列表 / 1 次最多 4 个问题（工具限制）
+- **重要议题走 multi-round-debate** —— 5 角色辩论生成产品决策
+- **长文档审查走 long-doc-review** —— 4 维 fan-out + 合并 + 决议 + 修复闭环
+
+### 5 个项目级 Skills（在 `.claude/skills/`）
+
+1. **multi-round-debate** — 5 角色辩论生成产品决策
+2. **session-opener** — 开场仪式：昨日续接+今日待办（每 session 自动触发）
+3. **completion-gate** — 完成门控：测试+文档+commit+决策 4 件套
+4. **git-push-guard** — 推送守门员：cleanup+progress+readme 三联检查
+5. **long-doc-review** — 长文本 4 维审查全量（fan-out 4 Agent + 合并 + PM 决议 + 自动修复）
+
+### Memory · 持久协作记忆
+
+Claude 有跨 session 的记忆系统（`C:\Users\WDM\.claude\projects\D--01-----AI-TUTOR-20260408------\memory\`）。
+- **user 类**：DM 的偏好 / 角色 / 工作习惯
+- **feedback 类**：DM 给过的指导 / 纠偏 / 验证过的判断
+- **project 类**：项目动态状态（决议 / 阶段切换 / 里程碑）
+- **reference 类**：外部资源指针
+
+新 session 开场时，Claude 会主动调用相关记忆，避免重复对齐。如果某条记忆与当前文件状态冲突，**以文件为准**。
 
 ---
 
@@ -160,18 +219,6 @@ Claude 在以下时机**必须主动触发** Skill，不等用户开口：
 
 ---
 
-## Skills 入口
-
-`.claude/skills/` 下提供 5 个项目级 Skill：
-
-1. **multi-round-debate** — 5 角色辩论生成产品决策
-2. **session-opener** — 开场仪式：昨日续接+今日待办
-3. **completion-gate** — 完成门控：测试+文档+commit+决策 4 件套
-4. **git-push-guard** — 推送守门员：强制 cleanup+progress+readme 三联检查
-5. **long-doc-review** — 长文本 4 维审查全量（fan-out 4 Agent + 合并 + PM 决议 + 自动修复）
-
----
-
 ## 历史与版本
 
 - 2026-04-08：项目启动，建立 6 大区结构
@@ -184,6 +231,9 @@ Claude 在以下时机**必须主动触发** Skill，不等用户开口：
 - 2026-05-04：03-full 全章 § 1-§ 10 完成 + 4 维审查
 - 2026-05-05：spec 拆分到 6 板块 17 文件 + 全文件审阅 + 全局术语校准
 - **2026-05-06**：**D-5.0 全量术语校准 + 编号重建 + 引用替换 + 03-full 退场 + claude-workspace 退场**——spec/ 22 文件最终交付
+- **2026-05-07 ~ 05-08**：**D-5.1 局部迭代启动**——recap 单文件重新讨论（4 决议 + 20 题决议 + 3 mock + v6/v7 设计 → 769 行替代版）/ feature-tree 探索归档暂停 / D-5.1 增量目录建立
+- **2026-05-08 ~ 05-09**：**recap 全文重写 + 多轮校准**（16 项 PM 决议 + 5 角色自主 debate / 第 3 章 A 基线明确 / 关联 Activity 集合不含 recap / 6 维画像范围收紧 / 跨 spec 补充决策 / 拉入 24.58 MB UI demo / 写 demo-vs-spec diff 文档 / 最终 recap 替换式整合回 D-5.0）
+- **2026-05-09 后续**：D-5.1 目录改名 D-5.0-supplements / cross-spec-decisions + demo-vs-spec-diff 两文档**内容驱动合并**为 D-5.0-spec-supplements-2026-05-09.md（341 行 / 21 项决议）/ debate-log 搬到 02-temp / naming-convention 删除
 
 ---
 

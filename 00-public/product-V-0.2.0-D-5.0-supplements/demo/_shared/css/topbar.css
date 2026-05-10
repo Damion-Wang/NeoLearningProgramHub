@@ -1,0 +1,74 @@
+/* v1.5.1 B12 · 8 页 topbar 统一 CSS · 抽出共享样式 · 杜绝跨页视觉跳动
+ *  使用方式：每页 head 加 <link rel="stylesheet" href="_shared/css/topbar.css?v=15">
+ *  约束：要求 tokens.css 已先加载（依赖 --topbar-h, --hairline, --accent 等 var）
+ */
+
+:root { --topbar-h: 56px; }
+
+/* === 容器 · stage / topbar grid === */
+.topbar {
+  display: grid;
+  grid-template-columns: 64px auto 1fr auto;
+  align-items: center;
+  background: transparent;
+  border-bottom: 1px solid var(--hairline);
+  padding-right: 16px;
+  height: var(--topbar-h);
+}
+
+/* === port-chip · 学员端 / 管理端 标识 === */
+.port-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-left: 8px;
+  flex-shrink: 0;
+  border: 1px solid currentColor;
+  background: transparent;
+}
+.port-chip-learner { color: var(--accent); }
+.port-chip-admin   { color: #10B981; }
+[data-theme="dark"] .port-chip-admin { color: #6EE7B7; }
+
+/* === topbar-brand · logo 整片可点（含周围 14px padding 热区） === */
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  cursor: pointer;
+}
+.topbar-brand img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 12px rgba(var(--accent-rgb), 0.25));
+}
+
+/* === topbar-project · 项目名 + 周次 === */
+.topbar-project {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-left: 8px;
+}
+.topbar-project-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-1);
+}
+.topbar-project-meta {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+/* === topbar-actions · 右侧按钮组 === */
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
